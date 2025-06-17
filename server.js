@@ -1,9 +1,9 @@
-// server.js
-// Lightweight Express.js API to trigger Pi Bot remotely
-
 import express from 'express';
 import { exec } from 'child_process';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { connectToDB } from './db.js';
+import passphraseRoutes from './routes/passphrases.js';
 dotenv.config();
 
 const app = express();
@@ -13,6 +13,9 @@ const PORT = process.env.PORT || 3000;
 const AUTH_KEY = process.env.AUTH_KEY || 'secret-key';
 
 app.use(express.json());
+await connectToDB();
+
+app.use('/api/passphrases', passphraseRoutes);
 
 // Ping route
 app.get('/', (req, res) => {
@@ -40,6 +43,6 @@ app.post('/run-bot', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
 });
