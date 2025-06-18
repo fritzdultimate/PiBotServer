@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import { exec } from 'child_process';
 import dotenv from 'dotenv';
@@ -13,6 +14,11 @@ const PORT = process.env.PORT || 3000;
 const AUTH_KEY = process.env.AUTH_KEY || 'secret-key';
 
 app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:8888',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
