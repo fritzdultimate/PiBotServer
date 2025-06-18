@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
+import { buildAndSubmitTx } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -26,6 +27,24 @@ app.use('/api/passphrases', passphraseRoutes);
 app.get('/', (req, res) => {
   res.send('🔁 Pi Bot Server is running');
 });
+
+app.post('/claim-pi', async (req, res) => {
+    const { passphrase, recipient, balanceId, amount } = req.body;
+    if (!passphrase) {
+        return res.status(404).json({ error: 'Passphrase is required' });
+    }
+
+    if (!amount) {
+        return res.status(404).json({ error: 'amount is required' });
+    }
+
+    try {
+        const txResult = await buildAndSubmitTx(passphrase, recipient, balanceId, amount);
+        res.json({ success: true, tx: txResult });
+    } catch (error) {
+        res.status(500).json({ error: error.response?.data || error.message });
+    }
+})
 
 // Trigger bot
 app.post('/run-bot', (req, res) => {
