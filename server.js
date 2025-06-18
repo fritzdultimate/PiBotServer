@@ -35,7 +35,7 @@ app.post('/claim-pi', async (req, res) => {
     }
 
     if (!amount) {
-        return res.status(404).json({ error: 'amount is required' });
+        return res.status(403).json({ error: 'amount is required' });
     }
 
     try {
