@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { buildAndSubmitTx } from './utils/fn.js';
+import { buildAndSubmitTx, FloodchannelTransaction } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -41,7 +41,7 @@ app.post('/claim-pi', async (req, res) => {
     }
 
     try {
-        const txResult = await buildAndSubmitTx(passphrase, recipient, balanceId, amount);
+        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
         res.json({ success: true, tx: txResult });
     } catch (error) {
         res.status(500).json({ error: error.response?.data || error.message });

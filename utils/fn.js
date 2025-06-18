@@ -122,6 +122,25 @@ export async function submitTransaction(txXdr) {
     }
 }
 
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const allSponsors = await Sponsors.find();
+    if(allSponsors) {
+        const result = await Promise.all(allSponsors.map(async (mnemonic, i) => {
+            return allSponsors;
+            try {
+                const xdr = await buildChannelTx(mnemonic, mainKp, balanceId, recipient, amount);
+                return await submitTransaction(xdr);
+            } catch (err) {
+                console.error(`❌ Error building/submitting for channel ${i}:`, err);
+            }
+        }));
+
+        return result;
+    }
+    return { success: false, error: "No sponsored accounts found"}
+}
+
 
 const FEE_CACHE_TTL = 10_000;
 
