@@ -2,7 +2,8 @@ import axios from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import bip39 from 'bip39';
 import ed25519 from 'ed25519-hd-key';
-import { Keypair, TransactionBuilder, Networks, Operation, Asset, Account, MuxedAccount   } from 'stellar-base';
+import { Keypair, TransactionBuilder, Operation, Asset, Account, MuxedAccount   } from 'stellar-base';
+import Sponsors from '../models/Sponsors.js';
 
 const HORIZON = 'https://api.mainnet.minepi.com';
 const NETWORK_PASSPHRASE = 'Pi Network';
