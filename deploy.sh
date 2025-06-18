@@ -5,4 +5,4 @@ git reset --hard
 git pull origin main
 
 echo "Restarting bot..."
-pm2 restart pibot || npm run start
+pm2 restart pibot
