@@ -25,7 +25,7 @@ app.use('/api/passphrases', passphraseRoutes);
 
 // Ping route
 app.get('/', (req, res) => {
-  res.send('🔁 Pi Bot Server is running - let me test this though!!!!' + new Date().toLocaleString());
+  res.send('🔁 Pi Bot Server is running - let me test this though' + new Date().toLocaleString());
 });
 
 app.post('/claim-pi', async (req, res) => {
