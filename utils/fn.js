@@ -2,7 +2,7 @@ import axios from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import bip39 from 'bip39';
 import ed25519 from 'ed25519-hd-key';
-import { Keypair, Server, TransactionBuilder, Networks, Operation, Asset, Account, MuxedAccount   } from 'stellar-base';
+import { Keypair, TransactionBuilder, Networks, Operation, Asset, Account, MuxedAccount   } from 'stellar-base';
 
 const HORIZON = 'https://api.mainnet.minepi.com';
 const NETWORK_PASSPHRASE = 'Pi Network';
@@ -36,7 +36,7 @@ export async function getAccount(publicKey) {
 
 export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount) {
     const kp = getKeypairFromPassphrase(passphrase);
-    const server = new Server(HORIZON);
+    // const server = new Server(HORIZON);
     // const account = await server.loadAccount(kp.publicKey());
     const accountData  = await getAccount(kp.publicKey());
     const account = new Account(publicKey, accountData.sequence);
