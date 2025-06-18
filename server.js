@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
+import sponsorRoutes from './routes/sponsors.js';
 import { buildAndSubmitTx } from './utils/fn.js';
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cors({
 await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
+app.use('/api/sponsors', sponsorRoutes);
 
 // Ping route
 app.get('/', (req, res) => {
