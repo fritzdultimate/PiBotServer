@@ -40,7 +40,7 @@ export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount)
     // const account = await server.loadAccount(kp.publicKey());
     const accountData  = await getAccount(kp.publicKey());
     const account = new Account(kp.publicKey(), accountData.sequence);
-    const muxedRecipient = new MuxedAccount(recipient, BigInt(123456));
+    // const muxedRecipient = new MuxedAccount(recipient, BigInt(123456));
 
     const tx = new TransactionBuilder(account, {
         fee: '100000',
@@ -49,7 +49,7 @@ export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount)
     })
         .addOperation(Operation.claimClaimableBalance({ balanceId }))
         .addOperation(Operation.payment({
-        destination: muxedRecipient,
+        destination: recipient,
         asset: Asset.native(),
         amount,
         }))
