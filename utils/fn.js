@@ -131,7 +131,7 @@ export async function getClaimableBalance(publicKey) {
         const res = await axios.get(
             `${HORIZON}/claimable_balances?claimant=${publicKey}`,
             { 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: { 'Content-Type': 'application/json' },
                 httpsAgent: agent,
             }
         );
