@@ -128,15 +128,19 @@ export async function getClaimableBalance(publicKey) {
         const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
         const agent = new HttpsProxyAgent(proxy);
 
-        const res = await axios.get(
-            `${HORIZON}/claimable_balances?claimant=${publicKey}`,
-            { 
-                headers: { 'Content-Type': 'application/json' },
-                httpsAgent: agent,
-            }
-        );
+        try {
+            const res = await axios.get(
+                `${HORIZON}/claimable_balances?claimant=${publicKey}`,
+                { 
+                    headers: { 'Content-Type': 'application/json' },
+                    httpsAgent: agent,
+                }
+            );
 
-        return res;
+            return res.data;
+        } catch(err) {
+            return { error: "something went wrong" }
+        }
 }
 
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
