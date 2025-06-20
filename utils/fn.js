@@ -135,6 +135,8 @@ export async function getClaimableBalance(publicKey) {
                 httpsAgent: agent,
             }
         );
+
+        return res;
 }
 
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
