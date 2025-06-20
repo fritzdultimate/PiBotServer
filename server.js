@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
   res.send('🔁 Pi Bot Server is running - let me test this though' + new Date().toLocaleString());
 });
 
-app.get('claimable-balance', async (req, res) => {
+app.get('/claimable-balance', async (req, res) => {
     const { publicKey } = req.body;
     if(!publicKey) {
         return res.status(400).json({error: "Valid public key is required"});
