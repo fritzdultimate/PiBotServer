@@ -38,7 +38,7 @@ app.post('/claimable-balance', async (req, res) => {
 
     try {
         const claimable = await getClaimableBalance(publicKey);
-        res.json({ success: true, result: claimable });
+        res.json({ success: true, result: 'claimable' });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
     }
