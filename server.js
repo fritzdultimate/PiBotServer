@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { buildAndSubmitTx, FloodchannelTransaction } from './utils/fn.js';
+import { buildAndSubmitTx, FloodchannelTransaction, getClaimableBalance } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -29,6 +29,21 @@ app.use('/api/sponsors', sponsorRoutes);
 app.get('/', (req, res) => {
   res.send('🔁 Pi Bot Server is running - let me test this though' + new Date().toLocaleString());
 });
+
+app.get('claimable-balance', async (req, res) => {
+    const { publicKey } = req.body;
+    if(!publicKey) {
+        return res.status(400).json({error: "Valid public key is required"});
+    }
+
+    try {
+        const claimable = await getClaimableBalance(publicKey);
+        res.json({ success: true, result: claimable });
+    } catch(err) {
+        res.status(500).json({ error: err.response?.data || err.message });
+    }
+    
+})
 
 app.post('/claim-pi', async (req, res) => {
     const { passphrase, recipient, balanceId, amount } = req.body;
