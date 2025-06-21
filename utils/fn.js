@@ -166,8 +166,8 @@ export async function sweepWallet(mainPhrase) {
     const accountData  = await getAccount(mainKp.publicKey());
     const account = new Account(mainKp.publicKey(), accountData.sequence);
 
-	const balanceString = getBalance(account);
-    return balanceString;
+	// const balanceString = getBalance(account);
+    return account;
 	// const baseFee = parseFloat(await getBaseFee()) + i * 1_000;
 
 	// const onePiInStroops = 10_000_000;
