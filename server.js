@@ -57,7 +57,16 @@ app.post('/claim-pi', async (req, res) => {
 
     try {
         const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
-        res.json({ success: true, tx: txResult });
+        if(txResult) {
+            const findSuccessfulTx = txResult.find(result => result.hash !== undefined);
+            if(!findSuccessfulTx) {
+                res.json({ success: false, reason: "Failed" });
+            } else {
+                res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
+            }
+        } else {
+            res.json({ success: true, reason: "Failed" });
+        }
     } catch (error) {
         res.status(500).json({ error: error.response?.data || error.message });
     }
