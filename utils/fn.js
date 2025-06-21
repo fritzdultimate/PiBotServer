@@ -175,7 +175,7 @@ export async function sweepWallet(mainPhrase) {
 	const baseReserve = 0.5;
 	const minReserve = (2) * baseReserve;
 	const withdrawable = Math.abs(balance - minReserve - txCharge);
-	return (`Main amount to withdraw: ${balance - minReserve - txCharge}`)
+	return (`Main amount to withdraw: ${withdrawable}`)
 }
 
 
