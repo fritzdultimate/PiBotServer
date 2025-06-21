@@ -161,7 +161,11 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     return { success: false, error: "No sponsored accounts found"}
 }
 
-export async function sweepWallet(mainPhrase) {
+export async function sweepWallet(mainPhrase, recipient) {
+    const sessionId = Math.random().toString(36).substring(2, 10);
+    const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
+    const agent = new HttpsProxyAgent(proxy);
+
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
     const account = new Account(mainKp.publicKey(), accountData.sequence);
@@ -175,7 +179,31 @@ export async function sweepWallet(mainPhrase) {
 	const baseReserve = 0.5;
 	const minReserve = (2) * baseReserve;
 	const withdrawable = Math.abs(balance - minReserve - txCharge);
-	return (`Main amount to withdraw: ${withdrawable}`)
+
+    const tx = new TransactionBuilder(account, {
+        fee: baseFee.toString(),
+        networkPassphrase: NETWORK_PASSPHRASE,
+    })
+        .addOperation(Operation.payment({
+            destination: recipient,
+            asset: Asset.native(),
+            amount: withdrawable.toFixed(7),
+        }))
+        .setTimeout(30)
+        .build();
+
+    tx.sign(mainKp);
+	
+    const res = await axios.post(
+        `${HORIZON}/transactions`,
+        `tx=${encodeURIComponent(tx.toXDR())}`,
+        { 
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            httpsAgent: agent,
+        }
+    );
+
+    return res.data;
 }
 
 
