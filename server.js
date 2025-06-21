@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { buildAndSubmitTx, FloodchannelTransaction, getClaimableBalance } from './utils/fn.js';
+import { buildAndSubmitTx, FloodchannelTransaction, getClaimableBalance, sweepWallet } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -39,6 +39,25 @@ app.post('/claimable-balance', async (req, res) => {
     try {
         const claimable = await getClaimableBalance(publicKey);
         res.json({ success: true, claimable });
+    } catch(err) {
+        res.status(500).json({ error: err.response?.data || err.message });
+    }
+    
+})
+
+app.post('/sweep', async (req, res) => {
+    const { phrase, recipient } = req.body;
+    if(!phrase) {
+        return res.status(400).json({error: "Passphrase is required"});
+    }
+
+    if(!recipient) {
+        return res.status(400).json({error: "Valid recipient is required"});
+    }
+
+    try {
+        const sweeper = await sweepWallet(phrase);
+        res.json({ success: true, sweeper });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
     }
