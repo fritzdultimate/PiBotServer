@@ -203,7 +203,7 @@ export async function sweepWallet(mainPhrase, recipient) {
         }
     );
 
-    return res.data;
+    return {data: res.data, amount: withdrawable.toFixed(7)};
 }
 
 
