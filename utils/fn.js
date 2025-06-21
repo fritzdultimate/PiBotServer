@@ -161,6 +161,24 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     return { success: false, error: "No sponsored accounts found"}
 }
 
+export async function sweepWallet(mainPhrase) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const accountData  = await getAccount(mainKp.publicKey());
+    const account = new Account(mainKp.publicKey(), accountData.sequence);
+
+	const balanceString = getBalance(account);
+    return balanceString;
+	// const baseFee = parseFloat(await getBaseFee()) + i * 1_000;
+
+	// const onePiInStroops = 10_000_000;
+	// const balance = parseFloat(balanceString);
+	// const txCharge = baseFee/onePiInStroops;
+	// const baseReserve = 0.5;
+	// const minReserve = (2 + account.subentry_count) * baseReserve;
+	// const withdrawable = Math.abs(balance - minReserve - txCharge);
+	// console.log(`Main amount to withdraw: ${balance - minReserve - txCharge}`)
+}
+
 
 const FEE_CACHE_TTL = 10_000;
 
