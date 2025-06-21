@@ -168,15 +168,14 @@ export async function sweepWallet(mainPhrase) {
 
 	const balanceString = getBalance(accountData);
 	const baseFee = parseFloat(await getBaseFee());
-    return baseFee;
 
-	// const onePiInStroops = 10_000_000;
-	// const balance = parseFloat(balanceString);
-	// const txCharge = baseFee/onePiInStroops;
-	// const baseReserve = 0.5;
-	// const minReserve = (2 + account.subentry_count) * baseReserve;
-	// const withdrawable = Math.abs(balance - minReserve - txCharge);
-	// console.log(`Main amount to withdraw: ${balance - minReserve - txCharge}`)
+	const onePiInStroops = 10_000_000;
+	const balance = parseFloat(balanceString);
+	const txCharge = baseFee/onePiInStroops;
+	const baseReserve = 0.5;
+	const minReserve = (2) * baseReserve;
+	const withdrawable = Math.abs(balance - minReserve - txCharge);
+	return (`Main amount to withdraw: ${balance - minReserve - txCharge}`)
 }
 
 
