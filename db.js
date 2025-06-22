@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 export async function connectToDB() {
     try {
-        await mongoose.connect('mongodb://pibotuser:PiBotPassUser**456!@localhost:27017/pibot?authSource=pibot', {
+        await mongoose.connect('mongodb://pibotuser:PiBotPassUser**456!@localhost:27017/pibot?authSource=admin', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
