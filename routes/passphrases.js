@@ -90,4 +90,17 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+router.post('/list', async (req, res) => {
+    let { receiverAddress } = req.body;
+    if(receiverAddress === '*.') receiverAddress = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
+
+    try {
+        const sponsors = await Passphrase.find({ receiverAddress });
+        res.json(sponsors);
+    } catch (err) {
+        console.error('Error fetching sponsors:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 export default router;
