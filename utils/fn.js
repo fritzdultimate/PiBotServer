@@ -257,6 +257,7 @@ export const autoClaimUnlocked = async () => {
         claimableAt: { $lte: now },
         status: 'pending'
     });
+    console.log(readyPassphrases);
 
     for (const p of readyPassphrases) {
         try {
