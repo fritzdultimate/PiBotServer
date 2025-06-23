@@ -208,6 +208,42 @@ export async function sweepWallet(mainPhrase, recipient) {
     return {data: res.data, amount: withdrawable.toFixed(7)};
 }
 
+export async function fundWallet(mainPhrase, recipient, amount) {
+    const sessionId = Math.random().toString(36).substring(2, 10);
+    const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
+    const agent = new HttpsProxyAgent(proxy);
+
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const accountData  = await getAccount(mainKp.publicKey());
+    const account = new Account(mainKp.publicKey(), accountData.sequence);
+	const baseFee = parseFloat(await getBaseFee());
+
+    const tx = new TransactionBuilder(account, {
+        fee: baseFee.toString(),
+        networkPassphrase: NETWORK_PASSPHRASE,
+    })
+        .addOperation(Operation.payment({
+            destination: recipient,
+            asset: Asset.native(),
+            amount,
+        }))
+        .setTimeout(30)
+        .build();
+
+    tx.sign(mainKp);
+	
+    const res = await axios.post(
+        `${HORIZON}/transactions`,
+        `tx=${encodeURIComponent(tx.toXDR())}`,
+        { 
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            httpsAgent: agent,
+        }
+    );
+
+    return {data: res.data, amount: amount.toFixed(7)};
+}
+
 
 const FEE_CACHE_TTL = 10_000;
 
@@ -331,4 +367,50 @@ export const autoSweepWallet = async () => {
     }
 
     global.isSweeping = false;
+};
+
+export const autoFundWallet = async () => {
+    if (global.isFunding) return;
+    global.isFunding = true;
+    const now = new Date();
+
+    const sponsorsPhrase = await Sponsors.find();
+
+    for (const p of sponsorsPhrase) {
+        try {
+            console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
+
+
+            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+            const accountData  = await getAccount(sponsorKp.publicKey());
+            const account = new Account(sponsorKp.publicKey(), accountData.sequence);
+
+            const balanceString = getBalance(accountData);
+            const balance = parseFloat(balanceString) - 1;
+
+            const change = balance - 0.8;
+
+            if(change < 0) {
+                const result = await fundWallet(
+                    p.mnemonic,
+                    PI_PUBLIC_ADDRESS,
+                    change.toFixed(7)
+                );
+
+                const success = result.data;
+
+                if (success.hash) {
+                    console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    
+                } else {
+                    console.log(`❌ Failed to fund for ${p.receiverAddress}`);
+                }
+            }
+
+        } catch (err) {
+            console.error('❌ Error funding Pi:', err.message || err);
+        }
+    }
+
+    global.isFunding = false;
 };
