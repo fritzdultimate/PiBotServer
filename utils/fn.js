@@ -285,8 +285,6 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
-    if (global.isClaiming) return;
-    global.isClaiming = true;
     const now = new Date();
 
     const readyPassphrases = await Passphrase.find({
@@ -333,7 +331,6 @@ export const autoClaimUnlocked = async () => {
         }
     }
 
-    global.isClaiming = false;
 };
 
 export const autoSweepWallet = async () => {
