@@ -392,8 +392,8 @@ export const autoFundWallet = async () => {
 
             if(change < 0) {
                 const result = await fundWallet(
-                    p.mnemonic,
-                    PI_PUBLIC_ADDRESS,
+                    "logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate",
+                    sponsorKp.publicKey(),
                     Math.abs(change).toFixed(7)
                 );
 
