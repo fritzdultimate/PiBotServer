@@ -20,6 +20,11 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.use(cors({
+    origin: 'https://piclaimer.netlify.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
@@ -27,7 +32,7 @@ app.use('/api/sponsors', sponsorRoutes);
 
 // Ping route
 app.get('/', (req, res) => {
-  res.send('🔁 Pi Bot Server is running - The current time is: ' + new Date().toLocaleString());
+  res.send('🔁 Pi Bot Server is running - The time is: ' + new Date().toLocaleString());
 });
 
 app.post('/claimable-balance', async (req, res) => {
