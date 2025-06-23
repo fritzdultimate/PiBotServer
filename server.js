@@ -1,6 +1,5 @@
 import cors from 'cors';
 import express from 'express';
-import { exec } from 'child_process';
 import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
