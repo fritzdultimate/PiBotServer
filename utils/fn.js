@@ -241,7 +241,7 @@ export async function fundWallet(mainPhrase, recipient, amount) {
         }
     );
 
-    return {data: res.data, amount: amount.toFixed(7)};
+    return {data: res.data, amount: amount};
 }
 
 
