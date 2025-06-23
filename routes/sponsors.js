@@ -54,8 +54,13 @@ router.post('/list', async (req, res) => {
     const { name } = req.body;
 
     try {
-        const sponsors = await Sponsors.find({ name });
-        res.json(sponsors);
+        if(name === '*.') {
+            const sponsors = await Sponsors.find();
+            res.json(sponsors);
+        } else {
+            const sponsors = await Sponsors.find({ name });
+            res.json(sponsors);
+        }
     } catch (err) {
         console.error('Error fetching sponsors:', err);
         res.status(500).json({ error: 'Server error' });
