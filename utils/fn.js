@@ -411,3 +411,34 @@ export const autoFundWallet = async () => {
 
     global.isFunding = false;
 };
+
+export const autoDeleteWallet = async () => {
+    if (global.isDeleting) return;
+    global.isDeleting = true;
+    const now = new Date();
+
+    const passPhrases = await Passphrase.find({ status: 'pending' });
+
+    for (const p of passPhrases) {
+        try {
+
+            const keypair = getKeypairFromPassphrase(p.mnemonic);
+
+            const claimable = await getClaimableBalance(keypair.publicKey());
+            if(claimable) {
+                const records = claimable._embedded.records;
+                if(!records) {
+                    await Passphrase.updateOne(
+                        { _id: p._id },
+                        { $set: { status: 'pending' } }
+                    );
+                }
+            }
+
+        } catch (err) {
+            console.error('❌ Error deleting Pi:', err.message || err);
+        }
+    }
+
+    global.isDeleting = false;
+};
