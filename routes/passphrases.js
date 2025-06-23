@@ -95,10 +95,10 @@ router.post('/list', async (req, res) => {
 
     try {
         if(receiverAddress === '*.') {
-            const sponsors = await Passphrase.find().sort({ claimableAt: 1 });;
+            const sponsors = await Passphrase.find().sort({ claimableAt: 1 });
             res.json(sponsors);
         } else {
-            const sponsors = await Passphrase.find({ receiverAddress });
+            const sponsors = await Passphrase.find({ receiverAddress }).sort({ claimableAt: 1 });
             res.json(sponsors);
         }
     } catch (err) {
