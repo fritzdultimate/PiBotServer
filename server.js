@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, buildAndSubmitTx, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, autoSweepWallet, buildAndSubmitTx, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -116,6 +116,7 @@ app.post('/claim-pi', async (req, res) => {
 })
 
 setInterval(autoClaimUnlocked, 200);
+setInterval(autoSweepWallet, 5000);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);

