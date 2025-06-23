@@ -6,6 +6,7 @@ import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
 import { buildAndSubmitTx, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
 const app = express();
@@ -134,6 +135,17 @@ app.post('/run-bot', (req, res) => {
     res.json({ status: 'Bot executed', output: stdout });
   });
 });
+
+// setInterval(async () => {
+//   const allPassPhrases = await Passphrase.find();
+
+//   for (const { phrase } of allPassPhrases) {
+//     const balance = await checkClaimable(phrase.mnemonic);
+//     if (balance && balance.amount > 0) {
+//       await claimAndSendPi(phrase, balance.id, yourWalletAddress);
+//     }
+//   }
+// }, 1000);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
