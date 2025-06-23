@@ -259,7 +259,7 @@ export const autoClaimUnlocked = async () => {
     });
     // const all = await Passphrase.find().select('claimableAt status');
     // console.log(all);
-    console.log(readyPassphrases);
+    // console.log(readyPassphrases);
 
     for (const p of readyPassphrases) {
         try {
