@@ -254,8 +254,8 @@ export const autoClaimUnlocked = async () => {
     const now = new Date();
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $gte: now },
-        status: 'failed'
+        claimableAt: { $lte: now },
+        status: 'pending'
     });
     // const all = await Passphrase.find().select('claimableAt status');
     // console.log(all);
@@ -282,18 +282,18 @@ export const autoClaimUnlocked = async () => {
                 );
             } else {
                 console.log(`❌ Failed to claim for ${p.receiverAddress}`);
-                await Passphrase.updateOne(
-                    { _id: p._id },
-                    { $set: { status: 'pending' } }
-                );
+                // await Passphrase.updateOne(
+                //     { _id: p._id },
+                //     { $set: { status: 'pending' } }
+                // );
             }
 
         } catch (err) {
             console.error('❌ Error something went wrong Pi:', err.message || err);
-            await Passphrase.updateOne(
-                { _id: p._id },
-                { $set: { status: 'pending' } }
-            );
+            // await Passphrase.updateOne(
+            //     { _id: p._id },
+            //     { $set: { status: 'pending' } }
+            // );
         }
     }
 
