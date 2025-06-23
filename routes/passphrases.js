@@ -95,14 +95,14 @@ router.post('/list', async (req, res) => {
 
     try {
         if(receiverAddress === '*.') {
-            const sponsors = await Passphrase.find().sort({ claimableAt: 1 });
-            res.json(sponsors);
+            const passphrases = await Passphrase.find().sort({ claimableAt: 1 });
+            res.json(passphrases);
         } else {
-            const sponsors = await Passphrase.find({ receiverAddress }).sort({ claimableAt: 1 });
-            res.json(sponsors);
+            const passphrases = await Passphrase.find({ receiverAddress }).sort({ claimableAt: 1 });
+            res.json(passphrases);
         }
     } catch (err) {
-        console.error('Error fetching sponsors:', err);
+        console.error('Error fetching passphrase:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
