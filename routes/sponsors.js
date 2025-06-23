@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
         const existing = await Sponsors.findOne({ mnemonic });
 
         if (existing) {
-            return res.status(409).json({ message: 'Sponsor already exists' });
+            return res.status(409).json({ error: 'Sponsor already exists' });
         }
 
         const saved = await Sponsors.create({ mnemonic, name });
