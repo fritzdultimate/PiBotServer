@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const PassphraseSchema = new mongoose.Schema({
     mnemonic: String,
     lastChecked: Date,
-    status: String, // idle, checking, claimed, sent, failed, etc.
+    status: { type: String, enum: ['pending', 'claimed', 'failed'], default: 'pending' },
     createdAt: { type: Date, default: Date.now },
     receiverAddress: String,
     claimableAt: Date,

@@ -77,4 +77,5 @@ router.get('/', async (req, res) => {
     res.json(all);
 });
 
+
 export default router;
