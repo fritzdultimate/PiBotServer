@@ -403,7 +403,7 @@ export const autoFundWallet = async () => {
                     console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
                     
                 } else {
-                    console.log(`❌ Failed to fund for ${p.receiverAddress}`);
+                    console.log(`❌ Failed to fund ${result.amount} PI}`);
                 }
             }
 
