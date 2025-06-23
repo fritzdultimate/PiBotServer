@@ -13,15 +13,17 @@ const PORT = process.env.PORT || 3000;
 
 // Optional: basic security key to protect API
 const AUTH_KEY = process.env.AUTH_KEY || 'secret-key';
-
+const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app'];
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:8888',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-app.use(cors({
-    origin: 'https://piclaimer.netlify.app',
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
