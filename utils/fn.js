@@ -80,7 +80,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: '100000',
+		fee: '400000',
 		networkPassphrase: 'Pi Network',
 
 	})
