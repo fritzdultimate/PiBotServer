@@ -49,4 +49,17 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+
+router.post('/list', async (req, res) => {
+    const { name } = req.body;
+
+    try {
+        const sponsors = await Sponsors.find({ name });
+        res.json(sponsors);
+    } catch (err) {
+        console.error('Error fetching sponsors:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 export default router;
