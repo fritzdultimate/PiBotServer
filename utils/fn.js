@@ -394,7 +394,7 @@ export const autoFundWallet = async () => {
                 const result = await fundWallet(
                     p.mnemonic,
                     PI_PUBLIC_ADDRESS,
-                    change.toFixed(7)
+                    Math.abs(change).toFixed(7)
                 );
 
                 const success = result.data;
