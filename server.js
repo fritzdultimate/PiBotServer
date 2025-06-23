@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { buildAndSubmitTx, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, buildAndSubmitTx, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -115,37 +115,7 @@ app.post('/claim-pi', async (req, res) => {
     }
 })
 
-// Trigger bot
-app.post('/run-bot', (req, res) => {
-  const { key } = req.body;
-
-  if (key !== AUTH_KEY) {
-    return res.status(403).json({ error: 'Unauthorized' });
-  }
-
-  exec('node pi_channel_bot.js', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`❌ Bot error: ${error.message}`);
-      return res.status(500).json({ error: error.message });
-    }
-    if (stderr) {
-      console.error(`⚠️ Bot stderr: ${stderr}`);
-    }
-    console.log(`✅ Bot stdout: ${stdout}`);
-    res.json({ status: 'Bot executed', output: stdout });
-  });
-});
-
-// setInterval(async () => {
-//   const allPassPhrases = await Passphrase.find();
-
-//   for (const { phrase } of allPassPhrases) {
-//     const balance = await checkClaimable(phrase.mnemonic);
-//     if (balance && balance.amount > 0) {
-//       await claimAndSendPi(phrase, balance.id, yourWalletAddress);
-//     }
-//   }
-// }, 1000);
+setInterval(autoClaimUnlocked, 100);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
