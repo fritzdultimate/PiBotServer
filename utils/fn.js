@@ -255,10 +255,10 @@ export const autoClaimUnlocked = async () => {
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $gte: now },
-        status: 'pending'
+        status: 'failed'
     });
-    const all = await Passphrase.find().select('claimableAt status');
-    console.log(all);
+    // const all = await Passphrase.find().select('claimableAt status');
+    // console.log(all);
     console.log(readyPassphrases);
 
     for (const p of readyPassphrases) {
@@ -282,18 +282,18 @@ export const autoClaimUnlocked = async () => {
                 );
             } else {
                 console.log(`❌ Failed to claim for ${p.receiverAddress}`);
-                await Passphrase.updateOne(
-                    { _id: p._id },
-                    { $set: { status: 'failed' } }
-                );
+                // await Passphrase.updateOne(
+                //     { _id: p._id },
+                //     { $set: { status: 'failed' } }
+                // );
             }
 
         } catch (err) {
-            console.error('❌ Error claiming Pi:', err.message || err);
-            await Passphrase.updateOne(
-                { _id: p._id },
-                { $set: { status: 'failed' } }
-            );
+            console.error('❌ Error something went wrong Pi:', err.message || err);
+            // await Passphrase.updateOne(
+            //     { _id: p._id },
+            //     { $set: { status: 'failed' } }
+            // );
         }
     }
 
