@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
         const existing = await Passphrase.findOne({ mnemonic });
 
         if (existing) {
-            return res.status(400).json({ error: 'Passphrase already exists' });
+            return res.status(409).json({ error: 'Passphrase already exists' });
         }
 
         const saved = await Passphrase.create({ mnemonic });
