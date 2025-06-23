@@ -52,7 +52,7 @@ app.post('/claimable-balance', async (req, res) => {
     
 })
 
-app.post('get-account', async (req, res) => {
+app.post('/get-account', async (req, res) => {
     const { publicKey } = req.body;
 
     try {
