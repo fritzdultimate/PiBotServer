@@ -371,7 +371,7 @@ export const autoFundWallet = async () => {
     global.isFunding = true;
     const now = new Date();
 
-    const sponsorsPhrase = await Sponsors.find();
+    const sponsorsPhrase = await Sponsors.find( {name: 'whoami-5677'} );
 
     for (const p of sponsorsPhrase) {
         try {
