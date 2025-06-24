@@ -136,6 +136,7 @@ export async function getClaimableBalance(publicKey) {
                 { 
                     headers: { 'Content-Type': 'application/json' },
                     httpsAgent: agent,
+                    timeout: 3000
                 }
             );
 
