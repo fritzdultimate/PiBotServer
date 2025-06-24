@@ -290,6 +290,7 @@ export function getBalance(account) {
 
 export const autoClaimUnlocked = async () => {
     const now = new Date();
+    global.isClaiming = true;
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
@@ -371,7 +372,7 @@ export const autoSweepWallet = async () => {
 };
 
 export const autoFundWallet = async () => {
-    if (global.isFunding) return;
+    if (global.isFunding || global.isClaiming) return;
     global.isFunding = true;
     const now = new Date();
 
@@ -442,4 +443,5 @@ export const autoDeleteWallet = async () => {
     }
 
     global.isDeleting = false;
+    global.isClaiming = false;
 };
