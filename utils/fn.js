@@ -115,6 +115,7 @@ export async function submitTransaction(txXdr) {
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 httpsAgent: agent,
+                timeout: 3000
             }
         );
 
