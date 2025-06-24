@@ -182,6 +182,10 @@ export async function sweepWallet(mainPhrase, recipient) {
 	const minReserve = (2) * baseReserve;
 	const withdrawable = Math.abs(balance - minReserve - txCharge);
 
+    if(balance - minReserve - txCharge <= 0) {
+        return;
+    }
+
     const tx = new TransactionBuilder(account, {
         fee: baseFee.toString(),
         networkPassphrase: NETWORK_PASSPHRASE,
