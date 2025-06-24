@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   const secretKey = 'hfhryeujhshbxhdsjjskaas';
 
   if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-    return res.status(403).json({ error: 'Forbidden: Invalid Auth Key' });
+    return res.status(403).json({ error: 'Forbidden' });
   }
 
   next();
