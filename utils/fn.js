@@ -416,20 +416,20 @@ export const autoDeleteWallet = async () => {
     if (global.isDeleting) return;
     global.isDeleting = true;
     const now = new Date();
-    const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
+    const oneMinutesAgo = new Date(now.getTime() -  ( 60 * 1000));
 
     const overduePassphrases = await Passphrase.find({
-        claimableAt: { $lte: twoMinutesAgo },
+        claimableAt: { $lte: oneMinutesAgo },
         status: 'pending'
     });
 
     for (const p of overduePassphrases) {
         try {
 
-            // await Passphrase.updateOne(
-            //     { _id: p._id },
-            //     { $set: { status: 'claimed' } }
-            // );
+            await Passphrase.updateOne(
+                { _id: p._id },
+                { $set: { status: 'claimed' } }
+            );
 
 
         } catch (err) {
