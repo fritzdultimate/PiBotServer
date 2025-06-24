@@ -26,6 +26,17 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.use((req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const secretKey = 'hfhryeujhshbxhdsjjskaas';
+
+  if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
+    return res.status(403).json({ error: 'Forbidden: Invalid Auth Key' });
+  }
+
+  next();
+});
 await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
