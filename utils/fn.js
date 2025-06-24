@@ -417,24 +417,20 @@ export const autoDeleteWallet = async () => {
     if (global.isDeleting) return;
     global.isDeleting = true;
     const now = new Date();
+    const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
 
-    const passPhrases = await Passphrase.find({ status: 'pending' });
+    const overduePassphrases = await Passphrase.find({
+        claimableAt: { $lte: twoMinutesAgo },
+        status: 'pending'
+    });
 
-    for (const p of passPhrases) {
+    for (const p of overduePassphrases) {
         try {
 
-            const keypair = getKeypairFromPassphrase(p.mnemonic);
-
-            const claimable = await getClaimableBalance(keypair.publicKey());
-            if(claimable) {
-                const records = claimable._embedded.records;
-                if(!records) {
-                    await Passphrase.updateOne(
-                        { _id: p._id },
-                        { $set: { status: 'pending' } }
-                    );
-                }
-            }
+            await Passphrase.updateOne(
+                { _id: p._id },
+                { $set: { status: 'claimed' } }
+            );
 
         } catch (err) {
             console.error('❌ Error deleting Pi:', err.message || err);
