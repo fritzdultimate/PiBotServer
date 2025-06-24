@@ -427,10 +427,11 @@ export const autoDeleteWallet = async () => {
     for (const p of overduePassphrases) {
         try {
 
-            await Passphrase.updateOne(
-                { _id: p._id },
-                { $set: { status: 'claimed' } }
-            );
+            // await Passphrase.updateOne(
+            //     { _id: p._id },
+            //     { $set: { status: 'claimed' } }
+            // );
+            
 
         } catch (err) {
             console.error('❌ Error deleting Pi:', err.message || err);
