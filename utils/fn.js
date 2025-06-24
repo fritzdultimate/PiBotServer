@@ -8,8 +8,7 @@ import Passphrase from '../models/Passphrase.js';
 
 const HORIZON = 'https://api.mainnet.minepi.com';
 const NETWORK_PASSPHRASE = 'Pi Network';
-// const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
-const PI_PUBLIC_ADDRESS = 'GC6W3TUI5AOWIUDXECX6NHAZOKMORN7ENTNOVIUROPIYFGNVWUIMK4M3';
+const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 
 
 export function getKeypairFromPassphrase(mnemonic) {
@@ -431,7 +430,7 @@ export const autoDeleteWallet = async () => {
             //     { _id: p._id },
             //     { $set: { status: 'claimed' } }
             // );
-            
+
 
         } catch (err) {
             console.error('❌ Error deleting Pi:', err.message || err);
