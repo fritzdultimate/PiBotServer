@@ -416,10 +416,10 @@ export const autoFundWallet = async () => {
     global.isFunding = false;
 };
 
-export const autoSweepWalletBeforeAndAfterTwentySeconds = async () => {
+export const autoSweepWalletBeforeAndAfter = async () => {
     const now = new Date();
-    const twentySecondsBefore = new Date(now.getTime() - 20 * 1000);
-    const twentySecondsAfter = new Date(now.getTime() + 20 * 1000);
+    const twentySecondsBefore = new Date(now.getTime() - 15 * 1000);
+    const twentySecondsAfter = new Date(now.getTime() + 25 * 1000);
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $gte: twentySecondsBefore, $lte: twentySecondsAfter },
