@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, autoSweepWalletBeforeAndAfterTwentySeconds, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -127,6 +127,7 @@ app.post('/claim-pi', async (req, res) => {
 
 setInterval(autoClaimUnlocked, 100);
 setInterval(autoSweepWallet, 30000);
+setInterval(autoSweepWalletBeforeAndAfterTwentySeconds, 100);
 
 setInterval(autoFundWallet, 3_000_000);
 setInterval(autoDeleteWallet, 10000);
