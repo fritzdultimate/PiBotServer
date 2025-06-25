@@ -295,7 +295,7 @@ export const autoClaimUnlocked = async () => {
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
         status: 'pending'
-    });
+    }); 
     // const all = await Passphrase.find().select('claimableAt status');
     // console.log(all);
     // console.log(readyPassphrases);
