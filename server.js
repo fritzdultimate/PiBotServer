@@ -129,7 +129,7 @@ setInterval(autoClaimUnlocked, 100);
 setInterval(autoSweepWallet, 18000000);
 setInterval(autoSweepWalletBeforeAndAfter, 100);
 
-setInterval(autoFundWallet, 3_000_000);
+setInterval(autoFundWallet, 40000000);
 setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
