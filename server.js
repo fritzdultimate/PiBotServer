@@ -111,7 +111,7 @@ app.post('/claim-pi', async (req, res) => {
     try {
         const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
         if(txResult) {
-            const findSuccessfulTx = txResult.find(result => result.hash !== undefined);
+            const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
                 res.json({ success: false, reason: "Failed in ledger", result: txResult });
             } else {
