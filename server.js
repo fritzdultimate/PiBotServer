@@ -86,6 +86,15 @@ app.post('/get-fee', async (req, res) => {
     
 })
 
+app.post('/auto-fund', async (req, res) => {
+    try {
+       autoFundWallet()
+    } catch(err) {
+        res.status(500).json({ error: err.response?.data || err.message });
+    }
+    
+})
+
 app.post('/sweep', async (req, res) => {
     const { phrase, recipient } = req.body;
     if(!phrase) {
@@ -121,8 +130,33 @@ app.post('/claim-pi', async (req, res) => {
 
     try {
         const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
-        res.json({ reason: "Error testing", result: txResult });
-        return
+        if(txResult) {
+            const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
+            if(!findSuccessfulTx) {
+                res.json({ success: false, reason: "Failed in ledger", result: txResult });
+            } else {
+                res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
+            }
+        } else {
+            res.json({ success: true, reason: "Failed before ledger", result: txResult });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.response?.data || error.message });
+    }
+})
+
+app.post('/claim-pi-p', async (req, res) => {
+    const { passphrase, recipient, balanceId, amount } = req.body;
+    if (!passphrase) {
+        return res.status(404).json({ error: 'Passphrase is required' });
+    }
+
+    if (!amount) {
+        return res.status(403).json({ error: 'amount is required' });
+    }
+
+    try {
+        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {

@@ -104,6 +104,85 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
   	return tx.toXDR();
 }
 
+export async function buildClaimTx(channelPhrase, mainKp, balanceId) {
+    const channelKp = getKeypairFromPassphrase(channelPhrase);
+    const accountData = await getAccount(channelKp.publicKey());
+    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+
+    const tx = new TransactionBuilder(channelAccount, {
+        fee: '100000', // 0.01 PI
+        networkPassphrase: 'Pi Network',
+    })
+    .addOperation(Operation.claimClaimableBalance({
+        balanceId,
+        source: mainKp.publicKey(),
+    }))
+    .setTimeout(30)
+    .build();
+
+    tx.sign(mainKp);
+    tx.sign(channelKp);
+
+    return tx.toXDR();
+}
+
+export async function buildSendTx(channelPhrase, mainKp, recipient, amount) {
+    const channelKp = getKeypairFromPassphrase(channelPhrase);
+    const accountData = await getAccount(channelKp.publicKey());
+    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+
+    const tx = new TransactionBuilder(channelAccount, {
+        fee: '10000000', // 1 PI = 10 million stroops
+        networkPassphrase: 'Pi Network',
+    })
+    .addOperation(Operation.payment({
+        destination: recipient,
+        asset: Asset.native(),
+        amount,
+        source: mainKp.publicKey(),
+    }))
+    .setTimeout(30)
+    .build();
+
+    tx.sign(mainKp);
+    tx.sign(channelKp);
+
+    return tx.toXDR();
+}
+
+export async function runParallelClaimAndSend(mainKp, balanceId, recipient, amount, channel1Phrase, channel2Phrase) {
+  try {
+    // Parallel build: claim and send
+    const [claimXdr, sendXdr] = await Promise.all([
+      buildClaimTx(channel1Phrase, mainKp, balanceId),
+      buildSendTx(channel2Phrase, mainKp, recipient, amount),
+    ]);
+
+    // Parallel submit
+    const [claimRes, sendRes] = await Promise.allSettled([
+      submitTransaction(claimXdr),
+      submitTransaction(sendXdr),
+    ]);
+
+    if (claimRes.status === 'fulfilled' && claimRes.value?.hash) {
+      console.log(`✅ Claimed: ${claimRes.value.hash}`);
+    } else {
+      console.log(`❌ Claim failed:`, claimRes.reason?.error || claimRes.reason);
+    }
+
+    if (sendRes.status === 'fulfilled' && sendRes.value?.hash) {
+      console.log(`✅ Sent: ${sendRes.value.hash}`);
+    } else {
+      console.log(`❌ Send failed:`, sendRes.reason?.error || sendRes.reason);
+    }
+  } catch (err) {
+    console.error('🔥 Error in parallel claim/send:', err.message || err);
+  }
+}
+
+
+
+
 export async function submitTransaction(txXdr) {
     try {
         const sessionId = Math.random().toString(36).substring(2, 10);
@@ -163,6 +242,42 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     }
     return { success: false, error: "No sponsored accounts found"}
 }
+
+export async function FloodParallelChannelTransaction(mainPhrase, balanceId, recipient, amount) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const allSponsors = await Sponsors.find({ name: 'whoami-5677' });
+
+    if (allSponsors.length < 2) return { success: false, error: "Not enough sponsors" };
+
+    const results = await Promise.allSettled(
+        Array.from({ length: Math.floor(allSponsors.length / 2) }, (_, i) => i * 2).map(async (i) => {
+            try {
+                const claimChannel = allSponsors[i];
+                const sendChannel = allSponsors[i + 1];
+
+                const [claimXDR, sendXDR] = await Promise.all([
+                    buildClaimTx(claimChannel.mnemonic, mainKp, balanceId),
+                    buildSendTx(sendChannel.mnemonic, mainKp, recipient, amount),
+                ]);
+
+                const [claimRes, sendRes] = await Promise.all([
+                    submitTransaction(claimXDR),
+                    submitTransaction(sendXDR),
+                ]);
+
+                return {
+                    claim: claimRes.hash || null,
+                    send: sendRes.hash || null,
+                };
+            } catch (err) {
+                return { error: err.message || err };
+            }
+        })
+    );
+
+    return results;
+}
+
 
 export async function sweepWallet(mainPhrase, recipient) {
     const sessionId = Math.random().toString(36).substring(2, 10);
