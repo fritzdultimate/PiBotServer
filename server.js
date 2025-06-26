@@ -113,7 +113,7 @@ app.post('/claim-pi', async (req, res) => {
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result.hash !== undefined);
             if(!findSuccessfulTx) {
-                res.json({ success: false, reason: "Failed in ledger" });
+                res.json({ success: false, reason: "Failed in ledger", result: txResult });
             } else {
                 res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
             }
