@@ -110,7 +110,7 @@ export async function buildClaimTx(channelPhrase, mainKp, balanceId) {
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
     const tx = new TransactionBuilder(channelAccount, {
-        fee: '100000', // 0.01 PI
+        fee: '300000', // 0.01 PI
         networkPassphrase: 'Pi Network',
     })
     .addOperation(Operation.claimClaimableBalance({
@@ -132,7 +132,7 @@ export async function buildSendTx(channelPhrase, mainKp, recipient, amount) {
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
     const tx = new TransactionBuilder(channelAccount, {
-        fee: '10000000', // 1 PI = 10 million stroops
+        fee: '300000', // 1 PI = 10 million stroops
         networkPassphrase: 'Pi Network',
     })
     .addOperation(Operation.payment({
