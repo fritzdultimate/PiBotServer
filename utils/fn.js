@@ -94,7 +94,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    .addMemo(Memo.text('x2'))
+    // .addMemo(Memo.text('x2'))
     .setTimeout(30)
     .build();
 
