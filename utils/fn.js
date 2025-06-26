@@ -289,16 +289,14 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
+    console.log(`Trying auto claim now`);
     const now = new Date();
-    global.isClaiming = true;
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
         status: 'pending'
     }); 
-    // const all = await Passphrase.find().select('claimableAt status');
-    // console.log(all);
-    // console.log(readyPassphrases);
+    
 
     for (const p of readyPassphrases) {
         try {
