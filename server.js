@@ -89,7 +89,8 @@ app.post('/get-fee', async (req, res) => {
 app.post('/fund', async (req, res) => {
     const { id } = req.body;
     try {
-       fundSingleWallet(id)
+       const result = await fundSingleWallet(id);
+       res.json(result)
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
     }

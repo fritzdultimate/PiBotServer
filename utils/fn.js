@@ -647,7 +647,7 @@ export const fundSingleWallet = async (id) => {
             const accountData  = await getAccount(sponsorKp.publicKey());
 
             const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 0.98;
+            const balance = parseFloat(balanceString) - 0.99;
 
             const change = balance - 0.08;
 
@@ -661,10 +661,12 @@ export const fundSingleWallet = async (id) => {
                 const success = result.data;
 
                 if (success.hash) {
-                    console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    return { success: true, message: `${result.amount} Pi funded successfull` }
+                    // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
                     
                 } else {
                     console.log(`❌ Failed to fund ${result.amount} PI}`);
+                    return { success: false, message: "Account funding failed" }
                 }
             }
 
