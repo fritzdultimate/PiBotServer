@@ -80,7 +80,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: '400000',
+		fee: '500000',
 		networkPassphrase: 'Pi Network',
 
 	})
@@ -94,6 +94,10 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
+    .addOperation(Operation.manageData({ name: 'x1', value: '1' }))
+    .addOperation(Operation.manageData({ name: 'x2', value: '2' }))
+    // .addOperation(Operation.manageData({ name: 'x3', value: '3' }))
+    // .addOperation(Operation.manageData({ name: 'x4', value: '4' }))
     .setTimeout(30)
     .build();
 
