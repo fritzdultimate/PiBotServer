@@ -635,43 +635,37 @@ export const autoDeleteWallet = async () => {
 };
 
 export const fundSingleWallet = async (id) => {
+  try {
+    const p = await Sponsors.findOne({ _id: id });
+    if (!p) return { success: false, message: 'Sponsor not found' };
 
-    const sponsorsPhrase = await Sponsors.find( {_id: id} );
+    const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+    const accountData = await getAccount(sponsorKp.publicKey());
+    const balance = parseFloat(getBalance(accountData));
 
-    for (const p of sponsorsPhrase) {
-        try {
-            console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
+    const requiredBalance = 0.99 + 0.08;
+    const missing = requiredBalance - balance;
 
+    if (missing > 0) {
+      const result = await fundWallet(
+        "logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate",
+        sponsorKp.publicKey(),
+        missing.toFixed(7)
+      );
 
-            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-            const accountData  = await getAccount(sponsorKp.publicKey());
-
-            const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 0.99;
-
-            const change = balance - 0.08;
-
-            if(change < 0) {
-                const result = await fundWallet(
-                    "logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate",
-                    sponsorKp.publicKey(),
-                    Math.abs(change).toFixed(7)
-                );
-
-                const success = result.data;
-
-                if (success.hash) {
-                    return { success: true, message: `${result.amount} Pi funded successfull` }
-                    // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
-                    
-                } else {
-                    console.log(`❌ Failed to fund ${result.amount} PI}`);
-                    return { success: false, message: "Account funding failed" }
-                }
-            }
-
-        } catch (err) {
-            console.error('❌ Error funding Pi:', err.message || err);
-        }
+      const success = result.data;
+      if (success.hash) {
+        return { success: true, message: `${result.amount} Pi funded successfully` };
+      } else {
+        return { success: false, message: "Account funding failed" };
+      }
+    } else {
+      return { success: true, message: "Balance already sufficient" };
     }
+
+  } catch (err) {
+    console.error('❌ Error funding Pi:', err.message || err);
+    return { success: false, message: err.message || "Unexpected error" };
+  }
 };
+
