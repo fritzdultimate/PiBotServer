@@ -493,7 +493,7 @@ export const autoFundWallet = async () => {
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 1;
 
-            const change = balance - 0.08;
+            const change = balance - 0.2;
 
             if(change < 0) {
                 const result = await fundWallet(
@@ -645,7 +645,7 @@ export const fundSingleWallet = async (id) => {
     const accountData = await getAccount(sponsorKp.publicKey());
     const balance = parseFloat(getBalance(accountData));
 
-    const requiredBalance = 0.99 + 0.08;
+    const requiredBalance = 0.99 + 0.2;
     const missing = requiredBalance - balance;
 
     if (missing > 0) {
