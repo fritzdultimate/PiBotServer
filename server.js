@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, FloodParallelChannelTransaction, getAccount, getBaseFee, getClaimableBalance, sweepWallet } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -156,7 +156,7 @@ app.post('/claim-pi-p', async (req, res) => {
     }
 
     try {
-        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
+        const txResult = await FloodParallelChannelTransaction(passphrase, balanceId, recipient, amount);
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
