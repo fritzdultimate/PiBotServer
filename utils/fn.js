@@ -633,3 +633,43 @@ export const autoDeleteWallet = async () => {
     global.isDeleting = false;
     global.isClaiming = false;
 };
+
+export const fundSingleWallet = async (id) => {
+
+    const sponsorsPhrase = await Sponsors.find( {_id: id} );
+
+    for (const p of sponsorsPhrase) {
+        try {
+            console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
+
+
+            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+            const accountData  = await getAccount(sponsorKp.publicKey());
+
+            const balanceString = getBalance(accountData);
+            const balance = parseFloat(balanceString) - 0.98;
+
+            const change = balance - 0.08;
+
+            if(change < 0) {
+                const result = await fundWallet(
+                    "logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate",
+                    sponsorKp.publicKey(),
+                    Math.abs(change).toFixed(7)
+                );
+
+                const success = result.data;
+
+                if (success.hash) {
+                    console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    
+                } else {
+                    console.log(`❌ Failed to fund ${result.amount} PI}`);
+                }
+            }
+
+        } catch (err) {
+            console.error('❌ Error funding Pi:', err.message || err);
+        }
+    }
+};

@@ -86,7 +86,8 @@ app.post('/get-fee', async (req, res) => {
     
 })
 
-app.post('/auto-fund', async (req, res) => {
+app.post('/fund', async (req, res) => {
+    const { id } = req.body;
     try {
        autoFundWallet()
     } catch(err) {
