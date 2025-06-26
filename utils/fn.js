@@ -418,28 +418,30 @@ export const autoClaimUnlocked = async () => {
         try {
             console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
-            const result = await FloodchannelTransaction(
+            FloodchannelTransaction(
                 p.mnemonic,
                 p.balanceId,
                 PI_PUBLIC_ADDRESS,
                 p.amount
-            );
+            ).then(result => {
+                const success = result.find(r => r.hash);
 
-            const success = result.find(r => r.hash);
+                if (success) {
+                    console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
+                    Passphrase.updateOne(
+                        { _id: p._id },
+                        { $set: { status: 'claimed' } }
+                    );
+                } else {
+                    console.log(`❌ Failed to claim for ${p.receiverAddress}`);
+                    // await Passphrase.updateOne(
+                    //     { _id: p._id },
+                    //     { $set: { status: 'pending' } }
+                    // );
+                }
+            })
 
-            if (success) {
-                console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
-                await Passphrase.updateOne(
-                    { _id: p._id },
-                    { $set: { status: 'claimed' } }
-                );
-            } else {
-                console.log(`❌ Failed to claim for ${p.receiverAddress}`);
-                // await Passphrase.updateOne(
-                //     { _id: p._id },
-                //     { $set: { status: 'pending' } }
-                // );
-            }
+            
 
         } catch (err) {
             console.error('❌ Error something went wrong Pi:', err.message || err);
