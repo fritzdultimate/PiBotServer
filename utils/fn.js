@@ -96,8 +96,6 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     }))
     .addOperation(Operation.manageData({ name: 'x1', value: '1' }))
     .addOperation(Operation.manageData({ name: 'x2', value: '2' }))
-    // .addOperation(Operation.manageData({ name: 'x3', value: '3' }))
-    // .addOperation(Operation.manageData({ name: 'x4', value: '4' }))
     .setTimeout(30)
     .build();
 
