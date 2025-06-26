@@ -148,7 +148,7 @@ export async function getClaimableBalance(publicKey) {
 
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    const allSponsors = await Sponsors.find();
+    const allSponsors = await Sponsors.find({name: 'whoami-5677'});
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
