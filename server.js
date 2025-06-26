@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, FloodParallelChannelTransaction, getAccount, getBaseFee, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getBaseFee, getClaimableBalance, sweepWallet } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -89,7 +89,7 @@ app.post('/get-fee', async (req, res) => {
 app.post('/fund', async (req, res) => {
     const { id } = req.body;
     try {
-       autoFundWallet()
+       fundSingleWallet(id)
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
     }
