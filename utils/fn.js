@@ -254,7 +254,7 @@ const FEE_CACHE_TTL = 10_000;
 
 let cachedFee= null;
 let lastFeeFetchTime = 0;
-async function getBaseFee() {
+export async function getBaseFee() {
     const sessionId = Math.random().toString(36).substring(2, 10);
     const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
     const agent = new HttpsProxyAgent(proxy);

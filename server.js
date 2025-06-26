@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, getAccount, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, sweepWallet } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -69,6 +69,17 @@ app.post('/get-account', async (req, res) => {
     try {
         const account = await getAccount(publicKey);
         res.json({ account });
+    } catch(err) {
+        res.status(500).json({ error: err.response?.data || err.message });
+    }
+    
+})
+
+app.post('/get-fee', async (req, res) => {
+
+    try {
+        const fee = await getBaseFee();
+        res.json({ fee });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
     }
