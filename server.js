@@ -179,7 +179,7 @@ setInterval(autoSweepWallet, 1800000);
 setInterval(autoSweepWalletBeforeAndAfter, 100);
 
 setInterval(autoFundWallet, 7200000);
-setInterval(autoFundWalletBeforeAndAfterClaim, 500);
+// setInterval(autoFundWalletBeforeAndAfterClaim, 500);
 setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
