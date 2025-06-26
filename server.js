@@ -118,7 +118,7 @@ app.post('/claim-pi', async (req, res) => {
                 res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
             }
         } else {
-            res.json({ success: true, reason: "Failed before ledger" });
+            res.json({ success: true, reason: "Failed before ledger", result: txResult });
         }
     } catch (error) {
         res.status(500).json({ error: error.response?.data || error.message });
