@@ -369,9 +369,6 @@ export const autoSweepWallet = async () => {
 };
 
 export const autoFundWallet = async () => {
-    if (global.isFunding || global.isClaiming) return;
-    global.isFunding = true;
-    const now = new Date();
 
     const sponsorsPhrase = await Sponsors.find( {name: 'whoami-5677'} );
 
@@ -382,7 +379,6 @@ export const autoFundWallet = async () => {
 
             const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
             const accountData  = await getAccount(sponsorKp.publicKey());
-            const account = new Account(sponsorKp.publicKey(), accountData.sequence);
 
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 1;
@@ -410,8 +406,6 @@ export const autoFundWallet = async () => {
             console.error('❌ Error funding Pi:', err.message || err);
         }
     }
-
-    global.isFunding = false;
 };
 
 export const autoFundWalletBeforeAndAfterClaim = async () => {
