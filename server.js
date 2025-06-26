@@ -175,7 +175,7 @@ app.post('/claim-pi-p', async (req, res) => {
 })
 
 setInterval(autoClaimUnlocked, 100);
-setInterval(autoSweepWallet, 1800000);
+// setInterval(autoSweepWallet, 1800000);
 setInterval(autoSweepWallet, 1800);
 setInterval(autoSweepWalletBeforeAndAfter, 100);
 
