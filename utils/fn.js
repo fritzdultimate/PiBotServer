@@ -426,7 +426,7 @@ export const autoClaimUnlocked = async () => {
     });
 
     console.log(readyPassphrases)
-    return;
+    // return;
     
 
     for (const p of readyPassphrases) {
