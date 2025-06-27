@@ -679,7 +679,7 @@ export function trackFunctionCalls(fn) {
 
   // Log and reset count every minute
   setInterval(() => {
-    console.log(`Function "${fn.name}" was called ${count} times in the last minute.`);
+    console.log(`Function "${fn.name}" was called ${count} times in the last second.`);
     count = 0;
   }, 1000); // 60,000 ms = 1 minute
 
