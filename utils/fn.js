@@ -418,11 +418,12 @@ export const autoClaimUnlocked = async () => {
     const specificTime = new Date('2025-06-30T17:47:10Z'); // Use 'Z' if UTC, or local timezone if needed
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: specificTime,
+        // claimableAt: specificTime,
         status: 'pending',
     });
 
     console.log(readyPassphrases)
+    return;
     
 
     for (const p of readyPassphrases) {
