@@ -415,11 +415,14 @@ export const autoClaimUnlocked = async () => {
     //     status: 'pending'
     // });
 
-    const specificTime = new Date('2025-06-30T17:47:10Z'); // Use 'Z' if UTC, or local timezone if needed
+    const target = new Date('2025-06-30T16:47:10.000Z');
+
+    const oneSecondBefore = new Date(target.getTime() - 1000);
+    const oneSecondAfter = new Date(target.getTime() + 1000);
 
     const readyPassphrases = await Passphrase.find({
-        // claimableAt: specificTime,
-        status: 'pending',
+    claimableAt: { $gte: oneSecondBefore, $lte: oneSecondAfter },
+    status: 'pending',
     });
 
     console.log(readyPassphrases)
