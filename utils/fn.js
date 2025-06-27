@@ -96,7 +96,6 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    // .addMemo(Memo.text('x2'))
     .setTimeout(5)
     .build();
 
@@ -199,7 +198,7 @@ export async function submitTransaction(txXdr) {
                 httpsAgent: agent,
             }
         );
-
+        console.log(res.data)
         return res.data;
     } catch (err) {
         console.log('❌ Client error submitting TX:', err);
@@ -409,12 +408,19 @@ export function getBalance(account) {
 export const autoClaimUnlocked = async () => {
     console.log(`Trying auto claim now...`);
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
+    // const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
+
+    // const readyPassphrases = await Passphrase.find({
+    //     claimableAt: { $lte: fiveSecondsFromNow },
+    //     status: 'pending'
+    // });
+
+    const specificTime = new Date('2025-06-30T17:47:10Z'); // Use 'Z' if UTC, or local timezone if needed
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: fiveSecondsFromNow },
-        status: 'pending'
-    }); 
+        claimableAt: specificTime,
+        status: 'pending',
+    });
     
 
     for (const p of readyPassphrases) {

@@ -175,7 +175,7 @@ app.post('/claim-pi-p', async (req, res) => {
 })
 
 const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
-setInterval(trackedBotFunction, 100);
+setInterval(trackedBotFunction, 2000);
 setInterval(autoSweepWallet, 1800000);
 // setInterval(autoSweepWallet, 1000);
 setInterval(autoSweepWalletBeforeAndAfter, 100);
