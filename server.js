@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getBaseFee, getClaimableBalance, sweepWallet } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getBaseFee, getClaimableBalance, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -174,7 +174,8 @@ app.post('/claim-pi-p', async (req, res) => {
     }
 })
 
-setInterval(autoClaimUnlocked, 100);
+const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
+setInterval(trackedBotFunction, 100);
 setInterval(autoSweepWallet, 1800000);
 // setInterval(autoSweepWallet, 1000);
 setInterval(autoSweepWalletBeforeAndAfter, 100);

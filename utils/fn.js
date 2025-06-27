@@ -674,3 +674,19 @@ export const fundSingleWallet = async (id) => {
   }
 };
 
+export function trackFunctionCalls(fn) {
+  let count = 0;
+
+  // Log and reset count every minute
+  setInterval(() => {
+    console.log(`Function "${fn.name}" was called ${count} times in the last minute.`);
+    count = 0;
+  }, 60_000); // 60,000 ms = 1 minute
+
+  // Return a wrapper function that increments count and calls the original
+  return (...args) => {
+    count++;
+    return fn(...args);
+  };
+}
+
