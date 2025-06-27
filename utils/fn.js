@@ -421,6 +421,8 @@ export const autoClaimUnlocked = async () => {
         claimableAt: specificTime,
         status: 'pending',
     });
+
+    console.log(readyPassphrases)
     
 
     for (const p of readyPassphrases) {
