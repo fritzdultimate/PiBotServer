@@ -83,11 +83,13 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		fee: '300000',
 		networkPassphrase: 'Pi Network',
 
+
 	})
     .addOperation(Operation.claimClaimableBalance({
 		balanceId,
 		source: mainKp.publicKey(),
     }))
+
     .addOperation(Operation.payment({
 		destination: recipient,
 		asset: Asset.native(),
@@ -95,7 +97,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		source: mainKp.publicKey(),
     }))
     // .addMemo(Memo.text('x2'))
-    .setTimeout(30)
+    .setTimeout(5)
     .build();
 
   	tx.sign(mainKp);
