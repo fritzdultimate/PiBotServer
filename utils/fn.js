@@ -408,22 +408,22 @@ export function getBalance(account) {
 export const autoClaimUnlocked = async () => {
     console.log(`Trying auto claim now...`);
     const now = new Date();
-    // const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
-
-    // const readyPassphrases = await Passphrase.find({
-    //     claimableAt: { $lte: fiveSecondsFromNow },
-    //     status: 'pending'
-    // });
-
-    const target = new Date('2025-06-30T16:47:10.000Z');
-
-    const oneSecondBefore = new Date(target.getTime() - 1000);
-    const oneSecondAfter = new Date(target.getTime() + 1000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
 
     const readyPassphrases = await Passphrase.find({
-    claimableAt: { $gte: oneSecondBefore, $lte: oneSecondAfter },
-    status: 'pending',
+        claimableAt: { $lte: fiveSecondsFromNow },
+        status: 'pending'
     });
+
+    // const target = new Date('2025-06-30T16:47:10.000Z');
+
+    // const oneSecondBefore = new Date(target.getTime() - 1000);
+    // const oneSecondAfter = new Date(target.getTime() + 1000);
+
+    // const readyPassphrases = await Passphrase.find({
+    // claimableAt: { $gte: oneSecondBefore, $lte: oneSecondAfter },
+    // status: 'pending',
+    // });
 
     console.log(readyPassphrases)
     // return;
