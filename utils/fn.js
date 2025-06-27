@@ -407,7 +407,7 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
-    console.log(`Trying auto claim now`);
+    console.log(`Trying auto claim now...`);
     const now = new Date();
     const fiveSecondsFromNow = new Date(now.getTime() + 5 * 1000);
 
