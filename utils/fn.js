@@ -412,7 +412,7 @@ export const autoClaimUnlocked = async () => {
     const fiveSecondsFromNow = new Date(now.getTime() + 5 * 1000);
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $gte: fiveSecondsFromNow },
+        claimableAt: { $lte: fiveSecondsFromNow },
         status: 'pending'
     }); 
     
