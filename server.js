@@ -44,12 +44,12 @@ app.use((req, res, next) => {
 
     console.log(`Incoming request from IP: ${clientIP}`);
 
-    if (!allowedIPs.includes(clientIP)) {
-        return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(req.socket.remoteAddress) });
-    }
+    // if (!allowedIPs.includes(clientIP)) {
+    //     return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(req.socket.remoteAddress) });
+    // }
 
     if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-        return res.status(403).json({ error: 'Forbidden' });
+        return res.status(403).json({ error: 'Forbidden', j: JSON.stringify(forwardedFor) });
     }
 
     next();
