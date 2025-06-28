@@ -132,7 +132,7 @@ app.post('/sweep', async (req, res) => {
     
 })
 
-app.post('/claim-multi', async (req, res) => {
+app.post('/taker-multix', async (req, res) => {
     const { passphrase, recipient, balanceId, amount } = req.body;
     if (!passphrase) {
         return res.status(404).json({ error: 'Passphrase is required' });
@@ -160,7 +160,7 @@ app.post('/claim-multi', async (req, res) => {
     }
 })
 
-app.post('/claim-pi', async (req, res) => {
+app.post('/pi-takerx', async (req, res) => {
     const { passphrase, recipient, balanceId, amount } = req.body;
     if (!passphrase) {
         return res.status(404).json({ error: 'Passphrase is required --multi' });
