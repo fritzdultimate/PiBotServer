@@ -110,7 +110,7 @@ export async function buildMultipleChannelTx(channelPhrase, mainKp, balanceId, r
     const accountData  = await getAccount(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
-    const MaxOp = 5;
+    const MaxOp = 2;
     const fee = 100000;
     const totalFee = (MaxOp + 2) * fee;
 
