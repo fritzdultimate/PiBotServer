@@ -34,7 +34,7 @@ app.use((req, res, next) => {
     const clientIP = req.ip || req.socket.remoteAddress;
     const cleanIP = clientIP.replace('::ffff:', '');
     if (!allowedIPs.includes(cleanIP)) {
-        return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: "clientIP" });
+        return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(clientIP) });
     }
 
     if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
