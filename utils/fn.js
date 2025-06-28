@@ -266,16 +266,12 @@ export async function submitTransaction(txXdr) {
 }
 
 export async function getClaimableBalance(publicKey) {
-        const sessionId = Math.random().toString(36).substring(2, 10);
-        const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
-        const agent = new HttpsProxyAgent(proxy);
 
         try {
             const res = await axios.get(
                 `${HORIZON}/claimable_balances?claimant=${publicKey}`,
                 { 
                     headers: { 'Content-Type': 'application/json' },
-                    httpsAgent: agent,
                 }
             );
 
