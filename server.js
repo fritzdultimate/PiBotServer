@@ -132,7 +132,7 @@ app.post('/claim-multi', async (req, res) => {
 
     try {
         const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
-        // res.json({ success: false, reason: "Failed in ledger", txResult });
+        res.json({ success: false, reason: "Failed in ledger", vars: [passphrase, balanceId, amount, recipient] });
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
