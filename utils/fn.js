@@ -124,7 +124,7 @@ export async function buildMultipleChannelTx(channelPhrase, mainKp, balanceId, r
             destination: recipient,
             asset: Asset.native(),
             amount: "0.0000001",
-            source: mainKp.publicKey()
+            source: channelKp.publicKey()
         }))
     }
 
