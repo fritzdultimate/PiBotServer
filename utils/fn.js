@@ -123,8 +123,8 @@ export async function buildMultipleChannelTx(channelPhrase, mainKp, balanceId, r
         txBuilder.addOperation(Operation.payment({
             destination: recipient,
             asset: Asset.native(),
-            amount: "0.0000001",
-            source: channelKp.publicKey()
+            amount: "0.000001",
+            // source: channelKp.publicKey()
         }))
     }
 
