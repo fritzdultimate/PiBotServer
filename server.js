@@ -36,20 +36,15 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
-    const allowedIPs = ['197.210.84.31'];
-    const forwardedFor = req.headers['x-forwarded-for'];
-    const clientIP = forwardedFor
-    ? forwardedFor.split(',')[0].trim() // Use first IP in the list
-    : req.socket?.remoteAddress?.replace('::ffff:', '');
-
-    console.log(`Incoming request from IP: ${clientIP}`);
+    // const allowedIPs = ['197.210.84.31'];
+    
 
     // if (!allowedIPs.includes(clientIP)) {
     //     return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(req.socket.remoteAddress) });
     // }
 
     if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-        return res.status(403).json({ error: 'Forbidden', joiu: JSON.stringify(forwardedFor) });
+        return res.status(403).json({ error: 'Forbidden' });
     }
 
     next();
