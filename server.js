@@ -49,7 +49,7 @@ app.use((req, res, next) => {
     // }
 
     if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-        return res.status(403).json({ error: 'Forbidden', j: JSON.stringify(forwardedFor) });
+        return res.status(403).json({ error: 'Forbidden', joiu: JSON.stringify(forwardedFor) });
     }
 
     next();
