@@ -28,14 +28,20 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const secretKey = 'hfhryeujhshbxhdsjjskaas';
+    const authHeader = req.headers.authorization;
+    const secretKey = 'hfhryeujhshbxhdsjjskaas';
+    const allowedIPs = ['123.45.67.89', '111.222.333.444'];
+    const clientIP = req.ip || req.socket.remoteAddress;
+    const cleanIP = clientIP.replace('::ffff:', '');
+    if (!allowedIPs.includes(cleanIP)) {
+        return res.status(403).json({ error: 'Forbidden: IP not allowed' });
+    }
 
-  if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+    if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
+        return res.status(403).json({ error: 'Forbidden' });
+    }
 
-  next();
+    next();
 });
 
 await connectToDB();
