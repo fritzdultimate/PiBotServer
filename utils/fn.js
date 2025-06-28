@@ -171,7 +171,7 @@ export async function buildMultipleChannelTxWithoutProxy(channelPhrase, mainKp, 
 
     const MaxOp = 2;
     const fee = 100000;
-    const totalFee = (MaxOp + 4) * fee;
+    const totalFee = (MaxOp + 2) * fee;
 
 	const txBuilder = new TransactionBuilder(channelAccount, {
 		fee: totalFee.toString(),
