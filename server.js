@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getBaseFee, getClaimableBalance, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, ClaimPi, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getBaseFee, getClaimableBalance, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -120,7 +120,7 @@ app.post('/sweep', async (req, res) => {
     
 })
 
-app.post('/claim-pi', async (req, res) => {
+app.post('/claim-multi', async (req, res) => {
     const { passphrase, recipient, balanceId, amount } = req.body;
     if (!passphrase) {
         return res.status(404).json({ error: 'Passphrase is required' });
@@ -132,6 +132,33 @@ app.post('/claim-pi', async (req, res) => {
 
     try {
         const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
+        if(txResult) {
+            const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
+            if(!findSuccessfulTx) {
+                res.json({ success: false, reason: "Failed in ledger", result: txResult });
+            } else {
+                res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
+            }
+        } else {
+            res.json({ success: true, reason: "Failed before ledger", result: txResult });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.response?.data || error.message });
+    }
+})
+
+app.post('/claim-pi', async (req, res) => {
+    const { passphrase, recipient, balanceId, amount } = req.body;
+    if (!passphrase) {
+        return res.status(404).json({ error: 'Passphrase is required' });
+    }
+
+    if (!amount) {
+        return res.status(403).json({ error: 'amount is required' });
+    }
+
+    try {
+        const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
