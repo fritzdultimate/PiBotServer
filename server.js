@@ -150,7 +150,7 @@ app.post('/claim-multi', async (req, res) => {
 app.post('/claim-pi', async (req, res) => {
     const { passphrase, recipient, balanceId, amount } = req.body;
     if (!passphrase) {
-        return res.status(404).json({ error: 'Passphrase is required' });
+        return res.status(404).json({ error: 'Passphrase is required --multi' });
     }
 
     if (!amount) {
