@@ -281,7 +281,7 @@ export async function getClaimableBalance(publicKey) {
 
             return res.data;
         } catch(err) {
-            return { error: "something went wrong" }
+            return { error: err }
         }
 }
 
