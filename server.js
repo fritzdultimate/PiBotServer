@@ -131,7 +131,7 @@ app.post('/claim-multi', async (req, res) => {
     }
 
     try {
-        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
+        const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
@@ -158,7 +158,7 @@ app.post('/claim-pi', async (req, res) => {
     }
 
     try {
-        const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
+        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
