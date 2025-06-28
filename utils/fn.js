@@ -303,7 +303,7 @@ export async function ClaimPi(mainPhrase, balanceId, recipient, amount) {
 
         return result;
     }
-    return { success: false, error: "No sponsored accounts found"}
+    return { success: false, error: "No sponsored accounts found."}
 }
 
 export async function FloodParallelChannelTransaction(mainPhrase, balanceId, recipient, amount) {
