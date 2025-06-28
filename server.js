@@ -26,14 +26,16 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-
+app.set('trust proxy', true);
 app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
     const allowedIPs = ['197.210.84.31'];
-    const clientIP = req.ip || req.socket.remoteAddress;
-    const cleanIP = clientIP.replace('::ffff:', '');
-    if (!allowedIPs.includes(cleanIP)) {
+    // const clientIP = req.ip || req.socket.remoteAddress;
+    // const cleanIP = clientIP.replace('::ffff:', '');
+
+    const clientIP = req.ip;
+    if (!allowedIPs.includes(clientIP)) {
         return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(clientIP) });
     }
 
