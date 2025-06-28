@@ -343,9 +343,6 @@ export async function FloodParallelChannelTransaction(mainPhrase, balanceId, rec
 
 
 export async function sweepWallet(mainPhrase, recipient) {
-    const sessionId = Math.random().toString(36).substring(2, 10);
-    const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
-    const agent = new HttpsProxyAgent(proxy);
 
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
@@ -384,7 +381,6 @@ export async function sweepWallet(mainPhrase, recipient) {
         `tx=${encodeURIComponent(tx.toXDR())}`,
         { 
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            httpsAgent: agent,
         }
     );
 
