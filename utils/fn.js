@@ -655,7 +655,7 @@ export const autoFundWallet = async () => {
                     console.log(`❌ Failed to fund ${result.amount} PI}`);
                 }
             }
-            await sleep(500);
+            await sleep(1000);
 
         } catch (err) {
             console.error('❌ Error funding Pi:', err.message || err);
