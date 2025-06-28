@@ -28,13 +28,19 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use((req, res, next) => {
+    console.log('req.ip:', req.ip);
+    console.log('req.headers["x-forwarded-for"]:', req.headers['x-forwarded-for']);
+    console.log('req.socket.remoteAddress:', req.socket.remoteAddress);
+    next();
+});
+app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
     const allowedIPs = ['197.210.84.31'];
     const rawIP = req.ip || req.socket.remoteAddress;
     const clientIP = rawIP.replace('::ffff:', '');
 
-    return res.status(403).json({ ip: JSON.stringify(req.ip) });
+    console.log(`Incoming request from IP: ${clientIP}`);
 
     if (!allowedIPs.includes(clientIP)) {
         return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(req.socket.remoteAddress) });
