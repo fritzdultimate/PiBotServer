@@ -169,7 +169,7 @@ export async function buildMultipleChannelTxWithoutProxy(channelPhrase, mainKp, 
     const accountData  = await getAccountWithoutProxy(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
-    const MaxOp = 2;
+    const MaxOp = 5;
     const fee = 100000;
     const totalFee = (MaxOp + 4) * fee;
 
