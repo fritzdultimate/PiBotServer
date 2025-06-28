@@ -119,16 +119,16 @@ export async function buildMultipleChannelTx(channelPhrase, mainKp, balanceId, r
 		networkPassphrase: 'Pi Network',
 	});
 
-    // for(let i = 0; i < MaxOp; i++) {
-    //     txBuilder.addOperation(Operation.payment({
-    //         destination: recipient,
-    //         asset: Asset.native(),
-    //         amount: "0.000001",
-    //         source: channelKp.publicKey()
-    //     }))
-    // }
+    for(let i = 0; i < MaxOp; i++) {
+        txBuilder.addOperation(Operation.payment({
+            destination: recipient,
+            asset: Asset.native(),
+            amount: "0.000001",
+            source: channelKp.publicKey()
+        }))
+    }
 
-    txBuilder
+    const tx = txBuilder
     .addOperation(Operation.claimClaimableBalance({
 		balanceId,
 		source: mainKp.publicKey(),
