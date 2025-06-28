@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', true);
 
 // Optional: basic security key to protect API
 const AUTH_KEY = process.env.AUTH_KEY || 'secret-key';
@@ -26,15 +27,13 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.set('trust proxy', true);
 app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
     const allowedIPs = ['197.210.84.31'];
-    // const clientIP = req.ip || req.socket.remoteAddress;
-    // const cleanIP = clientIP.replace('::ffff:', '');
+    const rawIP = req.ip || req.socket.remoteAddress;
+    const clientIP = rawIP.replace('::ffff:', '');
 
-    const clientIP = req.ip;
     if (!allowedIPs.includes(clientIP)) {
         return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(clientIP) });
     }
