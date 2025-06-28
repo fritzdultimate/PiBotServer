@@ -439,10 +439,6 @@ const FEE_CACHE_TTL = 10_000;
 let cachedFee= null;
 let lastFeeFetchTime = 0;
 export async function getBaseFee() {
-    const sessionId = Math.random().toString(36).substring(2, 10);
-    const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
-    const agent = new HttpsProxyAgent(proxy);
-
     const now = Date.now();
     if (cachedFee && (now - lastFeeFetchTime < FEE_CACHE_TTL)) {
         return cachedFee;
@@ -452,7 +448,6 @@ export async function getBaseFee() {
         const response = await axios.get(`${HORIZON}/fee_stats`, 
             {
                 headers: { 'Content-Type': 'application/json' },
-                httpsAgent: agent,
             }
         );
         cachedFee = response.data.fee_charged.max; // returns string
