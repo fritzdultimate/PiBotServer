@@ -164,6 +164,50 @@ export async function buildMultipleChannelTx(channelPhrase, mainKp, balanceId, r
   	return tx.toXDR();
 }
 
+export async function buildMultipleChannelTxWithoutProxy(channelPhrase, mainKp, balanceId, recipient, amount) {
+    const channelKp = getKeypairFromPassphrase(channelPhrase);
+    const accountData  = await getAccountWithoutProxy(channelKp.publicKey());
+    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+
+    const MaxOp = 2;
+    const fee = 100000;
+    const totalFee = (MaxOp + 2) * fee;
+
+	const txBuilder = new TransactionBuilder(channelAccount, {
+		fee: totalFee.toString(),
+		networkPassphrase: 'Pi Network',
+	});
+
+    for(let i = 0; i < MaxOp; i++) {
+        txBuilder.addOperation(Operation.payment({
+            destination: recipient,
+            asset: Asset.native(),
+            amount: "0.0000001",
+            source: channelKp.publicKey()
+        }))
+    }
+
+    const tx = txBuilder
+    .addOperation(Operation.claimClaimableBalance({
+		balanceId,
+		source: mainKp.publicKey(),
+    }))
+
+    .addOperation(Operation.payment({
+		destination: recipient,
+		asset: Asset.native(),
+		amount,
+		source: mainKp.publicKey(),
+    }))
+    .setTimeout(40)
+    .build();
+
+  	tx.sign(mainKp);
+  	tx.sign(channelKp);
+
+  	return tx.toXDR();
+}
+
 export async function buildClaimTx(channelPhrase, mainKp, balanceId) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData = await getAccount(channelKp.publicKey());
@@ -265,6 +309,24 @@ export async function submitTransaction(txXdr) {
     }
 }
 
+export async function submitTransactionWithoutProxy(txXdr) {
+    try {
+
+        const res = await axios.post(
+            `${HORIZON}/transactions`,
+            `tx=${encodeURIComponent(txXdr)}`,
+            { 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            }
+        );
+        console.log(res.data)
+        return res.data;
+    } catch (err) {
+        console.log('❌ Client error submitting TX:', err);
+        return { success: false, error: err.response?.data || err.message}
+    }
+}
+
 export async function getClaimableBalance(publicKey) {
 
         try {
@@ -307,6 +369,24 @@ export async function ClaimPi(mainPhrase, balanceId, recipient, amount) {
             try {
                 const xdr = await buildMultipleChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 return await submitTransaction(xdr);
+            } catch (err) {
+                console.error(`❌ Error building/submitting for channel ${i}:`, err);
+            }
+        }));
+
+        return result;
+    }
+    return { success: false, error: "No sponsored accounts found."}
+}
+
+export async function ClaimPiWithoutProxy(mainPhrase, balanceId, recipient, amount) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const allSponsors = await Sponsors.find({name: 'whoami-5677'});
+    if(allSponsors) {
+        const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
+            try {
+                const xdr = await buildMultipleChannelTxWithoutProxy(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                return await submitTransactionWithoutProxy(xdr);
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
             }
