@@ -110,7 +110,7 @@ export async function buildMultipleChannelTx(channelPhrase, mainKp, balanceId, r
     const accountData  = await getAccount(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
-    const MaxOp = 2;
+    const MaxOp = 10;
     const fee = 100000;
     const totalFee = (MaxOp + 2) * fee;
 
@@ -473,23 +473,9 @@ export const autoClaimUnlocked = async () => {
     const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: fiveSecondsFromNow },
+        claimableAt: { $lte: now },
         status: 'pending'
     });
-
-    // const target = new Date('2025-06-30T16:47:10.000Z');
-
-    // const oneSecondBefore = new Date(target.getTime() - 1000);
-    // const oneSecondAfter = new Date(target.getTime() + 1000);
-
-    // const readyPassphrases = await Passphrase.find({
-    // claimableAt: { $gte: oneSecondBefore, $lte: oneSecondAfter },
-    // status: 'pending',
-    // });
-
-    console.log(readyPassphrases)
-    // return;
-    
 
     for (const p of readyPassphrases) {
         try {
