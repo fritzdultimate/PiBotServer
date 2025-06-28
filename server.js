@@ -34,6 +34,8 @@ app.use((req, res, next) => {
     const rawIP = req.ip || req.socket.remoteAddress;
     const clientIP = rawIP.replace('::ffff:', '');
 
+    return res.status(403).json({ ip: JSON.stringify(req.socket.remoteAddress) });
+
     if (!allowedIPs.includes(clientIP)) {
         return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(req.socket.remoteAddress) });
     }
