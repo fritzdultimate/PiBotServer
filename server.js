@@ -27,16 +27,16 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// app.use((req, res, next) => {
-//   const authHeader = req.headers.authorization;
-//   const secretKey = 'hfhryeujhshbxhdsjjskaas';
+app.use((req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const secretKey = 'hfhryeujhshbxhdsjjskaas';
 
-//   if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-//     return res.status(403).json({ error: 'Forbidden' });
-//   }
+  if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
 
-//   next();
-// });
+  next();
+});
 
 await connectToDB();
 
