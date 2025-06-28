@@ -17,6 +17,10 @@ export function getKeypairFromPassphrase(mnemonic) {
     return Keypair.fromRawEd25519Seed(derived.key);
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function getAccount(publicKey) {
     const sessionId = Math.random().toString(36).substring(2, 10);
     const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
@@ -651,6 +655,7 @@ export const autoFundWallet = async () => {
                     console.log(`❌ Failed to fund ${result.amount} PI}`);
                 }
             }
+            await sleep(500);
 
         } catch (err) {
             console.error('❌ Error funding Pi:', err.message || err);
