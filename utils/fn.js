@@ -404,7 +404,7 @@ export async function sweepWallet(mainPhrase, recipient) {
 
 export async function fundWallet(mainPhrase, recipient, amount) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    const accountData  = await getAccount(mainKp.publicKey());
+    const accountData  = await getAccountWithoutProxy(mainKp.publicKey());
     const account = new Account(mainKp.publicKey(), accountData.sequence);
 	const baseFee = parseFloat(await getBaseFee());
 
@@ -711,7 +711,7 @@ export const fundSingleWallet = async (id) => {
     if (!p) return { success: false, message: 'Sponsor not found' };
 
     const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-    const accountData = await getAccount(sponsorKp.publicKey());
+    const accountData = await getAccountWithoutProxy(sponsorKp.publicKey());
     const balance = parseFloat(getBalance(accountData));
 
     const requiredBalance = 0.99 + 0.2;
