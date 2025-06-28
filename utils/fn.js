@@ -37,6 +37,21 @@ export async function getAccount(publicKey) {
     }
 }
 
+export async function getAccountWithoutProxy(publicKey) {
+    try {
+        const response = await axios.get(
+            `${HORIZON}/accounts/${publicKey}`,
+            {
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
+        return response.data;
+    } catch(err) {
+        // console.error(`❌ Failed to fetch account [${publicKey}]:`, err.response?.data || err.message);
+        throw err;
+    }
+}
+
 export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount) {
     const sessionId = Math.random().toString(36).substring(2, 10);
     const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
@@ -542,7 +557,7 @@ export const autoFundWallet = async () => {
 
 
             const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-            const accountData  = await getAccount(sponsorKp.publicKey());
+            const accountData  = await getAccountWithoutProxy(sponsorKp.publicKey());
 
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 1;

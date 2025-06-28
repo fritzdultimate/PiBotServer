@@ -218,7 +218,7 @@ const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
 setInterval(trackedBotFunction, 100);
 setInterval(autoSweepWallet, 2000);
 
-setInterval(autoFundWallet, 10000000);
+setInterval(autoFundWallet, 300000);
 // setInterval(autoFundWallet, 2000);
 // setInterval(autoFundWalletBeforeAndAfterClaim, 500);
 setInterval(autoDeleteWallet, 10000);
