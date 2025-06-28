@@ -37,8 +37,10 @@ app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
     const allowedIPs = ['197.210.84.31'];
-    const rawIP = req.ip || req.socket.remoteAddress;
-    const clientIP = rawIP.replace('::ffff:', '');
+    const forwardedFor = req.headers['x-forwarded-for'];
+    const clientIP = forwardedFor
+    ? forwardedFor.split(',')[0].trim() // Use first IP in the list
+    : req.socket?.remoteAddress?.replace('::ffff:', '');
 
     console.log(`Incoming request from IP: ${clientIP}`);
 
