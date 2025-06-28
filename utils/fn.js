@@ -436,7 +436,7 @@ export async function FloodParallelChannelTransaction(mainPhrase, balanceId, rec
 export async function sweepWallet(mainPhrase, recipient) {
 
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    const accountData  = await getAccount(mainKp.publicKey());
+    const accountData  = await getAccountWithoutProxy(mainKp.publicKey());
     const account = new Account(mainKp.publicKey(), accountData.sequence);
 
 	const balanceString = getBalance(accountData);
