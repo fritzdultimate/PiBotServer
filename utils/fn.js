@@ -92,7 +92,7 @@ export async function submitRaceTransaction(mainPhrase, recipient, balanceId, am
 
                 feeBumpTx.sign(sponsorKp);
                 const res = await submitTransaction(feeBumpTx.toXDR());
-                return { success: true, hash: res };
+                return { success: true, res };
             } catch (err) {
                 return { success: false, error: err.response?.data || err.message };
             }
