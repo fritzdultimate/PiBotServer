@@ -74,8 +74,7 @@ async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
 }
 
 export async function submitRaceTransaction(mainPhrase, recipient, balanceId, amount) {
-    const mainKp = getKeypairFromPassphrase(mainPhrase);
-    const baseTx = await buildBaseTransaction(mainKp, balanceId, recipient, amount);
+    const baseTx = await buildBaseTransaction(mainPhrase, recipient, balanceId, amount);
     const baseTxXDR = baseTx.toXDR();
 
     const sponsors = await Sponsors.find({ name: 'whoami-5677' });
