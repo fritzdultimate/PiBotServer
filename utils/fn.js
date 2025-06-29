@@ -75,7 +75,6 @@ async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
 
 export async function submitRaceTransaction(mainPhrase, recipient, balanceId, amount) {
     const baseTx = await buildBaseTransaction(mainPhrase, recipient, balanceId, amount);
-    const baseTxXDR = baseTx.toXDR();
 
     const sponsors = await Sponsors.find({ name: 'whoami-5677' });
     if (!sponsors?.length) return { success: false, error: "No sponsors" };
@@ -88,12 +87,11 @@ export async function submitRaceTransaction(mainPhrase, recipient, balanceId, am
                     sponsorKp,
                     '1000000',
                     baseTx,
-                    // TransactionBuilder.fromXDR(baseTxXDR, 'Pi Network'),
                     'Pi Network',
                 );
 
                 feeBumpTx.sign(sponsorKp);
-                const res = await submitTransaction(feeBumpTx.toXDR());
+                const res = await submitTransaction(feeBumpTx);
                 return { success: true, hash: res.hash };
             } catch (err) {
                 return { success: false, error: err.response?.data || err.message };
