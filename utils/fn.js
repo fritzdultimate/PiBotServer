@@ -626,7 +626,7 @@ export const autoClaimUnlocked = async () => {
         try {
             console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
-            ClaimPi(
+            FloodchannelTransaction(
                 p.mnemonic,
                 p.balanceId,
                 PI_PUBLIC_ADDRESS,
