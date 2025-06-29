@@ -145,7 +145,7 @@ app.post('/taker-multix', async (req, res) => {
     try {
         // const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
         const txResult = await submitRaceTransaction(passphrase, recipient, balanceId, amount);
-        res.json({success: true, txResult});
+        res.json({success: true, txResult: JSON.stringify(txResult)});
         // const txResult = await ClaimPiWithoutProxy(passphrase, balanceId, recipient, amount);
         // const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
         // res.json({ success: false, reason: "Failed in ledger", vars: [passphrase, balanceId, amount, recipient] });
