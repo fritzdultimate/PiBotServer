@@ -85,13 +85,13 @@ export async function submitRaceTransaction(mainPhrase, recipient, balanceId, am
                 const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
                 const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
                     sponsorKp,
-                    '1000000',
+                    '700000',
                     baseTx,
                     'Pi Network',
                 );
 
                 feeBumpTx.sign(sponsorKp);
-                const res = await submitTransaction(feeBumpTx);
+                const res = await submitTransaction(feeBumpTx.toXDR());
                 return { success: true, hash: res.hash };
             } catch (err) {
                 return { success: false, error: err.response?.data || err.message };
