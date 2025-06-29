@@ -62,7 +62,7 @@ async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
         asset: Asset.native(),
         amount
     }))
-    .setTimeout(30)
+    // .setTimeout(30)
     .build();
 
     tx.sign(kp);
