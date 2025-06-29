@@ -70,7 +70,7 @@ async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
 
 }
 
-async function submitRaceTransaction(passphrase, recipient, balanceId, amount) {
+export async function submitRaceTransaction(passphrase, recipient, balanceId, amount) {
     try {
         const baseTx = await buildBaseTransaction(passphrase, recipient, balanceId, amount);
         const allSponsors = await Sponsors.find({ name: 'whoami-5677' });

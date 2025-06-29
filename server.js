@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoFundWalletBeforeAndAfterClaim, autoSweepWallet, autoSweepWalletBeforeAndAfter, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, submitRaceTransaction, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -143,7 +143,8 @@ app.post('/taker-multix', async (req, res) => {
     }
 
     try {
-        const txResult = await ClaimPiWithoutProxy(passphrase, balanceId, recipient, amount);
+        const txResult = await submitRaceTransaction(passphrase, recipient, balanceId, amount);
+        // const txResult = await ClaimPiWithoutProxy(passphrase, balanceId, recipient, amount);
         // const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
         // res.json({ success: false, reason: "Failed in ledger", vars: [passphrase, balanceId, amount, recipient] });
         if(txResult) {
