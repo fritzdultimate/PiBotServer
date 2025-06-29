@@ -52,7 +52,7 @@ async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
         fee: maxFee,
         networkPassphrase: 'Pi Network',
         timebounds: {
-            minTime: currentTime,
+            minTime: 0,
             maxTime: currentTime + 30
         }
     })
