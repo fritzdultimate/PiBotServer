@@ -80,29 +80,36 @@ export async function submitRaceTransaction(passphrase, recipient, balanceId, am
         if (!allSponsors?.length) {
             return { success: false, error: "No sponsored accounts found" };
         }
-
+        let txCopy;
+        let result = [];
         for(const sponsor of allSponsors) {
             const baseTx = await buildBaseTransaction(sponsor.mnemonic, passphrase, recipient, balanceId, amount);
-            const submissionResults = await Promise.allSettled(
-                allSponsors.map(async (sponsor) => {
-                    try {
-                        const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
-                        const txCopy = TransactionBuilder.fromXDR(
-                            baseTx.toXDR(),
-                            'Pi Network'
-                        );
-                        txCopy.sign(sponsorKp);
 
-                        const result = await submitTransaction(txCopy.toXDR());
-                        return { success: true, result };
-                    } catch (err) {
-                        return { success: false, error: err?.response?.data || err.message || err };
-                    }
-                })
+            const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
+            txCopy = TransactionBuilder.fromXDR(
+                baseTx.toXDR(),
+                'Pi Network'
             );
+            txCopy.sign(sponsorKp);
+            const res = await submitTransaction(txCopy.toXDR());
+            result.push(res);
 
-            return { success: true, submissions: submissionResults };
+            // const submissionResults = await Promise.allSettled(
+            //     allSponsors.map(async (sponsor) => {
+            //         try {
+                        
+
+            //             const result = await submitTransaction(txCopy.toXDR());
+            //             return { success: true, result };
+            //         } catch (err) {
+            //             return { success: false, error: err?.response?.data || err.message || err };
+            //         }
+            //     })
+            // );
+
+            // return { success: true, submissions: submissionResults };
         }
+        return result;
     } catch (err) {
         console.error('❌ Error building/submitting:', err);
         return { success: false, error: err.message || err };
