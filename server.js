@@ -143,12 +143,13 @@ app.post('/taker-multix', async (req, res) => {
     }
 
     try {
-        const txResult = await submitRaceTransaction(passphrase, recipient, balanceId, amount);
+        const txResult = await FloodchannelTransaction(passphrase, recipient, balanceId, amount);
+        // const txResult = await submitRaceTransaction(passphrase, recipient, balanceId, amount);
         // const txResult = await ClaimPiWithoutProxy(passphrase, balanceId, recipient, amount);
         // const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
         // res.json({ success: false, reason: "Failed in ledger", vars: [passphrase, balanceId, amount, recipient] });
-        if(txResult.success) {
-            const findSuccessfulTx = txResult.submissions.find(result => result?.hash !== undefined);
+        if(txResult) {
+            const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
                 res.json({ success: false, reason: "Failed in ledger", result: txResult });
             } else {
