@@ -143,7 +143,7 @@ app.post('/taker-multix', async (req, res) => {
     }
 
     try {
-        const txResult = await FloodchannelTransaction(passphrase, recipient, balanceId, amount);
+        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
         // const txResult = await submitRaceTransaction(passphrase, recipient, balanceId, amount);
         // const txResult = await ClaimPiWithoutProxy(passphrase, balanceId, recipient, amount);
         // const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
