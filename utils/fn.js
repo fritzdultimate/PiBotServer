@@ -41,6 +41,70 @@ export async function getAccount(publicKey) {
     }
 }
 
+async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
+    const kp = getKeypairFromPassphrase(passphrase);
+    const accountData  = await getAccount(kp.publicKey());
+    const account = new Account(kp.publicKey(), accountData.sequence);
+    const currentTime = Math.floor(Date.now() / 1000);
+    const maxFee = '400000';
+
+    const tx = new TransactionBuilder(account, {
+        fee: maxFee,
+        networkPassphrase: 'Pi Network',
+        timebounds: {
+            minTime: currentTime,
+            maxTime: currentTime + 30
+        }
+    })
+    .addOperation(Operation.claimClaimableBalance({ balanceId }))
+    .addOperation(Operation.payment({
+        destination: recipient,
+        asset: Asset.native(),
+        amount
+    }))
+    .setTimeout(30)
+    .build();
+
+    tx.sign(kp);
+    return tx;
+
+}
+
+async function submitRaceTransaction(passphrase, recipient, balanceId, amount) {
+    try {
+        const baseTx = await buildBaseTransaction(passphrase, recipient, balanceId, amount);
+        const allSponsors = await Sponsors.find({ name: 'whoami-5677' });
+
+        if (!allSponsors?.length) {
+            return { success: false, error: "No sponsored accounts found" };
+        }
+
+        const submissionResults = await Promise.allSettled(
+            allSponsors.map(async (sponsor) => {
+                try {
+                    const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
+                    const txCopy = TransactionBuilder.fromXDR(
+                        baseTx.toXDR(),
+                        'Pi Network'
+                    );
+                    txCopy.sign(sponsorKp);
+
+                    const result = await submitTransaction(txCopy.toXDR());
+                    return { success: true, result };
+                } catch (err) {
+                    return { success: false, error: err?.response?.data || err.message || err };
+                }
+            })
+        );
+
+        return { success: true, submissions: submissionResults };
+    } catch (err) {
+        console.error('❌ Error building/submitting:', err);
+        return { success: false, error: err.message || err };
+    }
+}
+
+
 export async function getAccountWithoutProxy(publicKey) {
     try {
         const response = await axios.get(
@@ -72,9 +136,9 @@ export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount)
     })
         .addOperation(Operation.claimClaimableBalance({ balanceId }))
         .addOperation(Operation.payment({
-        destination: recipient,
-        asset: Asset.native(),
-        amount,
+            destination: recipient,
+            asset: Asset.native(),
+            amount,
         }))
         .setTimeout(30)
         .build();
