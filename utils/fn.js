@@ -84,12 +84,12 @@ export async function submitRaceTransaction(mainPhrase, recipient, balanceId, am
         sponsors.map(async sponsor => {
             try {
                 const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
-                const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction({
-                    feeSource: sponsorKp.publicKey(),
-                    baseFee: '1000000', // 1 PI if you want to outbid other bots
-                    innerTransaction: TransactionBuilder.fromXDR(baseTxXDR, 'Pi Network'),
-                    networkPassphrase: 'Pi Network',
-                });
+                const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
+                    sponsorKp,
+                    '1000000',
+                    TransactionBuilder.fromXDR(baseTxXDR, 'Pi Network'),
+                    'Pi Network',
+                );
 
                 feeBumpTx.sign(sponsorKp);
                 const res = await submitTransaction(feeBumpTx.toXDR());
