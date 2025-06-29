@@ -41,26 +41,31 @@ export async function getAccount(publicKey) {
     }
 }
 
-async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
-    const kp = getKeypairFromPassphrase(passphrase);
-    const accountData  = await getAccount(kp.publicKey());
-    const account = new Account(kp.publicKey(), accountData.sequence);
+async function buildBaseTransaction(channelPhrase, passphrase, recipient, balanceId, amount) {
+    const mainKp = getKeypairFromPassphrase(passphrase);
+
+    const channelKp = getKeypairFromPassphrase(channelPhrase);
+    const accountData  = await getAccount(channelKp.publicKey());
+    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+
+
     const currentTime = Math.floor(Date.now() / 1000);
     const maxFee = '400000';
 
-    const tx = new TransactionBuilder(account, {
+    const tx = new TransactionBuilder(channelAccount, {
         fee: maxFee,
         networkPassphrase: 'Pi Network',
         timebounds: {
             minTime: 0,
             maxTime: currentTime + 30
-        }
+        },
     })
-    .addOperation(Operation.claimClaimableBalance({ balanceId }))
+    .addOperation(Operation.claimClaimableBalance({ balanceId, source: mainKp.publicKey() }))
     .addOperation(Operation.payment({
         destination: recipient,
         asset: Asset.native(),
-        amount
+        amount,
+        source: mainKp.publicKey()
     }))
     .build();
 
@@ -71,32 +76,33 @@ async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
 
 export async function submitRaceTransaction(passphrase, recipient, balanceId, amount) {
     try {
-        const baseTx = await buildBaseTransaction(passphrase, recipient, balanceId, amount);
         const allSponsors = await Sponsors.find({ name: 'whoami-5677' });
-
         if (!allSponsors?.length) {
             return { success: false, error: "No sponsored accounts found" };
         }
 
-        const submissionResults = await Promise.allSettled(
-            allSponsors.map(async (sponsor) => {
-                try {
-                    const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
-                    const txCopy = TransactionBuilder.fromXDR(
-                        baseTx.toXDR(),
-                        'Pi Network'
-                    );
-                    txCopy.sign(sponsorKp);
+        for(const sponsor of allSponsors) {
+            const baseTx = await buildBaseTransaction(sponsor.mnemonic, passphrase, recipient, balanceId, amount);
+            const submissionResults = await Promise.allSettled(
+                allSponsors.map(async (sponsor) => {
+                    try {
+                        const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
+                        const txCopy = TransactionBuilder.fromXDR(
+                            baseTx.toXDR(),
+                            'Pi Network'
+                        );
+                        txCopy.sign(sponsorKp);
 
-                    const result = await submitTransaction(txCopy.toXDR());
-                    return { success: true, result };
-                } catch (err) {
-                    return { success: false, error: err?.response?.data || err.message || err };
-                }
-            })
-        );
+                        const result = await submitTransaction(txCopy.toXDR());
+                        return { success: true, result };
+                    } catch (err) {
+                        return { success: false, error: err?.response?.data || err.message || err };
+                    }
+                })
+            );
 
-        return { success: true, submissions: submissionResults };
+            return { success: true, submissions: submissionResults };
+        }
     } catch (err) {
         console.error('❌ Error building/submitting:', err);
         return { success: false, error: err.message || err };
