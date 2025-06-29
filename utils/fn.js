@@ -87,7 +87,8 @@ export async function submitRaceTransaction(mainPhrase, recipient, balanceId, am
                 const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
                     sponsorKp,
                     '1000000',
-                    TransactionBuilder.fromXDR(baseTxXDR, 'Pi Network'),
+                    baseTx,
+                    // TransactionBuilder.fromXDR(baseTxXDR, 'Pi Network'),
                     'Pi Network',
                 );
 
