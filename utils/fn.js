@@ -93,21 +93,6 @@ export async function submitRaceTransaction(passphrase, recipient, balanceId, am
             txCopy.sign(sponsorKp);
             const res = await submitTransaction(txCopy.toXDR());
             result.push(res);
-
-            // const submissionResults = await Promise.allSettled(
-            //     allSponsors.map(async (sponsor) => {
-            //         try {
-                        
-
-            //             const result = await submitTransaction(txCopy.toXDR());
-            //             return { success: true, result };
-            //         } catch (err) {
-            //             return { success: false, error: err?.response?.data || err.message || err };
-            //         }
-            //     })
-            // );
-
-            // return { success: true, submissions: submissionResults };
         }
         return result;
     } catch (err) {
