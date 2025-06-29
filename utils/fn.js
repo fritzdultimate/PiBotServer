@@ -69,7 +69,7 @@ async function buildBaseTransaction(channelPhrase, passphrase, recipient, balanc
     }))
     .build();
 
-    tx.sign(kp);
+    tx.sign(mainKp);
     return tx;
 
 }
