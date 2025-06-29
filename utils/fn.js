@@ -2,7 +2,7 @@ import axios from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import bip39 from 'bip39';
 import ed25519 from 'ed25519-hd-key';
-import { Keypair, TransactionBuilder, Operation, Asset, Account   } from 'stellar-base';
+import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransaction   } from 'stellar-base';
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 
@@ -41,18 +41,17 @@ export async function getAccount(publicKey) {
     }
 }
 
-async function buildBaseTransaction(channelPhrase, passphrase, recipient, balanceId, amount) {
+async function buildBaseTransaction(passphrase, recipient, balanceId, amount) {
     const mainKp = getKeypairFromPassphrase(passphrase);
 
-    const channelKp = getKeypairFromPassphrase(channelPhrase);
-    const accountData  = await getAccount(channelKp.publicKey());
-    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+    const accountData = await getAccount(mainKp.publicKey());
+    const account = new Account(mainKp.publicKey(), accountData.sequence);
 
 
     const currentTime = Math.floor(Date.now() / 1000);
     const maxFee = '400000';
 
-    const tx = new TransactionBuilder(channelAccount, {
+    const tx = new TransactionBuilder(account, {
         fee: maxFee,
         networkPassphrase: 'Pi Network',
         timebounds: {
@@ -74,31 +73,35 @@ async function buildBaseTransaction(channelPhrase, passphrase, recipient, balanc
 
 }
 
-export async function submitRaceTransaction(passphrase, recipient, balanceId, amount) {
-    try {
-        const allSponsors = await Sponsors.find({ name: 'whoami-5677' });
-        if (!allSponsors?.length) {
-            return { success: false, error: "No sponsored accounts found" };
-        }
-        let txCopy;
-        let result = [];
-        for(const sponsor of allSponsors) {
-            const baseTx = await buildBaseTransaction(sponsor.mnemonic, passphrase, recipient, balanceId, amount);
+export async function submitRaceTransaction(mainPhrase, recipient, balanceId, amount) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const baseTx = await buildBaseTransaction(mainKp, balanceId, recipient, amount);
+    const baseTxXDR = baseTx.toXDR();
 
-            const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
-            txCopy = TransactionBuilder.fromXDR(
-                baseTx.toXDR(),
-                'Pi Network'
-            );
-            txCopy.sign(sponsorKp);
-            const res = await submitTransaction(txCopy.toXDR());
-            result.push(res);
-        }
-        return result;
-    } catch (err) {
-        console.error('❌ Error building/submitting:', err);
-        return { success: false, error: err.message || err };
-    }
+    const sponsors = await Sponsors.find({ name: 'whoami-5677' });
+    if (!sponsors?.length) return { success: false, error: "No sponsors" };
+
+    const submissions = await Promise.allSettled(
+        sponsors.map(async sponsor => {
+            try {
+                const sponsorKp = getKeypairFromPassphrase(sponsor.mnemonic);
+                const feeBumpTx = FeeBumpTransaction.build({
+                    feeSource: sponsorKp.publicKey(),
+                    baseFee: '1000000', // 1 PI if you want to outbid other bots
+                    innerTransaction: TransactionBuilder.fromXDR(baseTxXDR, 'Pi Network'),
+                    networkPassphrase: 'Pi Network',
+                });
+
+                feeBumpTx.sign(sponsorKp);
+                const res = await submitTransaction(feeBumpTx.toXDR());
+                return { success: true, hash: res.hash };
+            } catch (err) {
+                return { success: false, error: err.response?.data || err.message };
+            }
+        })
+    );
+
+    return submissions;
 }
 
 
