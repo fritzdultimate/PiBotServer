@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, submitRaceTransaction, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, submitRaceTransaction, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -143,12 +143,56 @@ app.post('/taker-multix', async (req, res) => {
     }
 
     try {
-        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
-        // const txResult = await submitRaceTransaction(passphrase, recipient, balanceId, amount);
-        // res.json({success: true, txResult});
-        // const txResult = await ClaimPiWithoutProxy(passphrase, balanceId, recipient, amount);
-        // const txResult = await ClaimPi(passphrase, balanceId, recipient, amount);
-        // res.json({ success: false, reason: "Failed in ledger", vars: [passphrase, balanceId, amount, recipient] });
+        const keypair = getKeypairFromPassphrase(mnemonic);
+        const publicKey = keypair.publicKey();
+        const claimableBalance = await getClaimableBalance(publicKey);
+        const records = claimableBalance?._embedded?.records || [];
+        const txResult = null;
+        
+        if (records.length > 0) {
+            const entries = [];
+
+            for (const record of records) {
+                const claimant = record.claimants.find(
+                    (c) => c.destination === publicKey
+                );
+
+                if (claimant) {
+                    const predicate = claimant.predicate;
+                    let claimableAt = null;
+
+                    if (predicate?.not?.abs_before) {
+                        claimableAt = predicate.not.abs_before;
+                    }
+
+                    entries.push({
+                        claimableAt,
+                    });
+                }
+            }
+
+            if (entries.length > 0) {
+                for(const entry of entries) {
+                    const now = new Date();
+                    if (!entry.claimableAt) {
+                        // No predicate: balance is immediately claimable
+                        console.log('Claimable immediately');
+                        txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
+                        continue;
+                    }
+
+                    const unlockTime = new Date(entry.claimableAt);
+
+                    if (now >= unlockTime) {
+                        console.log(`Claimable since ${unlockTime.toISOString()}`);
+                        txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
+                    } else {
+                        console.log(`Not yet claimable, unlocks at ${unlockTime.toISOString()}`);
+                    }
+                }
+            }
+        }
+        
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
             if(!findSuccessfulTx) {
@@ -230,3 +274,5 @@ setInterval(autoDeleteWallet, 10000);
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
 });
+
+
