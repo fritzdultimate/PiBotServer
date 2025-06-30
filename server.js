@@ -148,7 +148,7 @@ app.post('/taker-multix', async (req, res) => {
         const claimableBalance = await getClaimableBalance(publicKey);
         const records = claimableBalance?._embedded?.records || [];
         const txResult = null;
-        
+
         if (records.length > 0) {
             const entries = [];
 
@@ -208,59 +208,6 @@ app.post('/taker-multix', async (req, res) => {
     }
 })
 
-app.post('/pi-takerx', async (req, res) => {
-    const { passphrase, recipient, balanceId, amount } = req.body;
-    if (!passphrase) {
-        return res.status(404).json({ error: 'Passphrase is required --multi' });
-    }
-
-    if (!amount) {
-        return res.status(403).json({ error: 'amount is required' });
-    }
-
-    try {
-        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
-        if(txResult) {
-            const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
-            if(!findSuccessfulTx) {
-                res.json({ success: false, reason: "Failed in ledger", result: txResult });
-            } else {
-                res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
-            }
-        } else {
-            res.json({ success: true, reason: "Failed before ledger", result: txResult });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.response?.data || error.message });
-    }
-})
-
-app.post('/claim-pi-p', async (req, res) => {
-    const { passphrase, recipient, balanceId, amount } = req.body;
-    if (!passphrase) {
-        return res.status(404).json({ error: 'Passphrase is required' });
-    }
-
-    if (!amount) {
-        return res.status(403).json({ error: 'amount is required' });
-    }
-
-    try {
-        const txResult = await FloodParallelChannelTransaction(passphrase, balanceId, recipient, amount);
-        if(txResult) {
-            const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
-            if(!findSuccessfulTx) {
-                res.json({ success: false, reason: "Failed in ledger", result: txResult });
-            } else {
-                res.json({ success: true, hash: findSuccessfulTx.hash, reason: "successful" })
-            }
-        } else {
-            res.json({ success: true, reason: "Failed before ledger", result: txResult });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.response?.data || error.message });
-    }
-})
 
 const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
 setInterval(trackedBotFunction, 100);
