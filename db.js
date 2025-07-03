@@ -8,7 +8,7 @@ export async function connectToDB() {
         console.log('✅ Connected to MongoDB at mongodb://localhost:27017/pibot');
     } catch (error) {
         console.error('❌ MongoDB connection error:', error);
-        process.exit(1); // Stop the server if DB connection fails
+        process.exit(1); // Stop the server if DB connection fails - manch
     }
 }
 // new text
