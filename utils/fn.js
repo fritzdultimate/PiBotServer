@@ -818,7 +818,7 @@ export const autoDeleteWallet = async () => {
     if (global.isDeleting) return;
     global.isDeleting = true;
     const now = new Date();
-    const oneMinutesAgo = new Date(now.getTime() -  ( 30 * 1000));
+    const oneMinutesAgo = new Date(now.getTime() -  ( 20 * 1000));
 
     const overduePassphrases = await Passphrase.find({
         claimableAt: { $lte: oneMinutesAgo },
