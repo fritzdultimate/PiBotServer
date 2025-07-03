@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 dotenv.config();
 
 const app = express();
@@ -219,7 +219,7 @@ app.post('/taker-sharma', async (req, res) => {
     }
 
     try {
-        const txResult = await FloodchannelTransaction(passphrase, balanceId, recipient, amount);
+        const txResult = await FloodchannelTransactionWithoutProxy(passphrase, balanceId, recipient, amount);
         
         if(txResult) {
             const findSuccessfulTx = txResult.find(result => result?.hash !== undefined);
