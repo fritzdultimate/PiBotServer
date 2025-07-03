@@ -465,6 +465,7 @@ export async function FloodchannelTransactionWithoutProxy(mainPhrase, balanceId,
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
                 const xdr = await buildChannelTxWithoutProxy(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                await sleep(400);
                 return await submitTransactionWithoutProxy(xdr);
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
