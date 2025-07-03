@@ -679,9 +679,11 @@ const sweepWithLogs = async (p) => {
 
 export const autoSweepWallet = async () => {
     const readyPassphrases = await Passphrase.find();
-    await Promise.allSettled(
-        readyPassphrases.map(p => sweepWithLogs(p))
-    );
+
+    for(const phrase of readyPassphrases) {
+        sweepWithLogs(phrase);
+        await sleep(1000);
+    }
 };
 
 export const autoFundWallet = async () => {

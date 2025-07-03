@@ -214,8 +214,6 @@ setInterval(trackedBotFunction, 100);
 setInterval(autoSweepWallet, 2000);
 
 setInterval(autoFundWallet, 300000);
-// setInterval(autoFundWallet, 2000);
-// setInterval(autoFundWalletBeforeAndAfterClaim, 500);
 setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
