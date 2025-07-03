@@ -11,4 +11,3 @@ export async function connectToDB() {
         process.exit(1); // Stop the server if DB connection fails
     }
 }
-
