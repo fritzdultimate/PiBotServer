@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
-// Optional: basic security key to protect API
+// Optional: basic security key to protect API.
 const AUTH_KEY = process.env.AUTH_KEY || 'secret-key';
 const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app'];
 app.use(express.json());
