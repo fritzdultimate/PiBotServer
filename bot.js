@@ -51,7 +51,7 @@ bot.on('message', async (msg) => {
             const accountData = await getAccountWithoutProxy(kp.publicKey());
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 0.98;
-            bot.sendMessage(chatId, `✅ Balance: ${balance} PI`);
+            bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
         } catch(error) {
             bot.sendMessage(chatId, `❌ Failed to fetch balance. Please try again`);
         }
