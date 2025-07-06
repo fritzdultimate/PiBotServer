@@ -19,6 +19,8 @@ bot.onText(/\/help/, (msg) => {
         /balance - Show Pi balance
         /claim - Claim unlocked Pi
         /status - Check bot status
+        /sweep - sweeps all available pi
+        /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
 });
