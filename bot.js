@@ -47,8 +47,8 @@ bot.on('message', async (msg) => {
         try {
             const kp = getKeypairFromPassphrase(passphrase)
             bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
+
             const accountData = await getAccountWithoutProxy(kp.publicKey());
-            const account = new Account(kp.publicKey(), accountData.sequence);
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 0.98;
             bot.sendMessage(chatId, `✅ Balance: ${balance} PI`);
