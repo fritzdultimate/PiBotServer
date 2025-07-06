@@ -664,6 +664,8 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
+    // if(global.isUnlocking) return;
+    // global.isUnlocking = true;
     console.log(`Trying auto claim now...`);
     const now = new Date();
     const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
@@ -710,6 +712,7 @@ export const autoClaimUnlocked = async () => {
             // );
         }
     }
+    // global.isUnlocking = false;
 
 };
 
