@@ -4,7 +4,7 @@ const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const bot = new TelegramBot(token, { polling: true });
 
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Welcome to PiBot! Type /help to see commands.");
+    bot.sendMessage(msg.chat.id, "Welcome to PiBot! Type /help to see commandsss.");
 })
 
 bot.onText(/\/help/, (msg) => {
