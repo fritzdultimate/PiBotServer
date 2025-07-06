@@ -35,6 +35,7 @@ bot.onText(/\/balance/, (msg) => {
 });
 
 bot.onText(/\/sweep/, (msg) => {
+    userSessions[chatId]['stopAll'] = false;
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space) to start sweeping');
 
