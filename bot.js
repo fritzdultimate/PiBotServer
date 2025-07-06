@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccountWithoutProxy, getKeypairFromPassphrase } from "./utils/fn";
+import { getAccountWithoutProxy, getBalance, getKeypairFromPassphrase } from "./utils/fn";
 import { Account } from "stellar-base";
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 console.log('Bot is running')
