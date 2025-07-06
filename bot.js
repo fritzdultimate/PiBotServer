@@ -8,11 +8,11 @@ bot.onText(/\/start/, (msg) => {
 })
 
 bot.onText(/\/help/, (msg) => {
-  const helpText = `
-📘 PiBot Commands:
-/balance - Show Pi balance
-/claim - Claim unlocked Pi
-/status - Check bot status
-`;
-  bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
+    const helpText = `
+        📘 PiBot Commands:
+        /balance - Show Pi balance
+        /claim - Claim unlocked Pi
+        /status - Check bot status
+        `;
+    bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
 });
