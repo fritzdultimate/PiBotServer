@@ -18,6 +18,7 @@
     "express": "^5.1.0",
     "https-proxy-agent": "^7.0.6",
     "mongoose": "^8.16.0",
+    "node-telegram-bot-api": "^0.66.0",
     "stellar-base": "^13.1.0"
   }
 }
