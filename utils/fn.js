@@ -17,7 +17,7 @@ export function getKeypairFromPassphrase(mnemonic) {
     return Keypair.fromRawEd25519Seed(derived.key);
 }
 
-function sleep(ms) {
+export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
