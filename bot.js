@@ -34,46 +34,54 @@ bot.onText(/\/balance/, (msg) => {
 
 bot.onText(/\/sweep/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space)');
+    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space) to start sweeping');
 
     userSessions[chatId] = { waitingForPassphraseForSweeping: true }
+});
+
+bot.onText(/\/stop/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Stopping any running process');
+
+    userSessions[chatId]['stopAll'] = true;
 });
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
     if(userSessions[chatId]?.waitingForPassphraseForSweeping) {
-        const passphrase = msg.text.trim().toLocaleLowerCase();
-
-        const words = passphrase.split(/\s+/);
-        if(words.length !== 24) {
-            return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
-        }
-
-        bot.sendMessage(chatId, '⏳ Sweeping Balance...');
-
-        try {
-            const kp = getKeypairFromPassphrase(passphrase)
-            bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
-            bot.sendMessage(chatId, `✅ Sender: ${kp.publicKey()}`);
-            bot.sendMessage(chatId, `✅ Receiver: GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS`);
-
-            const accountData = await getAccountWithoutProxy(kp.publicKey());
-            const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 0.98;
-
-            if(balance - 0.01 <= 0) {
-                return bot.sendMessage(chatId, `❌ Insufficient Balance: ${balance.toFixed(7)} PI`);
-            } else {
-                const result = await sweepWallet(passphrase, MAIN_ADDRESS);
-                if(result.data && result.data.hash) {
-                    return bot.sendMessage(chatId, `✅ ${result.amount} PI sweeped`);
-                } else {
-                    bot.sendMessage(chatId, `❌ Sweeping failed`);
-                }
+        while(!userSessions[chatId]?.stopAll) {
+            const passphrase = msg.text.trim().toLocaleLowerCase();
+            const words = passphrase.split(/\s+/);
+            if(words.length !== 24) {
+                return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
             }
-        } catch(error) {
-            bot.sendMessage(chatId, `❌ Something went wrong, please try again`);
+
+            bot.sendMessage(chatId, '⏳ Sweeping Balance...');
+
+            try {
+                const kp = getKeypairFromPassphrase(passphrase)
+                bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
+                bot.sendMessage(chatId, `✅ Sender: ${kp.publicKey()}`);
+                bot.sendMessage(chatId, `✅ Receiver: GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS`);
+
+                const accountData = await getAccountWithoutProxy(kp.publicKey());
+                const balanceString = getBalance(accountData);
+                const balance = parseFloat(balanceString) - 0.98;
+
+                if(balance - 0.01 <= 0) {
+                    return bot.sendMessage(chatId, `❌ Insufficient Balance: ${balance.toFixed(7)} PI`);
+                } else {
+                    const result = await sweepWallet(passphrase, MAIN_ADDRESS);
+                    if(result.data && result.data.hash) {
+                        return bot.sendMessage(chatId, `✅ ${result.amount} PI sweeped`);
+                    } else {
+                        bot.sendMessage(chatId, `❌ Sweeping failed`);
+                    }
+                }
+            } catch(error) {
+                bot.sendMessage(chatId, `❌ Something went wrong, please try again`);
+            }
         }
 
         delete userSessions[chatId]
