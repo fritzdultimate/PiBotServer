@@ -130,10 +130,10 @@ bot.on('message', async (msg) => {
                 bot.sendMessage(chatId, `❌ Failed to fetch balance. Please try again`);
             }
 
-        delete userSessions[chatId]
+            // delete userSessions[chatId]
         }
     } catch(err) {
         delete userSessions[chatId]
-        return bot.sendMessage(chatId, `❌ Unknown error occured ${err}`);
+        return bot.sendMessage(chatId, `❌ Unknown error occured`);
     }
 })
