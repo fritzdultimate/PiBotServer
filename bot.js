@@ -84,7 +84,7 @@ bot.on('message', async (msg) => {
                 bot.sendMessage(chatId, `❌ Something went wrong, please try again`);
             }
 
-            await sleep(2500);
+            await sleep(2000);
         }
 
         delete userSessions[chatId]
