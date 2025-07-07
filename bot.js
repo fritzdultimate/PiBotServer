@@ -102,7 +102,7 @@ bot.on('message', async (msg) => {
 
             if(words.length === 1) {
                 bot.sendMessage(chatId, '⏳ Checking validity of the address');
-                const accountData = await getAccountWithoutProxy(passphrase);
+                const accountData = await getAccountWithoutProxy(passphrase.toUpperCase());
                 if(!accountData.balances) {
                     return bot.sendMessage(chatId, '❌ Invalid wallet. Please send address starting with G....');
                 } else {
