@@ -5,6 +5,7 @@ import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
 import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
 const app = express();
