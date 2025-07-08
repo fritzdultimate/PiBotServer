@@ -6,7 +6,7 @@ import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransact
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 
-const HORIZON = 'https://api.mainnet.minepi.com';
+const HORIZON = 'http://93.127.203.237:8000';
 const NETWORK_PASSPHRASE = 'Pi Network';
 const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 
