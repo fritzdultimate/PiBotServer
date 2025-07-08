@@ -120,7 +120,7 @@ app.post('/sweep', async (req, res) => {
     }
 
     try {
-        const keypair = getKeypairFromPassphrase(mnemonic);
+        const keypair = getKeypairFromPassphrase(phrase);
         const publicKey = keypair.publicKey();
         const claimableBalance = await getClaimableBalance(publicKey);
 
@@ -143,7 +143,7 @@ app.post('/sweep', async (req, res) => {
                     }
 
                     entries.push({
-                        mnemonic,
+                        phrase,
                         recipient,
                         claimableAt,
                         balanceId: record.id,
@@ -155,14 +155,14 @@ app.post('/sweep', async (req, res) => {
             if (entries.length > 0) {
 
                 for(const entry of entries) {
-                    console.log(`Phrase: ${entry.mnemonic}`)
+                    console.log(`Phrase: ${entry.phrase}`)
                     console.log(`Balance ID: ${entry.balanceId}`)
                     console.log(`Recipient: ${entry.recipient}`)
                     console.log(`Amount: ${entry.amount}`)
-                    await FloodchannelTransaction(entry.mnemonic, entry.balanceId, entry.recipient, entry.amount);
+                    await FloodchannelTransaction(entry.phrase, entry.balanceId, entry.recipient, entry.amount);
                 }
 
-                const existing = await Passphrase.findOne({ mnemonic });
+                const existing = await Passphrase.findOne({ phrase });
                 if (!existing) {
                     await Passphrase.insertMany(entries);
                 }
