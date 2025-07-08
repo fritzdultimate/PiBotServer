@@ -21,8 +21,8 @@ bot.onText(/\/help/, (msg) => {
         /claim - Claim unlocked Pi
         /status - Check bot status
         /sweep - sweeps all available pi
-        /upload-passphrase - Upload a locked pi wallet with your valid wallet address
-        /upload-sponsor - Upload a pi wallet your unique name
+        /uploadPassphrase - Upload a locked pi wallet with your valid wallet address
+        /uploadSponsor - Upload a pi wallet your unique name
         /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
