@@ -118,6 +118,8 @@ bot.on('message', async (msg) => {
         const passphraseWords = parts.slice(0, -1);
 
         if(passphraseWords.length !== 24 || name.length) {
+            console.log(`Passphrase: ${passphraseWords}, length: ${passphraseWords.length}`)
+            console.log(`Name: ${name}}`)
             return bot.sendMessage(chatId, '❌ Invalid format. Make sure you send 24 words followed by a name');
         }
 
