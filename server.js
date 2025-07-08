@@ -51,6 +51,16 @@ app.use((req, res, next) => {
     next();
 });
 
+app.post('/webhook', (req, res) => {
+  const authHeader = req.headers['authorization'];
+  if (authHeader !== 'Bearer hfhryeujhshbxhdsjjskaas') {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  console.log('Webhook received:', req.body);
+  res.json({ status: 'OK' });
+});
+
 await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
