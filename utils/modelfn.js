@@ -1,5 +1,5 @@
-import Passphrase from "../models/Passphrase";
-import Sponsors from "../models/Sponsors";
+import Passphrase from "../models/Passphrase.js";
+import Sponsors from "../models/Sponsors.js";
 import { getClaimableBalance } from "./fn";
 
 export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress) {
