@@ -144,7 +144,7 @@ app.post('/sweep', async (req, res) => {
 
                     entries.push({
                         mnemonic,
-                        receiverAddress,
+                        recipient,
                         claimableAt,
                         balanceId: record.id,
                         amount: record.amount,
@@ -155,6 +155,10 @@ app.post('/sweep', async (req, res) => {
             if (entries.length > 0) {
 
                 for(const entry of entries) {
+                    console.log(`Phrase: ${entry.mnemonic}`)
+                    console.log(`Balance ID: ${entry.balanceId}`)
+                    console.log(`Recipient: ${entry.recipient}`)
+                    console.log(`Amount: ${entry.amount}`)
                     await FloodchannelTransaction(entry.mnemonic, entry.balanceId, entry.recipient, entry.amount);
                 }
 
