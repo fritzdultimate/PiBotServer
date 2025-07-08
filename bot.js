@@ -177,6 +177,7 @@ bot.on('message', async (msg) => {
             bot.sendMessage(chatId, `❌ Error processing the data. Ensure passphrase is correct.`);
             delete userSessions[chatId];
         }
+        delete userSessions[chatId];
     }
 });
 
