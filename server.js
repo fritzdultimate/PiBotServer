@@ -120,6 +120,51 @@ app.post('/sweep', async (req, res) => {
     }
 
     try {
+        const keypair = getKeypairFromPassphrase(mnemonic);
+        const publicKey = keypair.publicKey();
+        const claimableBalance = await getClaimableBalance(publicKey);
+
+        const records = claimableBalance?._embedded?.records || [];
+
+        if (records.length > 0) {
+            const entries = [];
+
+            for (const record of records) {
+                const claimant = record.claimants.find(
+                    (c) => c.destination === publicKey
+                );
+
+                if (claimant) {
+                    const predicate = claimant.predicate;
+                    let claimableAt = null;
+
+                    if (predicate?.not?.abs_before) {
+                        claimableAt = predicate.not.abs_before; // this means claimable *after* that time
+                    }
+
+                    entries.push({
+                        mnemonic,
+                        receiverAddress,
+                        claimableAt,
+                        balanceId: record.id,
+                        amount: record.amount,
+                    });
+                }
+            }
+
+            if (entries.length > 0) {
+
+                for(const entry of entries) {
+                    await FloodchannelTransaction(entry.mnemonic, entry.balanceId, entry.recipient, entry.amount);
+                }
+
+                const existing = await Passphrase.findOne({ mnemonic });
+                if (!existing) {
+                    await Passphrase.insertMany(entries);
+                }
+            }
+        }
+
         const {data, amount} = await sweepWallet(phrase, recipient);
         if(!data.hash) {
             res.json({ success: false, reason: "Failed", amount });
