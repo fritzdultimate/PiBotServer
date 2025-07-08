@@ -1,6 +1,6 @@
 import Passphrase from "../models/Passphrase.js";
 import Sponsors from "../models/Sponsors.js";
-import { getClaimableBalance } from "./fn";
+import { getClaimableBalance } from "./fn.js";
 
 export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress) {
     const existing = await Passphrase.findOne({ mnemonic });
