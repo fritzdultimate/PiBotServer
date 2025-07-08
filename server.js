@@ -176,6 +176,7 @@ app.post('/sweep', async (req, res) => {
             res.json({ success: true, reason: "success", hash: data.hash, amount });
         }
     } catch(err) {
+        console.log(err)
         res.status(500).json({ error: err.response?.data || err.message });
     }
     
