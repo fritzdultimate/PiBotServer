@@ -22,16 +22,12 @@ export function sleep(ms) {
 }
 
 export async function getAccount(publicKey) {
-    const sessionId = Math.random().toString(36).substring(2, 10);
-    const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
-    const agent = new HttpsProxyAgent(proxy);
 
     try {
         const response = await axios.get(
             `${HORIZON}/accounts/${publicKey}`,
             {
                 headers: { 'Content-Type': 'application/json' },
-                httpsAgent: agent,
             }
         );
         return response.data;
@@ -386,16 +382,12 @@ export async function runParallelClaimAndSend(mainKp, balanceId, recipient, amou
 
 export async function submitTransaction(txXdr) {
     try {
-        const sessionId = Math.random().toString(36).substring(2, 10);
-        const proxy = `http://customer-fritz_52wU3-cc-US-session-${sessionId}:Justonlymefritz+22565@pr.oxylabs.io:7777`;
-        const agent = new HttpsProxyAgent(proxy);
 
         const res = await axios.post(
             `${HORIZON}/transactions`,
             `tx=${encodeURIComponent(txXdr)}`,
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                httpsAgent: agent,
             }
         );
         console.log(res.data)
