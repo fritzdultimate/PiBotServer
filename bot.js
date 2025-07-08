@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
+import { connectToDB } from "./db.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -9,6 +10,7 @@ console.log('Bot is running')
 
 
 const bot = new TelegramBot(token, { polling: true });
+await connectToDB();
 
 bot.onText(/\/start/, (msg) => {
     bot.sendMessage(msg.chat.id, "Welcome to PiBot! Type /help to see commandsss.");
