@@ -24,7 +24,6 @@ bot.onText(/\/help/, (msg) => {
         /status - Check bot status
         /sweep - sweeps all available pi
         /uploadPassphrase - Upload a locked pi wallet with your valid wallet address
-        /uploadSponsor - Upload a pi wallet your unique name
         /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
@@ -148,9 +147,8 @@ bot.on('message', async (msg) => {
         } catch (error) {
             console.log(error)
             bot.sendMessage(chatId, `❌ Error processing the data. Ensure passphrase is correct.`);
+            delete userSessions[chatId];
         }
-
-        delete userSessions[chatId];
     }
 });
 
