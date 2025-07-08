@@ -239,9 +239,9 @@ app.post('/taker-sharma', async (req, res) => {
 
 const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
 setInterval(trackedBotFunction, 100);
-setInterval(autoSweepWallet, 2000);
+// setInterval(autoSweepWallet, 2000);
 
-setInterval(autoFundWallet, 1200000);
+// setInterval(autoFundWallet, 1200000);
 setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
