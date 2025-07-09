@@ -805,7 +805,7 @@ export const autoFundWallet = async () => {
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 1;
 
-            const change = balance - 0.2;
+            const change = balance - 0.4;
 
             if(change < 0) {
                 const result = await fundWallet(
