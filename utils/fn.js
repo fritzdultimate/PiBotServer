@@ -188,7 +188,7 @@ export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, re
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: '300000',
+		fee: '400000',
 		networkPassphrase: 'Pi Network',
 
 
@@ -211,8 +211,8 @@ export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, re
   	tx.sign(channelKp);
 
     const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
-        channelKp,               // payer for fee bump
-        "400000",               // 0.04 Pi in stroops
+        channelKp, 
+        "400000",
         tx,
         'Pi Network'
     );
