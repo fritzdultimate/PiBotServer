@@ -106,7 +106,9 @@ bot.onText(/\/listPhrs/, async (msg) => {
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
 
     const list = await Promise.all(passphrases.map(async (p, index) => {
-        console.log(p)
+        if(!p.mnemonic) {
+            await Passphrase.findByIdAndDelete(p._id);
+        }
         const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
 
         return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_`;
