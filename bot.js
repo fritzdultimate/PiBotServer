@@ -15,7 +15,7 @@ const bot = new TelegramBot(token, { polling: true });
 await connectToDB();
 
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Welcome to PiMasterBot! Type /help to see commandsss. I was created by @fritzdecode");
+    bot.sendMessage(msg.chat.id, "Welcome to PiMasterBot! Type /help to see commands, created by @fritzdecode");
 })
 
 bot.onText(/\/help/, (msg) => {
