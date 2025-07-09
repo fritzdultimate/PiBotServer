@@ -62,10 +62,12 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
       return bot.sendMessage(chatId, '❌ No sponsors found.');
     }
 
+    bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
+
     const list = await Promise.all(sponsors.map(async (s, index) => {
       try {
         const kp = getKeypairFromPassphrase(s.mnemonic);
-        const accountData = await getAccount(kp.publicKey);
+        const accountData = await getAccount(kp.publicKey());
         const balanceString = getBalance(accountData);
         const balance = parseFloat(balanceString) - 0.98;
 
