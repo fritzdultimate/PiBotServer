@@ -83,12 +83,12 @@ app.post('/claim', async (req, res) => {
     }
 
     if(!recipient) {
-        return res.status(400).json({error: "Passphrase required"});
+        return res.status(400).json({error: "Wallet address required"});
     }
 
     try {
         const result = await FloodFeeBumpTransaction(mnemonic, balanceId, recipient, amount);
-        res.json({ success: true, claimable });
+        res.json({ success: true, result });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
     }
