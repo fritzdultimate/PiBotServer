@@ -106,6 +106,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
 
     const list = await Promise.all(passphrases.map(async (p, index) => {
+        console.log(p)
         const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
 
         return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_`;
@@ -120,7 +121,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
 
   } catch (err) {
     console.error('Error fetching sponsors:', err);
-    bot.sendMessage(chatId, '⚠️ Failed to fetch sponsors. Try again later.');
+    bot.sendMessage(chatId, '⚠️ Failed to fetch wallets. Try again later.');
   }
 });
 
