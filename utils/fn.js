@@ -793,7 +793,7 @@ export const autoSweepWallet = async () => {
 
 export const autoFundWallet = async () => {
 
-    const sponsorsPhrase = await Sponsors.find( {name: 'whoami-5677'} );
+    const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
 
     for (const p of sponsorsPhrase) {
         try {
