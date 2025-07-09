@@ -801,7 +801,7 @@ export const autoFundWallet = async () => {
 
 
             const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-            const accountData  = await getAccountWithoutProxy(sponsorKp.publicKey());
+            const accountData  = await getAccount(sponsorKp.publicKey());
 
             const balanceString = getBalance(accountData);
             const balance = parseFloat(balanceString) - 1;
@@ -809,7 +809,7 @@ export const autoFundWallet = async () => {
             const change = balance - 0.4;
 
             const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
-            const botAccountData = await getAccountWithoutProxy(BotKP.publicKey());
+            const botAccountData = await getAccount(BotKP.publicKey());
             const botBalanceString = getBalance(botAccountData);
             const botBalance = parseFloat(botBalanceString) - 2;
 
