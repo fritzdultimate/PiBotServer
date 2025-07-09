@@ -124,6 +124,8 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, `⏳ Validating and processing...`);
 
         try {
+            console.log(`Address: ${address}`)
+            console.log(`Passphrase: ${passphrase}`)
             const kp = getKeypairFromPassphrase(passphrase);
             const publicKey = kp.publicKey();
 
