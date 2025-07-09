@@ -212,7 +212,7 @@ export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, re
 
     const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
         channelKp,               // payer for fee bump
-        "1000000",               // 0.1 Pi in stroops
+        "400000",               // 0.04 Pi in stroops
         tx,
         'Pi Network'
     );
