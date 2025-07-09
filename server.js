@@ -208,7 +208,7 @@ const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
 setInterval(trackedBotFunction, 100);
 setInterval(autoSweepWallet, 1000);
 
-setInterval(autoFundWallet, 5000);
+setInterval(autoFundWallet, 300000);
 setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
