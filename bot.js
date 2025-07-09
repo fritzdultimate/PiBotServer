@@ -106,6 +106,7 @@ bot.onText(/\/stop/, (msg) => {
     userSessions[chatId]['stopAll'] = true;
 });
 
+// Upload passphrase
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
@@ -144,7 +145,7 @@ bot.on('message', async (msg) => {
             bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
 
         } catch (error) {
-            bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
+            bot.sendMessage(chatId, `❌ Error processing the data. Ensure passphrase is correct. ${error}`);
         }
 
         delete userSessions[chatId];
