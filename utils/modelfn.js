@@ -17,7 +17,7 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress)
 
         for (const record of records) {
             const claimant = record.claimants.find(
-                (c) => c.destination === publicKey
+                (c) => c.destination === derivedPublicKey
             );
 
             if (claimant) {
