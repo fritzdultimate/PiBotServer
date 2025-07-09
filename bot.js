@@ -147,6 +147,7 @@ bot.onText(/\/stop/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Stopping any running process');
 
+    userSessions[chatId] = {};
     userSessions[chatId]['stopAll'] = true;
 });
 
