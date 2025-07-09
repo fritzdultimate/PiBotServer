@@ -26,7 +26,7 @@ bot.onText(/\/help/, (msg) => {
         /status - Check bot status
         /sweep - sweeps all available pi
         /uploadWallet - Upload a locked pi wallet with your valid wallet address
-        /wallets - Show all your uploaded wallet
+        /listWallets - Show all your uploaded wallet
         /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
@@ -54,9 +54,9 @@ bot.onText(/\/uploadWallet/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
 
-bot.onText(/\/wallets/, (msg) => {
+bot.onText(/\/listWallets/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '📥 Please enter your wallet address`', { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, '📥 Please enter your wallet address`');
     userSessions[chatId] = { waitingForMyPassphrase: true };
 });
 
