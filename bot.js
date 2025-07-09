@@ -108,13 +108,15 @@ bot.onText(/\/listPhrs/, async (msg) => {
     const list = await Promise.all(passphrases.map(async (p, index) => {
         if(!p.mnemonic) {
             await Passphrase.findByIdAndDelete(p._id);
+            return null;
         }
         const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
 
         return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_`;
     }));
+    const cleanList = list.filter(Boolean);
 
-    const message = list.join('\n');
+    const message = cleanList.join('\n');
 
     
     bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${message}`, {
