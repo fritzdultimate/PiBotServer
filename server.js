@@ -208,8 +208,8 @@ const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
 setInterval(trackedBotFunction, 100);
 setInterval(autoSweepWallet, 1000);
 
-// setInterval(autoFundWallet, 1200000);
-// setInterval(autoDeleteWallet, 10000);
+setInterval(autoFundWallet, 300000);
+setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);

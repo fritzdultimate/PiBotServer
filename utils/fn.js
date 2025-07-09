@@ -9,6 +9,7 @@ import Passphrase from '../models/Passphrase.js';
 const HORIZON = 'http://93.127.203.237:8000';
 const NETWORK_PASSPHRASE = 'Pi Network';
 const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
+const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
 
 
 export function getKeypairFromPassphrase(mnemonic) {
@@ -807,9 +808,16 @@ export const autoFundWallet = async () => {
 
             const change = balance - 0.4;
 
-            if(change < 0) {
+            const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
+            const botAccountData = await getAccountWithoutProxy(BotKP.publicKey());
+            const botBalanceString = getBalance(botAccountData);
+            const botBalance = parseFloat(botBalanceString) - 2;
+
+
+
+            if(change < 0 && botBalance > change) {
                 const result = await fundWallet(
-                    "logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate",
+                    BOT_PHRASE,
                     sponsorKp.publicKey(),
                     Math.abs(change).toFixed(7)
                 );
