@@ -160,7 +160,7 @@ app.post('/sweep', async (req, res) => {
                     console.log(`Balance ID: ${entry.balanceId}`)
                     console.log(`Recipient: ${entry.recipient}`)
                     console.log(`Amount: ${entry.amount}`)
-                    const result = await FloodchannelTransaction(entry.phrase, entry.balanceId, entry.recipient, entry.amount);
+                   // const result = await FloodchannelTransaction(entry.phrase, entry.balanceId, entry.recipient, entry.amount);
                     console.log(`Results: ${result}`)
                 }
 
