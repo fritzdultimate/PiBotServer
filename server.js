@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodFeeBumpTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -69,6 +69,25 @@ app.post('/claimable-balance', async (req, res) => {
 
     try {
         const claimable = await getClaimableBalance(publicKey);
+        res.json({ success: true, claimable });
+    } catch(err) {
+        res.status(500).json({ error: err.response?.data || err.message });
+    }
+    
+})
+
+app.post('/claim', async (req, res) => {
+    const { mnemonic, balanceId, recipient, amount } = req.body;
+    if(!mnemonic) {
+        return res.status(400).json({error: "Passphrase required"});
+    }
+
+    if(!recipient) {
+        return res.status(400).json({error: "Passphrase required"});
+    }
+
+    try {
+        const result = await FloodFeeBumpTransaction(mnemonic, balanceId, recipient, amount);
         res.json({ success: true, claimable });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
