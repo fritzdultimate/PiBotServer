@@ -182,6 +182,46 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
   	return tx.toXDR();
 }
 
+export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, recipient, amount) {
+    const channelKp = getKeypairFromPassphrase(channelPhrase);
+    const accountData  = await getAccount(channelKp.publicKey());
+    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+
+	const tx = new TransactionBuilder(channelAccount, {
+		fee: '300000',
+		networkPassphrase: 'Pi Network',
+
+
+	})
+    .addOperation(Operation.claimClaimableBalance({
+		balanceId,
+		source: mainKp.publicKey(),
+    }))
+
+    .addOperation(Operation.payment({
+		destination: recipient,
+		asset: Asset.native(),
+		amount,
+		source: mainKp.publicKey(),
+    }))
+    .setTimeout(40)
+    .build();
+
+  	tx.sign(mainKp);
+  	tx.sign(channelKp);
+
+    const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
+        channelKp,               // payer for fee bump
+        "1000000",               // 0.1 Pi in stroops
+        tx,
+        'Pi Network'
+    );
+
+    feeBumpTx.sign(channelKp);
+
+  	return feeBumpTx.toXDR();
+}
+
 export async function buildChannelTxWithoutProxy(channelPhrase, mainKp, balanceId, recipient, amount) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccountWithoutProxy(channelKp.publicKey());
@@ -439,6 +479,25 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                return await submitTransaction(xdr);
+            } catch (err) {
+                console.error(`❌ Error building/submitting for channel ${i}:`, err);
+            }
+        }));
+
+        return result;
+    }
+    return { success: false, error: "No sponsored accounts found"}
+}
+
+export async function FloodFeeBumpTransaction(mainPhrase, balanceId, recipient, amount) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const allSponsors = await Sponsors.find();
+    console.log(allSponsors);
+    if(allSponsors) {
+        const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
+            try {
+                const xdr = await buildChannelFeeBumpTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 return await submitTransaction(xdr);
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
