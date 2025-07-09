@@ -71,7 +71,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
         const balanceString = getBalance(accountData);
         const balance = parseFloat(balanceString) - 0.98;
 
-        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: ${balance.toFixed(7)} PI`;
+        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: *${balance.toFixed(7)} PI*`;
       } catch (e) {
         return `${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`;
       }
