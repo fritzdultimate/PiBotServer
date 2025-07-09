@@ -70,8 +70,10 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
         const accountData = await getAccount(kp.publicKey());
         const balanceString = getBalance(accountData);
         const balance = parseFloat(balanceString) - 0.98;
+        
+        const phraseShort = `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`;
 
-        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: *${balance.toFixed(7)} PI*`;
+        return `${index + 1}. ${phraseShort || 'Unknown'} - *${balance.toFixed(7)} PI*`;
       } catch (e) {
         return `${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`;
       }
