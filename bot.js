@@ -62,17 +62,23 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
       return bot.sendMessage(chatId, '❌ No sponsors found.');
     }
 
-    // Format each sponsor entry
-    const list = sponsors.map(async(s, index) => {
+    const list = await Promise.all(sponsors.map(async (s, index) => {
+      try {
         const kp = getKeypairFromPassphrase(s.mnemonic);
         const accountData = await getAccount(kp.publicKey);
         const balanceString = getBalance(accountData);
         const balance = parseFloat(balanceString) - 0.98;
-        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: ${balance.toFixed(7)} PI`
-    }).join('\n');
 
-    // Send message
-    bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${list}`, {
+        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: ${balance.toFixed(7)} PI`;
+      } catch (e) {
+        return `${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`;
+      }
+    }));
+
+    const message = list.join('\n');
+
+    
+    bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${message}`, {
       parse_mode: 'Markdown',
     });
 
