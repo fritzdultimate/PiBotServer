@@ -25,8 +25,8 @@ bot.onText(/\/help/, (msg) => {
         /claim - Claim unlocked Pi
         /status - Check bot status
         /sweep - sweeps all available pi
-        /uploadPassphrase - Upload a locked pi wallet with your valid wallet address
-        /myPassphrases - Show all your uploaded wallet
+        /uploadWallet - Upload a locked pi wallet with your valid wallet address
+        /wallets - Show all your uploaded wallet
         /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
@@ -48,13 +48,13 @@ bot.onText(/\/sweep/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseForSweeping: true, stopAll: false }
 });
 
-bot.onText(/\/uploadPassphrase/, (msg) => {
+bot.onText(/\/uploadWallet/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by the wallet address.\n\nFormat:\n`word1 word2 ... word24 G...`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
 
-bot.onText(/\/myPassphrases/, (msg) => {
+bot.onText(/\/wallets/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please enter your wallet address`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForMyPassphrase: true };
