@@ -56,7 +56,7 @@ bot.onText(/\/uploadWallet/, (msg) => {
 
 bot.onText(/\/listWallets/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '📥 Please enter your wallet address`');
+    bot.sendMessage(chatId, '📥 Please enter your wallet address');
     userSessions[chatId] = { waitingForMyPassphrase: true };
 });
 
