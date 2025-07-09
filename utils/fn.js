@@ -648,7 +648,7 @@ export async function sweepWallet(mainPhrase, recipient) {
 
 export async function fundWallet(mainPhrase, recipient, amount) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    const accountData  = await getAccountWithoutProxy(mainKp.publicKey());
+    const accountData  = await getAccount(mainKp.publicKey());
     const account = new Account(mainKp.publicKey(), accountData.sequence);
 	const baseFee = parseFloat(await getBaseFee());
 
