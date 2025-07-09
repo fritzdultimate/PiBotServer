@@ -63,9 +63,13 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
     }
 
     // Format each sponsor entry
-    const list = sponsors.map((s, index) => 
-      `${index + 1}. ${s.username || s.name || 'Unknown'} - ${s.amount || 'N/A'}`
-    ).join('\n');
+    const list = sponsors.map(async(s, index) => {
+        const kp = getKeypairFromPassphrase(s.mnemonic);
+        const accountData = await getAccount(kp.publicKey);
+        const balanceString = getBalance(accountData);
+        const balance = parseFloat(balanceString) - 0.98;
+        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: ${balance.toFixed(7)}`
+    }).join('\n');
 
     // Send message
     bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${list}`, {
