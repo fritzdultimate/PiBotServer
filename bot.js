@@ -131,7 +131,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
     });
 
   } catch (err) {
-    console.error('Error fetching sponsors:', err);
+    console.error('Error fetching wallets:', err);
     bot.sendMessage(chatId, '⚠️ Failed to fetch wallets. Try again later.');
   }
 });
