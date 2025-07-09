@@ -68,7 +68,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
         const accountData = await getAccount(kp.publicKey);
         const balanceString = getBalance(accountData);
         const balance = parseFloat(balanceString) - 0.98;
-        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: ${balance.toFixed(7)}`
+        return `${index + 1}. ${s.username || s.name || 'Unknown'} - Balance: ${balance.toFixed(7)} PI`
     }).join('\n');
 
     // Send message
