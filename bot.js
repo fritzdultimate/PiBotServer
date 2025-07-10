@@ -273,6 +273,7 @@ bot.on('message', async (msg) => {
         if (!deleted) {
             return bot.sendMessage(chatId, `❌ Passphrase not found...`)
         }
+        delete userSessions[chatId];
         return bot.sendMessage(chatId, `✅ Passphrase deleted...`)
 
 
