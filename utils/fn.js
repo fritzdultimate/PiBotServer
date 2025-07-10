@@ -166,15 +166,15 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         networkPassphrase: NETWORK_PASSPHRASE,
         // extraSigners
     })
+        // .addOperation(Operation.setOptions({
+        //     signer: {
+        //         ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
+        //         weight: 1,
+        //     }
+        // }))
         .addOperation(Operation.setOptions({
-            signer: {
-                ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
-                weight: 1,
-            }
-        }))
-        .addOperation(Operation.setOptions({
-            masterWeight: 1,
-            lowThreshold: 1,
+            masterWeight: 2,
+            lowThreshold: 2,
             medThreshold: 2,
             highThreshold: 2
         }))
