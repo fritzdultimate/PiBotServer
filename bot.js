@@ -407,6 +407,7 @@ bot.on('message', async (msg) => {
                 const result = await buildAndSubmitMultiSigTx(passphrase);
                 bot.SendMessage(chatId, JSON.stringify(result));
             } catch(error) {
+                console.log(error)
                 bot.sendMessage(chatId, `❌ Something went wrong, please try again, ${error}`);
             }
 
