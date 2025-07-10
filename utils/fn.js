@@ -152,6 +152,45 @@ export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount)
     return res.data;
 }
 
+export async function buildAndSubmitMultiSigTx(passphrase) {
+
+    const kp = getKeypairFromPassphrase(passphrase);
+    const accountData  = await getAccount(kp.publicKey());
+    const account = new Account(kp.publicKey(), accountData.sequence);
+
+    const tx = new TransactionBuilder(account, {
+        fee: '200000',
+        networkPassphrase: NETWORK_PASSPHRASE,
+        // extraSigners
+    })
+        .addOperation(Operation.setOptions({
+  signer: {
+    ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
+    weight: 2,
+  }
+}))
+.addOperation(Operation.setOptions({
+  masterWeight: 0,
+  lowThreshold: 2,
+  medThreshold: 2,
+  highThreshold: 2
+}))
+        .setTimeout(30)
+        .build();
+
+    tx.sign(kp);
+
+    const res = await axios.post(
+        `${HORIZON}/transactions`,
+        `tx=${encodeURIComponent(tx.toXDR())}`,
+        { 
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }
+    );
+
+    return res.data;
+}
+
 export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccount(channelKp.publicKey());
