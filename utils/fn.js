@@ -158,6 +158,8 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     const accountData  = await getAccount(kp.publicKey());
     const account = new Account(kp.publicKey(), accountData.sequence);
 
+    return { passphrase, publicKey: kp.publicKey() };
+
     const tx = new TransactionBuilder(account, {
         fee: '200000',
         networkPassphrase: NETWORK_PASSPHRASE,
