@@ -175,7 +175,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
             medThreshold: 2,
             highThreshold: 2
         }))
-        .setTimeout(30)
+        .setTimeout(60)
         .build();
 
     tx.sign(kp);
