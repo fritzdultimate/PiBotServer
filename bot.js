@@ -46,6 +46,13 @@ bot.onText(/\/balance/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseForBalance: true }
 });
 
+bot.onText(/\/multisig/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space)');
+
+    userSessions[chatId] = { waitingForMultiSig: true }
+});
+
 bot.onText(/\/sweep/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space) to start sweeping');
