@@ -271,7 +271,7 @@ bot.on('message', async (msg) => {
             bot.sendMessage(chatId, `✅ Public Key: ${kp.publicKey()}`)
 
         if (!deleted) {
-            return bot.sendMessage(chatId, `❌ Passphrase found...`)
+            return bot.sendMessage(chatId, `❌ Passphrase not found...`)
         }
         return bot.sendMessage(chatId, `✅ Passphrase deleted...`)
 
