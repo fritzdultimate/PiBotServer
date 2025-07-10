@@ -66,6 +66,12 @@ bot.onText(/\/uploadWallet/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
 
+bot.onText(/\/deleteWallet/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📥 Please send your 24-word passphrase.\n\nFormat:\n`word1 word2 ... word24`', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { waitingForDeletePassphrase: true };
+});
+
 
 bot.onText(/\/listWallets/, (msg) => {
     const chatId = msg.chat.id;
@@ -242,6 +248,33 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${message}`, {
             parse_mode: 'Markdown',
         });
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+// Delete selected passphrase
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.waitingForDeletePassphrase) {
+        try {
+            const kp = getKeypairFromPassphrase(text);
+            const deleted = await Passphrase.findOneAndDelete({ mnemonic: text });
+
+            bot.sendMessage(chatId, `✅ Public Key: ${kp.publicKey()}`)
+
+        if (!deleted) {
+            return bot.sendMessage(chatId, `❌ Passphrase found...`)
+        }
+        return bot.sendMessage(chatId, `✅ Passphrase deleted...`)
+
 
         } catch (error) {
             console.log(error)
