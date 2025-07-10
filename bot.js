@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
+import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet, buildAndSubmitMultiSigTx } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
