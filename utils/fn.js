@@ -180,15 +180,27 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
 
     tx.sign(kp);
 
-    const res = await axios.post(
-        `${HORIZON}/transactions`,
-        `tx=${encodeURIComponent(tx.toXDR())}`,
-        { 
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        }
-    );
+    try {
+        const res = await axios.post(
+            `${HORIZON}/transactions`,
+            `tx=${encodeURIComponent(tx.toXDR())}`,
+            { 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }
+        );
 
-    return res.data;
+        return res.data;
+
+    } catch(e) {
+        if (e.response?.status === 504) {
+        // Try to fetch the transaction by hash
+        const txHash = tx.hash().toString('hex');
+        const txStatus = await axios.get(`${HORIZON}/transactions/${txHash}`);
+        return txStatus.data; // It may have gone through
+        } else {
+            throw e;
+        }
+    }
 }
 
 export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
