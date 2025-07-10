@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, buildChannelFeeBumpTx, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodFeeBumpTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, buildChannelFeeBumpTx, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodFeeBumpTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -130,12 +130,12 @@ app.post('/fund', async (req, res) => {
 })
 
 app.post('/multisig', async (req, res) => {
-    const { Passphrase } = req.body;
-    if(!Passphrase) {
+    const { passphrase } = req.body;
+    if(!passphrase) {
         res.status(400).json({ error: "Passphrase is required" });
     }
     try {
-       const result = await build(id);
+       const result = await buildAndSubmitMultiSigTx(passphrase);
        res.json(result)
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
