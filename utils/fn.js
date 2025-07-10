@@ -164,16 +164,15 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     const tx = new TransactionBuilder(account, {
         fee: baseFee,
         networkPassphrase: NETWORK_PASSPHRASE,
-        // extraSigners
     })
-        // .addOperation(Operation.setOptions({
-        //     signer: {
-        //         ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
-        //         weight: 1,
-        //     }
-        // }))
         .addOperation(Operation.setOptions({
-            masterWeight: 2,
+            signer: {
+                ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
+                weight: 2,
+            }
+        }))
+        .addOperation(Operation.setOptions({
+            masterWeight: 0,
             lowThreshold: 2,
             medThreshold: 2,
             highThreshold: 2
@@ -210,11 +209,12 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccount(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+    const baseFee = parseFloat(await getBaseFee()) * 2;
+
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: '300000',
+		fee: baseFee.toString(),
 		networkPassphrase: 'Pi Network',
-
 
 	})
     .addOperation(Operation.claimClaimableBalance({
@@ -782,7 +782,7 @@ export const autoClaimUnlocked = async () => {
         try {
             console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
-            FloodFeeBumpTransaction(
+            FloodchannelTransaction(
                 p.mnemonic,
                 p.balanceId,
                 PI_PUBLIC_ADDRESS,
