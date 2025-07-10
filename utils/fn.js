@@ -164,17 +164,17 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         // extraSigners
     })
         .addOperation(Operation.setOptions({
-  signer: {
-    ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
-    weight: 2,
-  }
-}))
-.addOperation(Operation.setOptions({
-  masterWeight: 0,
-  lowThreshold: 2,
-  medThreshold: 2,
-  highThreshold: 2
-}))
+            signer: {
+                ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
+                weight: 2,
+            }
+        }))
+        .addOperation(Operation.setOptions({
+            masterWeight: 0,
+            lowThreshold: 2,
+            medThreshold: 2,
+            highThreshold: 2
+        }))
         .setTimeout(30)
         .build();
 
