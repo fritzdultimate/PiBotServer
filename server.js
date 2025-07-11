@@ -85,7 +85,7 @@ app.post('/claim', async (req, res) => {
     }
 
     try {
-        const result = await FloodChannelManualSequence(mnemonic, balanceId, recipient, amount);
+        const result = await FloodchannelTransaction(mnemonic, balanceId, recipient, amount);
         res.json({ success: true, result });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });

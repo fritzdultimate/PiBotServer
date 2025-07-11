@@ -232,6 +232,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
+    .addMemo(Memo.text('PiClaim'))
     .setTimeout(20)
     .build();
 
