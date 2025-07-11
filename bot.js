@@ -25,6 +25,7 @@ bot.onText(/\/help/, (msg) => {
         📘 PiBot Commands:
         /balance - Show Pi balance
         /claim - Claim unlocked Pi
+        /search - Check if a wallet exists
         /sweep - sweeps all available pi
         /uploadWallet - Upload a locked pi wallet with your valid wallet address
         /listWallets - Show all your uploaded wallet
@@ -38,6 +39,13 @@ const userSessions = {};
 bot.onText(/\/claim/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Not available on *demo*', { parse_mode: 'Markdown' });
+});
+
+bot.onText(/\/search/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Please send the wallet pulic key starting with *G*', { parse_mode: 'Markdown' });
+
+    userSessions[chatId] = { SearchingForWallet: true }
 });
 
 bot.onText(/\/balance/, (msg) => {
@@ -248,6 +256,38 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${message}`, {
             parse_mode: 'Markdown',
         });
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+// Search for wallet
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.SearchingForWallet) {
+        try {
+            const passphrases = await Passphrase.find();
+
+        if (passphrases.length === 0) {
+            return bot.sendMessage(chatId, '❌ No wallet found.');
+        }
+
+        const existing = passphrases.find(phrase => {
+            const kp = getKeypairFromPassphrase(phrase.mnemonic);
+            return kp.publicKey() === text;
+        });
+
+        if(existing) {
+            return bot.sendMessage(chatId, `✅ Matching wallet for public key with locked ${existing.amount} PI found.`);
+        }
+        return bot.sendMessage(chatId, `❌ No matching wallet found.`);
 
         } catch (error) {
             console.log(error)
