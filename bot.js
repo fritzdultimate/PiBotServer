@@ -285,9 +285,12 @@ bot.on('message', async (msg) => {
         });
 
         if(existing) {
-            bot.sendMessage(chatId, `✅ Matching wallet for public key with locked ${existing.amount} PI found.`);
+            delete userSessions[chatId];
+            return bot.sendMessage(chatId, `✅ Matching wallet for public key with locked ${existing.amount} PI found.`);
+            
         }
-        bot.sendMessage(chatId, `❌ No matching wallet found.`);
+        delete userSessions[chatId];
+        return bot.sendMessage(chatId, `❌ No matching wallet found.`);
 
         } catch (error) {
             console.log(error)
