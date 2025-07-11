@@ -131,12 +131,13 @@ bot.onText(/\/listPhrs/, async (msg) => {
             await Passphrase.findByIdAndDelete(p._id);
             return null;
         }
+        const kp = getKeypairFromPassphrase(p.mnemonic);
         const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
         const baseMsg = `${index + 1}. ${phraseShort || 'Unknown'} --_${p.status}_`;
         if(!p.claimableAt) {
-            return baseMsg + '\n\n';
+            return baseMsg + `\n ✅ PubKey: ${kp.publicKey()}` + '\n\n';
         }
-        return  `${baseMsg}\n Locked coin: *${p.amount} PI*, Time *${formatReadableTimeString(p.claimableAt)} (${timeAgoOrInString(p.claimableAt)})*\n\n`;
+        return  `${baseMsg}\n Locked coin: *${p.amount} PI*, Time *${formatReadableTimeString(p.claimableAt)} (${timeAgoOrInString(p.claimableAt)})*\n ✅ PubKey: ${kp.publicKey()} \n\n`;
     }));
     const cleanList = list.filter(Boolean);
 
