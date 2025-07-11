@@ -287,7 +287,7 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
         let currentSeq = BigInt(accountData.sequence);
         console.log(`Current Sequence: ${accountData.sequence}`)
 
-        const numTx = 4;
+        const numTx = 1;
 
         for (let i = 0; i < numTx; i++) {
             const seq = (currentSeq + BigInt(i + 1)).toString();
@@ -906,7 +906,7 @@ const sweepWithLogs = async (p) => {
             // console.log(`❌ Failed to sweep for ${p.receiverAddress}`);
         }
     } catch (err) {
-        console.error('❌ Error sweeping Pi:', err.message || err);
+        // console.error('❌ Error sweeping Pi:', err.message || err);
     }
 };
 
@@ -1125,7 +1125,7 @@ export function trackFunctionCalls(fn) {
 
   // Log and reset count every minute
   setInterval(() => {
-    console.log(`Function "${fn.name}" was called ${count} times in the last second.`);
+    // console.log(`Function "${fn.name}" was called ${count} times in the last second.`);
     count = 0;
   }, 1000); // 60,000 ms = 1 minute
 
