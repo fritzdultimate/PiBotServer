@@ -731,45 +731,53 @@ export async function sweepWallet(mainPhrase, recipient) {
 
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccountWithoutProxy(mainKp.publicKey());
-    const account = new Account(mainKp.publicKey(), accountData.sequence);
 
-	const balanceString = getBalance(accountData);
-	const baseFee = parseFloat(await getBaseFee());
+    for (const i = 0; i <= 5; i++) {
+        const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
+        const account = new Account(mainKp.publicKey(), seq);
+        const balanceString = getBalance(accountData);
+        const baseFee = parseFloat(await getBaseFee());
 
-	const onePiInStroops = 10_000_000;
-	const balance = parseFloat(balanceString);
-	const txCharge = baseFee/onePiInStroops;
-	const baseReserve = 0.5;
-	const minReserve = 0.98;
-	const withdrawable = Math.abs(balance - minReserve - txCharge);
+        const onePiInStroops = 10_000_000;
+        const balance = parseFloat(balanceString);
+        const txCharge = baseFee/onePiInStroops;
+        const baseReserve = 0.5;
+        const minReserve = 0.98;
+        const withdrawable = Math.abs(balance - minReserve - txCharge);
 
-    if(balance - minReserve - txCharge <= 0) {
-        return;
-    }
-
-    const tx = new TransactionBuilder(account, {
-        fee: baseFee.toString(),
-        networkPassphrase: NETWORK_PASSPHRASE,
-    })
-        .addOperation(Operation.payment({
-            destination: recipient,
-            asset: Asset.native(),
-            amount: withdrawable.toFixed(7),
-        }))
-        .setTimeout(30)
-        .build();
-
-    tx.sign(mainKp);
-	
-    const res = await axios.post(
-        `${HORIZON}/transactions`,
-        `tx=${encodeURIComponent(tx.toXDR())}`,
-        { 
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        if(balance - minReserve - txCharge <= 0) {
+            return;
         }
-    );
 
-    return {data: res.data, amount: withdrawable.toFixed(7)};
+        const tx = new TransactionBuilder(account, {
+            fee: baseFee.toString(),
+            networkPassphrase: NETWORK_PASSPHRASE,
+        })
+            .addOperation(Operation.payment({
+                destination: recipient,
+                asset: Asset.native(),
+                amount: withdrawable.toFixed(7),
+            }))
+            .setTimeout(30)
+            .build();
+
+        tx.sign(mainKp);
+        
+        const res = await axios.post(
+            `${HORIZON}/transactions`,
+            `tx=${encodeURIComponent(tx.toXDR())}`,
+            { 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            }
+        );
+
+        if(res.data.hash) {
+            return {data: res.data, amount: withdrawable.toFixed(7)};
+        }
+    }
+	
+
+    return {data: { error: "No Pi sweeped" }, amount: 0.000};
 }
 
 export async function fundWallet(mainPhrase, recipient, amount) {
