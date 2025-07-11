@@ -203,6 +203,7 @@ bot.on('message', async (msg) => {
             bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
 
         } catch (error) {
+            console.log(error)
             bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
         }
 
