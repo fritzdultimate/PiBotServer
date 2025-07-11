@@ -291,6 +291,7 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
 
         for (let i = 0; i < numTx; i++) {
             const seq = (currentSeq + BigInt(i + 1)).toString();
+            console.log(`Using Sequence: ${seq}`)
             try {
                 const xdr = await buildManualSequenceTx(channelKp, mainKp, seq, balanceId, recipient, amount);
                 allTxs.push(xdr);
