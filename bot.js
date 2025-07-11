@@ -153,7 +153,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
     const message = cleanList.join('\n');
 
     const chunks = splitMessage(message);
-
+    console.log(chunks)
     for (const chunk of chunks) {
         bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${chunk}`, {
             parse_mode: 'Markdown',
