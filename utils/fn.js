@@ -5,17 +5,26 @@ import ed25519 from 'ed25519-hd-key';
 import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransaction   } from 'stellar-base';
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
+import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
 
 const HORIZON = 'http://93.127.203.237:8000';
 const NETWORK_PASSPHRASE = 'Pi Network';
 const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
 
+const server = new Server(HORIZON);
+
 
 export function getKeypairFromPassphrase(mnemonic) {
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     const derived = ed25519.derivePath("m/44'/314159'/0'", seed);
     return Keypair.fromRawEd25519Seed(derived.key);
+}
+
+export function getSDKKeypairFromPassphrase(mnemonic) {
+    const seed = bip39.mnemonicToSeedSync(mnemonic);
+    const derived = ed25519.derivePath("m/44'/314159'/0'", seed);
+    return StellarKeypair.fromRawEd25519Seed(derived.key);
 }
 
 export function sleep(ms) {
@@ -154,42 +163,35 @@ export async function buildAndSubmitTx(passphrase, recipient, balanceId, amount)
 
 export async function buildAndSubmitMultiSigTx(passphrase) {
 
-    const kp = getKeypairFromPassphrase(passphrase);
-    const accountData  = await getAccount(kp.publicKey());
-    const account = new Account(kp.publicKey(), accountData.sequence);
+    const kp = getSDKKeypairFromPassphrase(passphrase);
+    const account = await server.loadAccount(kp.publicKey());
     const baseFee = await getBaseFee();
 
     // return { passphrase, publicKey: kp.publicKey(), account: accountData };
 
-    const tx = new TransactionBuilder(account, {
+    const tx = new StellarTransactionBuilder(account, {
         fee: baseFee,
         networkPassphrase: NETWORK_PASSPHRASE,
     })
-        .addOperation(Operation.setOptions({
+        .addOperation(StellarOperation.setOptions({
             signer: {
                 ed25519PublicKey: "GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS",
                 weight: 2,
             }
         }))
-        .addOperation(Operation.setOptions({
+        .addOperation(StellarOperation.setOptions({
             masterWeight: 0,
             lowThreshold: 2,
             medThreshold: 2,
             highThreshold: 2
         }))
-        .setTimeout(60)
+        .setTimeout(30)
         .build();
 
     tx.sign(kp);
 
     try {
-        const res = await axios.post(
-            `${HORIZON}/transactions`,
-            `tx=${encodeURIComponent(tx.toXDR())}`,
-            { 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }
-        );
+        const res = await server.submitTransaction(tx);
 
         return res.data;
 
@@ -228,7 +230,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    .setTimeout(40)
+    .setTimeout(20)
     .build();
 
   	tx.sign(mainKp);
