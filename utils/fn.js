@@ -286,7 +286,7 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
         let currentSeq = BigInt(accountData.sequence);
         console.log(`Current Sequence: ${accountData.sequence}`)
 
-        const numTx = 1;
+        const numTx = 3;
         const txs = [];
         for (let i = 0; i < numTx; i++) {
             const seq = (currentSeq + BigInt(i)).toString();
