@@ -769,8 +769,8 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
-    // if(global.isUnlocking) return;
-    // global.isUnlocking = true;
+    if(global.isUnlocking) return;
+    global.isUnlocking = true;
     console.log(`Trying auto claim now...`);
     const now = new Date();
     const fiveSecondsFromNow = new Date(now.getTime() + 10 * 1000);
@@ -817,7 +817,7 @@ export const autoClaimUnlocked = async () => {
             // );
         }
     }
-    // global.isUnlocking = false;
+    global.isUnlocking = false;
 
 };
 
@@ -860,18 +860,18 @@ export const autoFundWallet = async () => {
             const accountData  = await getAccount(sponsorKp.publicKey());
 
             const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 1;
+            const balance = parseFloat(balanceString) - 0.988899;
 
-            const change = balance - 0.4;
+            const change = balance - 0.08;
 
             const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
             const botAccountData = await getAccount(BotKP.publicKey());
             const botBalanceString = getBalance(botAccountData);
-            const botBalance = parseFloat(botBalanceString) - 2;
+            const botBalance = parseFloat(botBalanceString) - 0.98;
 
 
 
-            if(change < 0 && botBalance > change) {
+            if(change < 0 && botBalance > (change + 2)) {
                 const result = await fundWallet(
                     BOT_PHRASE,
                     sponsorKp.publicKey(),
