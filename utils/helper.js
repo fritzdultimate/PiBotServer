@@ -41,3 +41,20 @@ export function timeAgoOrInString(timeStr) {
 
     return 'just now';
 }
+
+export function splitMessage(message, maxLength = 4096) {
+    const result = [];
+    let current = '';
+
+    for (const line of message.split('\n')) {
+        if ((current + line).length > maxLength) {
+            result.push(current);
+            current = '';
+        }
+        current += line + '\n';
+    }
+
+    if (current) result.push(current);
+    return result;
+}
+

