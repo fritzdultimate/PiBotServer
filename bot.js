@@ -132,6 +132,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
       return bot.sendMessage(chatId, '❌ No wallet found.');
     }
 
+    console.log(`Listing your wallets...`);
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
 
     const list = await Promise.all(passphrases.map(async (p, index) => {
