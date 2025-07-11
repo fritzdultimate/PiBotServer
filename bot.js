@@ -286,7 +286,8 @@ bot.on('message', async (msg) => {
 
         if(existing) {
             delete userSessions[chatId];
-            return bot.sendMessage(chatId, `✅ Matching wallet for public key with locked ${existing.amount} PI found.`);
+            const lockedPi = existing.amount ? `locked ${existing.amount} PI` : 'No locked PI'
+            return bot.sendMessage(chatId, `✅ Matching wallet for public key with ${lockedPi} found.`);
             
         }
         delete userSessions[chatId];
