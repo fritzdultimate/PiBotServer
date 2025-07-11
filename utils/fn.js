@@ -300,8 +300,6 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
         }
     }
 
-    console.log(allTxs.length);
-
     // const limit = pLimit(30)
     const results = await Promise.all(
         // allTxs.map(xdr => limit(() => submitTransaction(xdr)))
@@ -559,7 +557,6 @@ export async function submitTransaction(txXdr) {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             }
         );
-        console.log(res.data)
         return res.data;
     } catch (err) {
         console.log('❌ Client error submitting TX:', err);
