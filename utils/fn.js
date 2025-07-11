@@ -285,6 +285,7 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
         const accountData  = await getAccount(channelKp.publicKey());
 
         let currentSeq = BigInt(accountData.sequence);
+        console.log(`Current Sequence: ${accountData.sequence}`)
 
         const numTx = 4;
 
@@ -298,6 +299,8 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
             }
         }
     }
+
+    console.log(allTxs.length);
 
     const limit = pLimit(30)
     const results = await Promise.all(
