@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccount, getAccountWithoutProxy, getBalance, getKeypairFromPassphrase, sleep, sweepWallet, buildAndSubmitMultiSigTx } from "./utils/fn.js";
+import { getAccount, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
@@ -345,7 +345,7 @@ bot.on('message', async (msg) => {
                 bot.sendMessage(chatId, `✅ Sender: ${kp.publicKey()}`);
                 bot.sendMessage(chatId, `✅ Receiver: GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS`);
 
-                const accountData = await getAccountWithoutProxy(kp.publicKey());
+                const accountData = await getAccount(kp.publicKey());
                 const balanceString = getBalance(accountData);
                 const balance = parseFloat(balanceString) - 0.98;
 
@@ -381,7 +381,7 @@ bot.on('message', async (msg) => {
 
             if(words.length === 1) {
                 bot.sendMessage(chatId, '⏳ Checking validity of the address');
-                const accountData = await getAccountWithoutProxy(passphrase.toUpperCase());
+                const accountData = await getAccount(passphrase.toUpperCase());
                 if(!accountData.balances) {
                     return bot.sendMessage(chatId, '❌ Invalid wallet. Please send address starting with G....');
                 } else {
@@ -401,7 +401,7 @@ bot.on('message', async (msg) => {
                 const kp = getKeypairFromPassphrase(passphrase)
                 bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
 
-                const accountData = await getAccountWithoutProxy(kp.publicKey());
+                const accountData = await getAccount(kp.publicKey());
                 const balanceString = getBalance(accountData);
                 const balance = parseFloat(balanceString) - 0.98;
                 bot.sendMessage(chatId, `✅ Balance: ${balance.toFixed(7)} PI`);
