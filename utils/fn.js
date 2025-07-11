@@ -278,7 +278,6 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
     }
 
     let allTxs = [];
-
     for (const sponsor of sponsors) {
         const channelKp = getKeypairFromPassphrase(sponsor.mnemonic);
 
@@ -288,26 +287,37 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
         console.log(`Current Sequence: ${accountData.sequence}`)
 
         const numTx = 1;
-
+        const txs = [];
         for (let i = 0; i < numTx; i++) {
             const seq = (currentSeq + BigInt(i)).toString();
             console.log(`Using Sequence: ${seq}`)
             try {
                 const xdr = await buildManualSequenceTx(channelKp, mainKp, seq, balanceId, recipient, amount);
-                allTxs.push(xdr);
+                // allTxs.push(xdr);
+                txs.push(xdr);
             } catch (err) {
                 console.error(`❌ Error building TX for sponsor ${sponsor.mnemonic.slice(0, 5)}...:`, err.message);
             }
         }
+        allTxs.push(txs);
+    }
+    const allResults = [];
+
+    for(const txs of allTxs) {
+        const results = await Promise.all(
+            txs.map(xdr => submitTransaction(xdr))
+        );
+        allResults.push(results);
+        sleep(500);
     }
 
     // const limit = pLimit(30)
-    const results = await Promise.all(
-        // allTxs.map(xdr => limit(() => submitTransaction(xdr)))
-        allTxs.map(xdr => submitTransaction(xdr))
-    );
+    // const results = await Promise.all(
+    //     allTxs.map(xdr => limit(() => submitTransaction(xdr)))
+    //     allTxs.map(xdr => submitTransaction(xdr))
+    // );
 
-    return results;
+    return allResults;
 }
 
 export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, recipient, amount) {
