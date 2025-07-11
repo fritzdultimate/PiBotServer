@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, buildChannelFeeBumpTx, ClaimPi, ClaimPiWithoutProxy, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodFeeBumpTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, buildChannelFeeBumpTx, ClaimPi, ClaimPiWithoutProxy, FloodChannelManualSequence, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodFeeBumpTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -85,7 +85,7 @@ app.post('/claim', async (req, res) => {
     }
 
     try {
-        const result = await FloodFeeBumpTransaction(mnemonic, balanceId, recipient, amount);
+        const result = await FloodChannelManualSequence(mnemonic, balanceId, recipient, amount);
         res.json({ success: true, result });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
