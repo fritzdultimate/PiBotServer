@@ -13,3 +13,31 @@ export function formatReadableTimeString(timeStr) {
         hour12: true,
     });
 }
+
+export function timeAgoOrInString(timeStr) {
+    const date = new Date(timeStr);
+    if (isNaN(date)) return 'Invalid date';
+
+    const now = Date.now();
+    const diff = Math.floor((date.getTime() - now) / 1000); // future is positive, past is negative
+    const absDiff = Math.abs(diff);
+
+    const intervals = [
+        { label: 'year', seconds: 31536000 },
+        { label: 'month', seconds: 2592000 },
+        { label: 'day', seconds: 86400 },
+        { label: 'hour', seconds: 3600 },
+        { label: 'minute', seconds: 60 },
+        { label: 'second', seconds: 1 },
+    ];
+
+    for (const { label, seconds } of intervals) {
+        const count = Math.floor(absDiff / seconds);
+        if (count >= 1) {
+            const timeStr = `${count} ${label}${count > 1 ? 's' : ''}`;
+            return diff > 0 ? `in ${timeStr}` : `${timeStr} ago`;
+        }
+    }
+
+    return 'just now';
+}
