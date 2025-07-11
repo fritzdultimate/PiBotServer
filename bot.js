@@ -86,10 +86,10 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
   const chatId = msg.chat.id;
 
   try {
-    const sponsors = await Sponsors.find(); // assuming this is a Mongoose model
+    const sponsors = await Sponsors.find();
 
     if (sponsors.length === 0) {
-      return bot.sendMessage(chatId, '❌ No sponsors found.');
+        return bot.sendMessage(chatId, '❌ No sponsors found.');
     }
 
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
@@ -105,6 +105,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
 
         return `${index + 1}. ${phraseShort || 'Unknown'} - *${balance.toFixed(7)} PI*`;
       } catch (e) {
+        console.log(e)
         return `${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`;
       }
     }));
