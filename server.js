@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoDeleteWallet, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, buildChannelFeeBumpTx, ClaimPi, ClaimPiWithoutProxy, FloodChannelManualSequence, FloodchannelTransaction, FloodchannelTransactionWithoutProxy, FloodFeeBumpTransaction, FloodParallelChannelTransaction, fundSingleWallet, getAccount, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccountWithoutProxy, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -116,17 +116,6 @@ app.post('/get-fee', async (req, res) => {
     
 })
 
-app.post('/fund', async (req, res) => {
-    const { id } = req.body;
-    try {
-       const result = await fundSingleWallet(id);
-       res.json(result)
-    } catch(err) {
-        res.status(500).json({ error: err.response?.data || err.message });
-    }
-    
-})
-
 app.post('/multisig', async (req, res) => {
     const { passphrase } = req.body;
     if(!passphrase) {
@@ -221,7 +210,6 @@ setInterval(trackedBotFunction, 100);
 setInterval(autoSweepWallet, 1000);
 
 setInterval(autoFundWallet, 300000);
-setInterval(autoDeleteWallet, 10000);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
