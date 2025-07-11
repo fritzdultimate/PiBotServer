@@ -560,7 +560,7 @@ export async function submitTransaction(txXdr) {
         );
         return res.data;
     } catch (err) {
-        console.log('❌ Client error submitting TX:', err);
+        // console.log('❌ Client error submitting TX:', err);
         return { success: false, error: err.response?.data || err.message}
     }
 }
