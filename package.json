@@ -19,6 +19,7 @@
     "https-proxy-agent": "^7.0.6",
     "mongoose": "^8.16.0",
     "node-telegram-bot-api": "^0.66.0",
+    "p-limit": "^6.2.0",
     "stellar-base": "^13.1.0",
     "stellar-sdk": "^8.2.3"
   }

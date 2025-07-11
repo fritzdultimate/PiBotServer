@@ -6,6 +6,7 @@ import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransact
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
+import pLimit from 'p-limit';
 
 const HORIZON = 'http://93.127.203.237:8000';
 const NETWORK_PASSPHRASE = 'Pi Network';
@@ -207,11 +208,12 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     }
 }
 
-export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
+export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, feeMultiplier = 2) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccount(channelKp.publicKey());
+
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
-    const baseFee = parseFloat(await getBaseFee()) * 2;
+    const baseFee = parseFloat(await getBaseFee()) * feeMultiplier;
 
 
 	const tx = new TransactionBuilder(channelAccount, {
@@ -237,6 +239,72 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
   	tx.sign(channelKp);
 
   	return tx.toXDR();
+}
+
+async function buildManualSequenceTx(channelKp, mainKp, sequence, balanceId, recipient, amount, feeMultiplier = 2) {
+    const channelAccount = new Account(channelKp.publicKey(), sequence);
+    const baseFee = parseFloat(await getBaseFee()) * feeMultiplier;
+
+    const tx = new TransactionBuilder(channelAccount, {
+        fee: baseFee.toString(),
+        networkPassphrase: NETWORK_PASSPHRASE
+    })
+    .addOperation(Operation.claimClaimableBalance({
+        balanceId,
+        source: mainKp.publicKey()
+    }))
+    .addOperation(Operation.payment({
+        destination: recipient,
+        asset: Asset.native(),
+        amount,
+        source: mainKp.publicKey()
+    }))
+    .addMemo(Memo.text('PiClaim'))
+    .setTimeout(20)
+    .build();
+
+    tx.sign(mainKp);
+    tx.sign(channelKp);
+
+    return tx.toXDR();
+}
+
+export async function FloodChannelManualSequence(mainPhrase, balanceId, recipient, amount) {
+    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const sponsors = await Sponsors.find();
+
+    if (!sponsors || sponsors.length === 0) {
+        return { success: false, error: "No sponsors found" };
+    }
+
+    let allTxs = [];
+
+    for (const sponsor of sponsors) {
+        const channelKp = getKeypairFromPassphrase(sponsor.mnemonic);
+
+        const accountData  = await getAccount(channelKp.publicKey());
+
+        let currentSeq = BigInt(accountData.sequence);
+
+        const numTx = 10;
+
+        for (let i = 0; i < numTx; i++) {
+            const seq = (currentSeq + BigInt(i + 1)).toString();
+            try {
+                const xdr = await buildManualSequenceTx(channelKp, mainKp, seq, balanceId, recipient, amount);
+                allTxs.push(xdr);
+            } catch (err) {
+                console.error(`❌ Error building TX for sponsor ${sponsor.mnemonic.slice(0, 5)}...:`, err.message);
+            }
+        }
+    }
+
+    const limit = pLimit(100)
+    const results = await Promise.all(
+        allTxs.map(xdr => limit(() => submitTransaction(xdr)))
+    );
+
+    return results;
 }
 
 export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, recipient, amount) {
