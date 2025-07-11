@@ -2,7 +2,7 @@ import axios from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import bip39 from 'bip39';
 import ed25519 from 'ed25519-hd-key';
-import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransaction   } from 'stellar-base';
+import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransaction, Memo   } from 'stellar-base';
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
