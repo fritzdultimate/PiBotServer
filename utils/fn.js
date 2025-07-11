@@ -12,7 +12,7 @@ const NETWORK_PASSPHRASE = 'Pi Network';
 const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
 
-const server = new Server(HORIZON);
+const server = new Server(HORIZON, { allowHttp: true });
 
 
 export function getKeypairFromPassphrase(mnemonic) {
