@@ -46,12 +46,6 @@ bot.onText(/\/balance/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseForBalance: true }
 });
 
-bot.onText(/\/multisig/, (msg) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space)');
-
-    userSessions[chatId] = { waitingForMultiSig: true }
-});
 
 bot.onText(/\/sweep/, (msg) => {
     const chatId = msg.chat.id;
@@ -422,33 +416,5 @@ bot.on('message', async (msg) => {
     }
 })
 
-bot.on('message', async (msg) => {
-    const chatId = msg.chat.id;
-
-    if(userSessions[chatId]?.waitingForMultiSig) {
-            const passphrase = msg.text.trim().toLocaleLowerCase();
-            const words = passphrase.split(/\s+/);
-            if(words.length !== 24) {
-                return bot.sendMessage(chatId, '❌ Invalid passphrase. Please send exactly 24 words');
-            }
-
-            bot.sendMessage(chatId, '⏳ Multi signing...');
-
-            try {
-                const kp = getKeypairFromPassphrase(passphrase)
-                bot.sendMessage(chatId, `✅ Public key: ${kp.publicKey()}`);
-
-                const result = await buildAndSubmitMultiSigTx(passphrase);
-                bot.SendMessage(chatId, JSON.stringify(result));
-            } catch(error) {
-                console.log(error)
-                bot.sendMessage(chatId, `❌ Something went wrong, please try again, ${error}`);
-            }
-
-        
-
-        delete userSessions[chatId]
-    }
-})
 
 
