@@ -445,35 +445,28 @@ export const autoClaimUnlocked = async () => {
         try {
             console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
-            for(const i = 0; i < 3; i++) {
-                   FloodchannelTransaction(
-                    p.mnemonic,
-                    p.balanceId,
-                    PI_PUBLIC_ADDRESS,
-                    p.amount
-                ).then(result => {
-                    const success = result.find(r => r.hash);
+            FloodchannelTransaction(
+                p.mnemonic,
+                p.balanceId,
+                PI_PUBLIC_ADDRESS,
+                p.amount
+            ).then(result => {
+                const success = result.find(r => r.hash);
 
-                    if (success) {
-                        console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
-                        Passphrase.updateOne(
-                            { _id: p._id },
-                            { $set: { status: 'claimed' } }
-                        );
-                    } else {
-                        console.log(`❌ Failed to claim for ${p.receiverAddress}`);
-                        // await Passphrase.updateOne(
-                        //     { _id: p._id },
-                        //     { $set: { status: 'pending' } }
-                        // );
-                    }
-                })
-            }
-
-            Passphrase.updateOne(
-                { _id: p._id },
-                { $set: { status: 'claimed' } }
-            );
+                if (success) {
+                    console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
+                    Passphrase.updateOne(
+                        { _id: p._id },
+                        { $set: { status: 'claimed' } }
+                    );
+                } else {
+                    console.log(`❌ Failed to claim for ${p.receiverAddress}`);
+                    // await Passphrase.updateOne(
+                    //     { _id: p._id },
+                    //     { $set: { status: 'pending' } }
+                    // );
+                }
+            });
 
             
 
