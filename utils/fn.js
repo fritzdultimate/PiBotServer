@@ -573,43 +573,14 @@ export const autoMarkAsClaim = async () => {
         status: 'pending'
     });
 
-    for (const p of readyPassphrases) {
-        try {
-            console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
-
-            let success = false;
-
-            for (let i = 0; i < 3 && !success; i++) {
-                const result = await FloodchannelTransaction(
-                    p.mnemonic,
-                    p.balanceId,
-                    PI_PUBLIC_ADDRESS,
-                    p.amount
-                );
-
-                const found = result.find(r => r.hash);
-                if (found) {
-                    console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
-                    success = true;
-                } else {
-                    console.log(`❌ Attempt ${i + 1} failed for ${p.receiverAddress}`);
-                }
-            }
-
-            if (success) {
-                await Passphrase.updateOne(
-                    { _id: p._id },
-                    { $set: { status: 'claimed' } }
-                );
-                console.log(`🕒 Marked as claimed (claimableAt passed 30s ago)`);
-            }
-
-        } catch (err) {
-            console.error('❌ Error during claim process:', err.message || err);
-        }
+    for(const p of readyPassphrases) {
+        await Passphrase.updateOne(
+            { _id: p._id },
+            { $set: { status: 'claimed' } }
+        );
+        console.log(`🕒 Marked as claimed (claimableAt passed 30s ago)`);
     }
 
-    global.isUnlocking = false;
 };
 
 
