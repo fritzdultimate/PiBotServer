@@ -92,25 +92,37 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
         return bot.sendMessage(chatId, '❌ No sponsors found.');
     }
 
+      const estimatedSeconds = sponsors.length; // 1s per sponsor
+bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*. Estimated time: *~${estimatedSeconds} seconds*`, {
+  parse_mode: 'Markdown',
+});
+
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
 
-    const list = await Promise.all(sponsors.map(async (s, index) => {
-      try {
-        const kp = getKeypairFromPassphrase(s.mnemonic);
-          bot.sendMessage(chatId, `⏳ Please wait while we fetch fee for this sponsor`)
-        const accountData = await getAccount(kp.publicKey());
-          await sleep(1005);
-        const balanceString = getBalance(accountData);
-        const balance = parseFloat(balanceString) - 0.98;
-        
-        const phraseShort = `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`;
+    const list = await Promise.all(
+  sponsors.map((s, index) =>
+    new Promise((resolve) => {
+      setTimeout(async () => {
+        try {
+          const kp = getKeypairFromPassphrase(s.mnemonic);
+          const accountData = await getAccount(kp.publicKey());
 
-        return `${index + 1}. ${phraseShort || 'Unknown'} - *${balance.toFixed(7)} PI*`;
-      } catch (e) {
-        console.log(e)
-        return `${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`;
-      }
-    }));
+          const balanceString = getBalance(accountData);
+          const balance = Math.max(parseFloat(balanceString) - 0.98, 0);
+
+          const phraseShort = s.mnemonic?.length > 14
+            ? `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`
+            : 'Unknown';
+
+          resolve(`${index + 1}. ${phraseShort} - *${balance.toFixed(7)} PI*`);
+        } catch (e) {
+          console.log(e);
+          resolve(`${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`);
+        }
+      }, index * 1005); // Stagger by 1 second per sponsor
+    })
+  )
+);
 
     const message = list.join('\n');
 
