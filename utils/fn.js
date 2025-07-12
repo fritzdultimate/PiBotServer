@@ -566,10 +566,10 @@ export const autoFundWallet = async () => {
 export const autoMarkAsClaim = async () => {
 
     const now = new Date();
-    const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000);
+    const inThirtySeconds = new Date(now.getTime() + 30 * 1000);
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: thirtySecondsAgo },
+        claimableAt: { $lte: inThirtySeconds },
         status: 'pending'
     });
 
