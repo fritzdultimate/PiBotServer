@@ -314,7 +314,7 @@ export async function sweepWallet(mainPhrase, recipient) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
 
-    for (const i = 0; i <= 5; i++) {
+    for (const i = 0; i < 1; i++) {
         const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
         const account = new Account(mainKp.publicKey(), seq);
         const balanceString = getBalance(accountData);
@@ -500,16 +500,22 @@ const sweepWithLogs = async (p) => {
 };
 
 export const autoSweepWallet = async () => {
+    if(global.isSweeping || global.isFunding || global.isUnlocking) {
+	return;
+    }
+    global.isSweeping = true
     const readyPassphrases = await Passphrase.find();
 
     for(const phrase of readyPassphrases) {
-        sweepWithLogs(phrase);
+        await sweepWithLogs(phrase);
         await sleep(1000);
     }
+    global.isSweeping = false;
 };
 
 export const autoFundWallet = async () => {
-
+    if(global.isFunding || global.isSweeping) return;
+    global.isFunding = true;
     const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
 
     for (const p of sponsorsPhrase) {
@@ -548,12 +554,13 @@ export const autoFundWallet = async () => {
                     console.log(`❌ Failed to fund ${result.amount} PI}`);
                 }
             }
-            await sleep(1000);
+            await sleep(5000);
 
         } catch (err) {
             console.error('❌ Error funding Pi:', err.message || err);
         }
     }
+    global.isFunding = false;
 };
 
 export const autoMarkAsClaim = async () => {
