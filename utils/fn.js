@@ -528,9 +528,9 @@ export const autoFundWallet = async () => {
             const accountData  = await getAccount(sponsorKp.publicKey());
 
             const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 0.988899;
+            const balance = parseFloat(balanceString) - 0.98;
 
-            const change = balance - 0.08;
+            const change = balance - 0.1;
 
             const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
             const botAccountData = await getAccount(BotKP.publicKey());
