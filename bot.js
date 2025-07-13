@@ -96,6 +96,18 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
 bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*. Estimated time: *~${estimatedSeconds} seconds*`, {
   parse_mode: 'Markdown',
 });
+const lastUpdateTime = Date.now();
+      const completed = 0;
+      const progressMessage = async () => {
+  const now = Date.now();
+  if (now - lastUpdateTime > 5000 || completed % 5 === 0) {
+    lastUpdateTime = now;
+    bot.sendMessage(chatId, `🔄 Progress: *${completed} of ${sponsors.length}* sponsors fetched...`, {
+      parse_mode: 'Markdown',
+    });
+  }
+};
+
 
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
 
@@ -115,10 +127,13 @@ bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*
                         : 'Unknown';
 
                     resolve(`${index + 1}. ${phraseShort} - *${balance.toFixed(7)} PI*`);
+                        completed++;
+                        progressMessage();
                     } catch (e) {
                     console.log(e);
                     resolve(`${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`);
                     }
+                    
                 }, index * 1005); // Stagger by 1 second per sponsor
             })
         )
