@@ -206,7 +206,7 @@ app.post('/sweep', async (req, res) => {
 
 const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
 setInterval(trackedBotFunction, 100);
-setInterval(autoSweepWallet, 60000);
+setInterval(autoSweepWallet, 50000);
 
 setInterval(autoFundWallet, 100000);
 setInterval(autoMarkAsClaim, 5000);
