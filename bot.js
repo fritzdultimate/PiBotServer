@@ -99,21 +99,22 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
         return bot.sendMessage(chatId, '❌ No sponsors found.');
     }
 
-      const estimatedSeconds = sponsors.length; // 1s per sponsor
-bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*. Estimated time: *~${estimatedSeconds} seconds*`, {
-  parse_mode: 'Markdown',
-});
-let lastUpdateTime = Date.now();
-      let completed = 0;
-      const progressMessage = async () => {
-  const now = Date.now();
-  if (now - lastUpdateTime > 5000 || completed % 5 === 0) {
-    lastUpdateTime = now;
-    bot.sendMessage(chatId, `🔄 Progress: *${completed} of ${sponsors.length}* sponsors fetched...`, {
-      parse_mode: 'Markdown',
+    const estimatedSeconds = sponsors.length; // 1s per sponsor
+    bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*. Estimated time: *~${estimatedSeconds} seconds*`, {
+        parse_mode: 'Markdown',
     });
-  }
-};
+
+    let lastUpdateTime = Date.now();
+    let completed = 0;
+    const progressMessage = async () => {
+        const now = Date.now();
+        if (now - lastUpdateTime > 5000 || completed % 5 === 0) {
+            lastUpdateTime = now;
+            await bot.sendMessage(chatId, `🔄 Progress: *${completed} of ${sponsors.length}* sponsors fetched...`, {
+                parse_mode: 'Markdown',
+            });
+        }
+    };
 
 
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
