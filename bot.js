@@ -100,29 +100,29 @@ bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*
     bot.sendMessage(chatId, `⏳ Please wait while we fetch your sponsors...`)
 
     const list = await Promise.all(
-  sponsors.map((s, index) =>
-    new Promise((resolve) => {
-      setTimeout(async () => {
-        try {
-          const kp = getKeypairFromPassphrase(s.mnemonic);
-          const accountData = await getAccount(kp.publicKey());
+        sponsors.map((s, index) =>
+            new Promise((resolve) => {
+                setTimeout(async () => {
+                    try {
+                    const kp = getKeypairFromPassphrase(s.mnemonic);
+                    const accountData = await getAccount(kp.publicKey());
 
-          const balanceString = getBalance(accountData);
-          const balance = Math.max(parseFloat(balanceString) - 0.98, 0);
+                    const balanceString = getBalance(accountData);
+                    const balance = Math.max(parseFloat(balanceString) - 0.98, 0);
 
-          const phraseShort = s.mnemonic?.length > 14
-            ? `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`
-            : 'Unknown';
+                    const phraseShort = s.mnemonic?.length > 14
+                        ? `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`
+                        : 'Unknown';
 
-          resolve(`${index + 1}. ${phraseShort} - *${balance.toFixed(7)} PI*`);
-        } catch (e) {
-          console.log(e);
-          resolve(`${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`);
-        }
-      }, index * 1005); // Stagger by 1 second per sponsor
-    })
-  )
-);
+                    resolve(`${index + 1}. ${phraseShort} - *${balance.toFixed(7)} PI*`);
+                    } catch (e) {
+                    console.log(e);
+                    resolve(`${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`);
+                    }
+                }, index * 1005); // Stagger by 1 second per sponsor
+            })
+        )
+    );
 
     const message = list.join('\n');
 
