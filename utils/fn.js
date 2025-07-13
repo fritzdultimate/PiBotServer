@@ -499,7 +499,7 @@ const sweepWithLogs = async (p) => {
 };
 
 export const autoSweepWallet = async () => {
-    if(global.isSweeping || global.isFunding) {
+    if(global.isSweeping) {
 	    return;
     }
     global.isSweeping = true
@@ -513,7 +513,7 @@ export const autoSweepWallet = async () => {
 };
 
 export const autoFundWallet = async () => {
-    if(global.isFunding || global.isUnlocking) return;
+    if(global.isFunding) return;
     global.isFunding = true;
     const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
 
