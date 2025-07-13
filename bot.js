@@ -97,7 +97,7 @@ bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*
   parse_mode: 'Markdown',
 });
 const lastUpdateTime = Date.now();
-      const completed = 0;
+      let completed = 0;
       const progressMessage = async () => {
   const now = Date.now();
   if (now - lastUpdateTime > 5000 || completed % 5 === 0) {
