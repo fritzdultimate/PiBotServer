@@ -96,7 +96,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
 bot.sendMessage(chatId, `⏳ Fetching balances for *${sponsors.length} sponsors*. Estimated time: *~${estimatedSeconds} seconds*`, {
   parse_mode: 'Markdown',
 });
-const lastUpdateTime = Date.now();
+let lastUpdateTime = Date.now();
       let completed = 0;
       const progressMessage = async () => {
   const now = Date.now();
