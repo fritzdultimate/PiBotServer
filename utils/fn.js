@@ -6,7 +6,6 @@ import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransact
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
-import pLimit from 'p-limit';
 
 const HORIZON = 'http://localhost:8000';
 const NETWORK_PASSPHRASE = 'Pi Network';
