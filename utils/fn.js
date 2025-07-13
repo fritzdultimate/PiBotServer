@@ -500,7 +500,7 @@ const sweepWithLogs = async (p) => {
 
 export const autoSweepWallet = async () => {
     if(global.isSweeping || global.isFunding) {
-	return;
+	    return;
     }
     global.isSweeping = true
     const readyPassphrases = await Passphrase.find();
