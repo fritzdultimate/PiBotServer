@@ -364,7 +364,7 @@ bot.on('message', async (msg) => {
 
         if(existing) {
             delete userSessions[chatId];
-            await bot.sendMessage(chatId, `✅ Matching wallet mnemonic: *${existing.mnemonic}*`, { parse_mode: 'Markdown' });
+            return bot.sendMessage(chatId, `✅ Matching wallet mnemonic: *${existing.mnemonic}*`, { parse_mode: 'Markdown' });
             
         }
         delete userSessions[chatId];
