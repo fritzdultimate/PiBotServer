@@ -449,7 +449,7 @@ export const autoClaimUnlocked = async () => {
                 p.balanceId,
                 PI_PUBLIC_ADDRESS,
                 p.amount
-            ).then(result => {
+            ).then(async (result) => {
                 const success = result.find(r => r.hash);
 
                 if (success) {
