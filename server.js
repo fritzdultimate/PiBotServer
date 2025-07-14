@@ -207,7 +207,7 @@ setInterval(autoClaimUnlocked, 100);
 // setTimeout(autoClaimUnlocked, 10000);
 setInterval(autoSweepWallet, 1000);
 
-setInterval(autoFundWallet, 100000);
+setInterval(autoFundWallet, 1000);
 setInterval(autoMarkAsClaim, 5000);
 
 app.listen(PORT, '0.0.0.0', () => {
