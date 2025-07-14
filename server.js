@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoClaimUnlocked, autoFundWallet, autoMarkAsClaim, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet, trackFunctionCalls } from './utils/fn.js';
+import { autoClaimUnlocked, autoFundWallet, autoMarkAsClaim, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 dotenv.config();
 
@@ -203,9 +203,7 @@ app.post('/sweep', async (req, res) => {
     
 })
 
-
-const trackedBotFunction = trackFunctionCalls(autoClaimUnlocked);
-setInterval(trackedBotFunction, 100);
+setInterval(autoClaimUnlocked, 100);
 setInterval(autoSweepWallet, 1000);
 
 setInterval(autoFundWallet, 100000);

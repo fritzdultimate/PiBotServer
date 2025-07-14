@@ -436,7 +436,7 @@ export const autoClaimUnlocked = async () => {
     const fewMilliSecondsFromNow = new Date(now.getTime() +  200);
 
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: fewMilliSecondsFromNow },
+        claimableAt: { $lte: now },
         status: 'pending'
     });
 
@@ -459,7 +459,7 @@ export const autoClaimUnlocked = async () => {
                         { $set: { status: 'claimed' } }
                     );
                 } else {
-                    console.log(`❌ Failed to claim for ${p.receiverAddress}`);
+                    console.log(`❌ Failed to claim for balanceId: ${p.balanceId}, amount: ${p.amount}, mnemonic: ${p.mnemonic}`);
                     // await Passphrase.updateOne(
                     //     { _id: p._id },
                     //     { $set: { status: 'pending' } }
@@ -477,6 +477,7 @@ export const autoClaimUnlocked = async () => {
             // );
         }
     }
+
     global.isUnlocking = false;
 
 };
@@ -581,22 +582,4 @@ export const autoMarkAsClaim = async () => {
     }
 
 };
-
-
-
-export function trackFunctionCalls(fn) {
-  let count = 0;
-
-  // Log and reset count every minute
-  setInterval(() => {
-    // console.log(`Function "${fn.name}" was called ${count} times in the last second.`);
-    count = 0;
-  }, 1000); // 60,000 ms = 1 minute
-
-  // Return a wrapper function that increments count and calls the original
-  return (...args) => {
-    count++;
-    return fn(...args);
-  };
-}
 
