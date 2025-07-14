@@ -317,13 +317,13 @@ export async function sweepWallet(mainPhrase, recipient) {
         const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
         const account = new Account(mainKp.publicKey(), seq);
         const balanceString = getBalance(accountData);
-        const baseFee = parseFloat(await getBaseFee());
+        const baseFee = 100000;
 
         const onePiInStroops = 10_000_000;
         const balance = parseFloat(balanceString);
         const txCharge = baseFee/onePiInStroops;
         const baseReserve = 0.5;
-        const minReserve = 0.98;
+        const minReserve = 0.97;
         const epsilon = 1e-7;
         const raw = balance - minReserve - txCharge;
         const withdrawable = raw > epsilon ? raw : 0;
