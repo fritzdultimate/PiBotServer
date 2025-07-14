@@ -331,7 +331,6 @@ export async function sweepWallet(mainPhrase, recipient) {
         if(withdrawable === 0) {
             return;
         }
-        console.log(`Amount to sweep: ${withdrawable}, typeof ${typeof withdrawable}`)
 
         const tx = new TransactionBuilder(account, {
             fee: baseFee.toString(),
@@ -526,13 +525,13 @@ export const autoSweepWallet = async () => {
         await Promise.all(passphrases.map(async (phrase, i) => {
             try {
                 const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
-                console.log(`Sweep tx for account number ${i} submitted.`)
+                // console.log(`Sweep tx for account number ${i} submitted.`)
             } catch (e) {
                 if (e.response && e.response.data && e.response.data.extras) {
                     const extras = e.response.data.extras;
-                    console.log('Transaction failed:', extras);
+                    // console.log('Transaction failed:', extras);
                 } else {
-                    console.error('Unknown error:', e);
+                    // console.error('Unknown error:', e);
                 }
             }
         }));
