@@ -337,7 +337,7 @@ export async function sweepWallet(mainPhrase, recipient) {
             .addOperation(Operation.payment({
                 destination: recipient,
                 asset: Asset.native(),
-                amount: Math.abs(withdrawable).toFixed(4).toString(),
+                amount: Math.abs(withdrawable).toFixed(6).toString(),
             }))
             .setTimeout(20)
             .build();
