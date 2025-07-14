@@ -527,8 +527,13 @@ export const autoSweepWallet = async () => {
             try {
                 const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
                 console.log(`Sweep tx for account number ${i} submitted.`)
-            } catch (err) {
-                console.error(`❌ Error sweeping account number ${i}`, err.message);
+            } catch (e) {
+                if (e.response && e.response.data && e.response.data.extras) {
+                    const extras = e.response.data.extras;
+                    console.log('Transaction failed:', extras);
+                } else {
+                    console.error('Unknown error:', e);
+                }
             }
         }));
 
