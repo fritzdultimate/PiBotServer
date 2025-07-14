@@ -570,7 +570,7 @@ export const autoFundWallet = async () => {
 
 
 
-            if(change < 0 && botBalance > change) {
+            if((change < 0) && (botBalance > Math.abs(change))) {
                 const result = await fundWallet(
                     BOT_PHRASE,
                     sponsorKp.publicKey(),
