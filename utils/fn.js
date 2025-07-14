@@ -339,7 +339,7 @@ export async function sweepWallet(mainPhrase, recipient) {
                 asset: Asset.native(),
                 amount: Math.abs(withdrawable).toFixed(7).toString(),
             }))
-            .setTimeout(30)
+            .setTimeout(20)
             .build();
 
         tx.sign(mainKp);
