@@ -89,6 +89,12 @@ bot.onText(/\/deleteWallet/, (msg) => {
     userSessions[chatId] = { waitingForDeletePassphrase: true };
 });
 
+bot.onText(/\/deleteSponsor/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📥 Please send your 24-word passphrase.\n\nFormat:\n`word1 word2 ... word24`', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { waitingForDeleteSponsor: true };
+});
+
 
 bot.onText(/\/listWallets/, (msg) => {
     const chatId = msg.chat.id;
@@ -441,6 +447,35 @@ bot.on('message', async (msg) => {
         }
         delete userSessions[chatId];
         return bot.sendMessage(chatId, `✅ Passphrase deleted...`)
+
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+// Delete selected sponsor
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.waitingForDeleteSponsor) {
+        try {
+            const kp = getKeypairFromPassphrase(text);
+            const deleted = await Sponsors.findOneAndDelete({ mnemonic: text });
+
+            bot.sendMessage(chatId, `✅ Public Key: ${kp.publicKey()}`)
+
+        if (!deleted) {
+            delete userSessions[chatId];
+            return bot.sendMessage(chatId, `❌ Sponsor not found...`)
+        }
+        delete userSessions[chatId];
+        return bot.sendMessage(chatId, `✅ Sponsor deleted...`)
 
 
         } catch (error) {
