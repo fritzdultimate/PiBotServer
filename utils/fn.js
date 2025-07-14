@@ -517,7 +517,7 @@ export const autoSweepWallet = async () => {
     }
 
     const readyPassphrases = await Passphrase.find();
-    const passphraseBatches = arrayBatches(readyPassphrases, 50);
+    const passphraseBatches = arrayBatches(readyPassphrases, 80);
 
     for(const passphrases of passphraseBatches) {
         await Promise.all(passphrases.map(async (phrase, i) => {
@@ -525,7 +525,7 @@ export const autoSweepWallet = async () => {
                 const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
                 console.log(`Sweep tx for account number ${i} submitted.`)
             } catch (err) {
-                console.error(`❌ Error sweeping account number ${i}`, err);
+                console.error(`❌ Error sweeping account number ${i}`, err.statusCode);
             }
         }));
 
