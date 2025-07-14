@@ -324,9 +324,9 @@ export async function sweepWallet(mainPhrase, recipient) {
         const txCharge = baseFee/onePiInStroops;
         const baseReserve = 0.5;
         const minReserve = 0.98;
-        const withdrawable = Math.abs(balance - minReserve - txCharge);
+        const withdrawable = balance - minReserve - txCharge;
 
-        if(balance - minReserve - txCharge <= 0) {
+        if(withdrawable <= 0) {
             return;
         }
 
@@ -337,7 +337,7 @@ export async function sweepWallet(mainPhrase, recipient) {
             .addOperation(Operation.payment({
                 destination: recipient,
                 asset: Asset.native(),
-                amount: withdrawable.toFixed(7),
+                amount: Math.abs(withdrawable).toFixed(7).toString(),
             }))
             .setTimeout(30)
             .build();
