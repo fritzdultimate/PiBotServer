@@ -529,7 +529,7 @@ export const autoSweepWallet = async () => {
             }
         }));
 
-        await sleep(100);
+        await sleep(1000);
     }
     global.isSweeping = false;
 };
