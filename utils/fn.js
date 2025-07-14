@@ -492,23 +492,71 @@ const sweepWithLogs = async (p) => {
     }
 };
 
+async function getUpcomingClaimables() {
+    const now = new Date();
+    const tenMin = 10 * 60 * 1000;
+    const tenMinutesFromNow = new Date(now.getTime() + tenMin);
+    const upcomingClaimables = await Passphrase.find({
+        claimableAt: {
+            $gt: now,
+            $lte: tenMinutesFromNow
+        },
+        status: 'pending'
+    });
+
+    return upcomingClaimables;
+}
+
+function arrayBatches(arr, batchSize = 100) {
+    const batches = [];
+
+    for (let i = 0; i < arr.length; i += batchSize) {
+        const batch = arr.slice(i, i + batchSize);
+        batches.push(batch);
+    }
+
+    return batches;
+}
+
 export const autoSweepWallet = async () => {
     if(global.isSweeping) {
 	    return;
     }
     global.isSweeping = true
-    const readyPassphrases = await Passphrase.find();
+    const upcomingClaimables = await getUpcomingClaimables();
+    if (upcomingClaimables.length) {
+        for(const claimable of upcomingClaimables) {
+            await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
+            await sleep(1000);
+        }
+        return;
+    }
 
-    for(const phrase of readyPassphrases) {
-        await sweepWithLogs(phrase);
-        await sleep(1000);
+    const readyPassphrases = await Passphrase.find();
+    const passphraseBatches = arrayBatches(readyPassphrases, 99);
+
+    for(const passphrases of passphraseBatches) {
+        await Promise.all(passphrases.map(async (phrase, i) => {
+            try {
+                const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                console.log(`Sweep tx for account number ${i} submitted.`)
+            } catch (err) {
+                console.error(`❌ Error sweeping account number ${i}`, err);
+            }
+        }));
+
+        await sleep(100);
     }
     global.isSweeping = false;
 };
 
 export const autoFundWallet = async () => {
+    const upcomingClaimables = await getUpcomingClaimables();
+    if (upcomingClaimables.length) return;
+
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
+
     const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
 
     for (const p of sponsorsPhrase) {
