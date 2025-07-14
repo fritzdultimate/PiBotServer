@@ -324,9 +324,9 @@ export async function sweepWallet(mainPhrase, recipient) {
         const txCharge = baseFee/onePiInStroops;
         const baseReserve = 0.5;
         const minReserve = 0.98;
-        const withdrawable = balance - minReserve - txCharge;
+        const withdrawable = Math.max(balance - minReserve - txCharge, 0);
 
-        if(withdrawable <= 0) {
+        if(withdrawable === 0) {
             return;
         }
 
