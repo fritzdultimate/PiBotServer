@@ -437,7 +437,7 @@ export const autoClaimUnlocked = async () => {
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
-        status: 'claimed'
+        status: 'pending'
     });
 
     for (const p of readyPassphrases) {
