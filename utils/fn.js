@@ -533,7 +533,7 @@ export const autoSweepWallet = async () => {
     }
 
     const readyPassphrases = await Passphrase.find();
-    const passphraseBatches = arrayBatches(readyPassphrases, 99);
+    const passphraseBatches = arrayBatches(readyPassphrases, 80);
 
     for(const passphrases of passphraseBatches) {
         await Promise.all(passphrases.map(async (phrase, i) => {
