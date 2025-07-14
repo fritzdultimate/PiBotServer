@@ -203,7 +203,8 @@ app.post('/sweep', async (req, res) => {
     
 })
 
-setInterval(autoClaimUnlocked, 100);
+// setInterval(autoClaimUnlocked, 100);
+setTimeout(autoClaimUnlocked, 1000);
 setInterval(autoSweepWallet, 1000);
 
 setInterval(autoFundWallet, 100000);
