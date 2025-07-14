@@ -329,6 +329,7 @@ export async function sweepWallet(mainPhrase, recipient) {
         if(withdrawable === 0) {
             return;
         }
+        console.log(`Amount to sweep: ${Math.abs(withdrawable).toFixed(6).toString()}`)
 
         const tx = new TransactionBuilder(account, {
             fee: baseFee.toString(),
