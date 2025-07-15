@@ -8,7 +8,7 @@ import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
 import { storeLockedPi } from './modelfn.js';
 
-const HORIZONS = ['http://localhost:8000'];
+const HORIZONS = ['http://localhost:8000', 'http://31.97.37.92:8000'];
 const NETWORK_PASSPHRASE = 'Pi Network';
 export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 // const PI_PUBLIC_ADDRESS = 'GDEZT7O6BFGB6LPSNMQAVTMTNCEVOJKNQ3W67Q5W5KENWWABMCO24E5U';
