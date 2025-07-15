@@ -646,13 +646,34 @@ export const autoCheckSponsorForClaimable = async () => {
     }
 }
 
-export const autoRemoveMatchingSponsorsFromPassphrase = async () => {
-    const sponsors = await Sponsors.find();
-    for(const s of sponsors) {
-        const existing = await Passphrase.find({ mnemonic: s.mnemonic });
-        if(existing) {
-            await Passphrase.deleteMany({ mnemonic: s.mnemonic });
+export const autoDuplicatePassphrase = async () => {
+    const duplicates = await Passphrase.aggregate([
+        {
+            $group: {
+            _id: "$phrase",
+            ids: { $push: "$_id" },
+            count: { $sum: 1 }
+            }
+        },
+        {
+            $match: { count: { $gt: 1 } }
+        }
+    ]);
+
+    for (const dup of duplicates) {
+        const [keep, ...toDelete] = dup.ids;
+
+        const docsToCheck = await Passphrase.find({ _id: { $in: toDelete } });
+
+        for (const doc of docsToCheck) {
+            const isClaimablePassed = !doc.claimableAt || new Date(doc.claimableAt) <= new Date();
+            const isBalanceIdNull = doc.balanceId == null;
+
+            if (isClaimablePassed || isBalanceIdNull) {
+                await Passphrase.deleteOne({ _id: doc._id });
+            }
         }
     }
+
 }
 
