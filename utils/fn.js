@@ -6,6 +6,7 @@ import { Keypair, TransactionBuilder, Operation, Asset, Account, FeeBumpTransact
 import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
+import { storeLockedPi } from './modelfn.js';
 
 const HORIZON = 'http://localhost:8000';
 const NETWORK_PASSPHRASE = 'Pi Network';
@@ -614,4 +615,26 @@ export const autoMarkAsClaim = async () => {
     }
 
 };
+
+export const autoCheckSponsorForClaimable = async () => {
+    const sponsors = await Sponsors.find();
+
+    for(const s of sponsors) {
+        const kp = getKeypairFromPassphrase(s.mnemonic);
+        const publicKey = kp.publicKey();
+        const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS)
+        if(result.success) {
+            await Sponsors.findByIdAndDelete(s._id);
+        }
+        await sleep(10000)
+    }
+
+    const passphrases = await Passphrase.find();
+    for(const p of passphrases) {
+        const kp = getKeypairFromPassphrase(p.mnemonic);
+        const publicKey = kp.publicKey();
+        await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS)
+        await sleep(10000);
+    }
+}
 
