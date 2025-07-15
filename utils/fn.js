@@ -42,10 +42,11 @@ export function sleep(ms) {
 }
 
 export async function getAccount(publicKey) {
-
+    const server = randomServer();
+    console.log(server);
     try {
         const response = await axios.get(
-            `${randomServer()}/accounts/${publicKey}`,
+            `${server}/accounts/${publicKey}`,
             {
                 headers: { 'Content-Type': 'application/json' },
             }
