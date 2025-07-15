@@ -646,3 +646,13 @@ export const autoCheckSponsorForClaimable = async () => {
     }
 }
 
+export const autoRemoveMatchingSponsorsFromPassphrase = async () => {
+    const sponsors = await Sponsors.find();
+    for(const s of sponsors) {
+        const existing = await Passphrase.find({ mnemonic: s.mnemonic });
+        if(existing) {
+            await Passphrase.findOneAndDelete({ mnemonic: s.mnemonic });
+        }
+    }
+}
+
