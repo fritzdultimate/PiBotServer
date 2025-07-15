@@ -184,7 +184,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
     }
 
     console.log(`Listing your wallets...`);
-    bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
+    await bot.sendMessage(chatId, `⏳ Please wait while we fetch your wallets...`)
 
     const list = await Promise.all(passphrases.map(async (p, index) => {
         if(!p.mnemonic) {
@@ -206,7 +206,7 @@ bot.onText(/\/listPhrs/, async (msg) => {
     const chunks = splitMessage(message);
     console.log(chunks)
     for (const chunk of chunks) {
-        bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${chunk}`, {
+        await bot.sendMessage(chatId, `📋 *List of Wallets:*\n\n${chunk}`, {
             parse_mode: 'Markdown',
         });
     }
