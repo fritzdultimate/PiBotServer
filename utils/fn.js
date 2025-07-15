@@ -632,7 +632,7 @@ export const autoCheckSponsorForClaimable = async () => {
         const kp = getKeypairFromPassphrase(s.mnemonic);
         const publicKey = kp.publicKey();
         const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
-        if(result.success) {
+        if(result && result.success) {
             await Sponsors.findByIdAndDelete(s._id);
         }
         await sleep(10000)
