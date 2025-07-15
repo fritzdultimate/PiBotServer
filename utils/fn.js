@@ -104,16 +104,14 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     }
 }
 
-export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, feeMultiplier = 2) {
+export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccount(channelKp.publicKey());
-
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
-    const baseFee = parseFloat(await getBaseFee()) * feeMultiplier;
 
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: baseFee.toString(),
+		fee: '300000',
 		networkPassphrase: 'Pi Network',
 
 	})
@@ -128,7 +126,6 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    .addMemo(Memo.text('PiMaster'))
     .setTimeout(20)
     .build();
 
