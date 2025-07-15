@@ -8,13 +8,17 @@ import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
 import { storeLockedPi } from './modelfn.js';
 
-const HORIZON = 'http://localhost:8000';
+const HORIZONS = ['http://localhost:8000'];
 const NETWORK_PASSPHRASE = 'Pi Network';
 export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 // const PI_PUBLIC_ADDRESS = 'GDEZT7O6BFGB6LPSNMQAVTMTNCEVOJKNQ3W67Q5W5KENWWABMCO24E5U';
 const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
 
-const server = new Server(HORIZON, { allowHttp: true });
+const horizonUrl = (i) => {
+    return HORIZONS[i % HORIZONS.length];
+}
+
+const server = new Server(horizonUrl(0), { allowHttp: true });
 
 
 export function getKeypairFromPassphrase(mnemonic) {
@@ -37,7 +41,7 @@ export async function getAccount(publicKey) {
 
     try {
         const response = await axios.get(
-            `${HORIZON}/accounts/${publicKey}`,
+            `${horizonUrl(0)}/accounts/${publicKey}`,
             {
                 headers: { 'Content-Type': 'application/json' },
             }
@@ -87,7 +91,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         if (e.response?.status === 504) {
         // Try to fetch the transaction by hash
         const txHash = tx.hash().toString('hex');
-        const txStatus = await axios.get(`${HORIZON}/transactions/${txHash}`);
+        const txStatus = await axios.get(`${horizonUrl(0)}/transactions/${txHash}`);
         return txStatus.data; // It may have gone through
         } else {
             throw e;
@@ -191,7 +195,7 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
     // const limit = pLimit(30)
     const results = await Promise.all(
         // allTxs.map(xdr => limit(() => submitTransaction(xdr)))
-        allTxs.map(xdr => submitTransaction(xdr))
+        allTxs.map(xdr => submitTransaction(xdr, horizonUrl(0)))
     );
 
     return results;
@@ -238,11 +242,11 @@ export async function buildChannelFeeBumpTx(channelPhrase, mainKp, balanceId, re
 }
 
 
-export async function submitTransaction(txXdr) {
+export async function submitTransaction(txXdr, horizon) {
     try {
 
         const res = await axios.post(
-            `${HORIZON}/transactions`,
+            `${horizon}/transactions`,
             `tx=${encodeURIComponent(txXdr)}`,
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -258,7 +262,7 @@ export async function submitTransaction(txXdr) {
 export async function getClaimableBalance(publicKey) {
         try {
             const res = await axios.get(
-                `${HORIZON}/claimable_balances?claimant=${publicKey}`,
+                `${horizonUrl(0)}/claimable_balances?claimant=${publicKey}`,
                 { 
                     headers: { 'Content-Type': 'application/json' },
                 }
@@ -278,7 +282,7 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
-                return await submitTransaction(xdr);
+                return await submitTransaction(xdr, horizonUrl(i));
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
             }
@@ -297,7 +301,7 @@ export async function FloodFeeBumpTransaction(mainPhrase, balanceId, recipient, 
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
                 const xdr = await buildChannelFeeBumpTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
-                return await submitTransaction(xdr);
+                return await submitTransaction(xdr, horizonUrl(i));
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
             }
@@ -348,7 +352,7 @@ export async function sweepWallet(mainPhrase, recipient) {
         tx.sign(mainKp);
         
         const res = await axios.post(
-            `${HORIZON}/transactions`,
+            `${horizonUrl(0)}/transactions`,
             `tx=${encodeURIComponent(tx.toXDR())}`,
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -386,7 +390,7 @@ export async function fundWallet(mainPhrase, recipient, amount) {
     tx.sign(mainKp);
 	
     const res = await axios.post(
-        `${HORIZON}/transactions`,
+        `${horizonUrl(0)}/transactions`,
         `tx=${encodeURIComponent(tx.toXDR())}`,
         { 
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -408,7 +412,7 @@ export async function getBaseFee() {
     }
 
     try {
-        const response = await axios.get(`${HORIZON}/fee_stats`, 
+        const response = await axios.get(`${horizonUrl(0)}/fee_stats`, 
             {
                 headers: { 'Content-Type': 'application/json' },
             }
