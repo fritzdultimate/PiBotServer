@@ -20,9 +20,11 @@ const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
 }
 
+const randomServer = () => HORIZONS[Math.floor(Math.random() * HORIZONS.length)];
 
 
-const server = new Server(horizonUrl(0), { allowHttp: true });
+
+const server = new Server(randomServer(), { allowHttp: true });
 export function getKeypairFromPassphrase(mnemonic) {
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     const derived = ed25519.derivePath("m/44'/314159'/0'", seed);
@@ -43,7 +45,7 @@ export async function getAccount(publicKey) {
 
     try {
         const response = await axios.get(
-            `${horizonUrl(0)}/accounts/${publicKey}`,
+            `${randomServer()}/accounts/${publicKey}`,
             {
                 headers: { 'Content-Type': 'application/json' },
             }
@@ -93,7 +95,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         if (e.response?.status === 504) {
         // Try to fetch the transaction by hash
         const txHash = tx.hash().toString('hex');
-        const txStatus = await axios.get(`${horizonUrl(0)}/transactions/${txHash}`);
+        const txStatus = await axios.get(`${randomServer()}/transactions/${txHash}`);
         return txStatus.data; // It may have gone through
         } else {
             throw e;
@@ -197,7 +199,7 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
     // const limit = pLimit(30)
     const results = await Promise.all(
         // allTxs.map(xdr => limit(() => submitTransaction(xdr)))
-        allTxs.map(xdr => submitTransaction(xdr, horizonUrl(0)))
+        allTxs.map(xdr => submitTransaction(xdr, randomServer())
     );
 
     return results;
@@ -264,7 +266,7 @@ export async function submitTransaction(txXdr, horizon) {
 export async function getClaimableBalance(publicKey) {
         try {
             const res = await axios.get(
-                `${horizonUrl(0)}/claimable_balances?claimant=${publicKey}`,
+                `${randomServer()}/claimable_balances?claimant=${publicKey}`,
                 { 
                     headers: { 'Content-Type': 'application/json' },
                 }
@@ -354,7 +356,7 @@ export async function sweepWallet(mainPhrase, recipient) {
         tx.sign(mainKp);
         
         const res = await axios.post(
-            `${horizonUrl(0)}/transactions`,
+            `${randomServer()}/transactions`,
             `tx=${encodeURIComponent(tx.toXDR())}`,
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -392,7 +394,7 @@ export async function fundWallet(mainPhrase, recipient, amount) {
     tx.sign(mainKp);
 	
     const res = await axios.post(
-        `${horizonUrl(0)}/transactions`,
+        `${randomServer()}/transactions`,
         `tx=${encodeURIComponent(tx.toXDR())}`,
         { 
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -414,7 +416,7 @@ export async function getBaseFee() {
     }
 
     try {
-        const response = await axios.get(`${horizonUrl(0)}/fee_stats`, 
+        const response = await axios.get(`${randomServer()}/fee_stats`, 
             {
                 headers: { 'Content-Type': 'application/json' },
             }
