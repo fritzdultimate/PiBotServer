@@ -152,6 +152,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
                         progressMessage();
                     } catch (e) {
                     console.log(e);
+                    console.log(s.mnemonic)
                     resolve(`${index + 1}. ${s.username || s.name || 'Unknown'} - ⚠️ Failed to fetch balance`);
                     }
                     
