@@ -97,7 +97,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         // Try to fetch the transaction by hash
         const txHash = tx.hash().toString('hex');
         const txStatus = await axios.get(`${randomServer()}/transactions/${txHash}`);
-        return txStatus.data; // It may have gone through
+        return txStatus.data;
         } else {
             throw e;
         }
@@ -279,7 +279,6 @@ export async function getClaimableBalance(publicKey) {
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const allSponsors = await Sponsors.find();
-    console.log(allSponsors);
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
@@ -346,7 +345,7 @@ export async function sweepWallet(mainPhrase, recipient) {
             .addOperation(Operation.payment({
                 destination: recipient,
                 asset: Asset.native(),
-                amount: Math.abs(withdrawable).toFixed(7).toString(),
+                amount: Math.abs(withdrawable).toFixed(6).toString(),
             }))
             .setTimeout(20)
             .build();
@@ -438,11 +437,11 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
-    if(global.isUnlocking) return;
-    global.isUnlocking = true;
+    // if(global.isUnlocking) return;
+    // global.isUnlocking = true;
     // console.log(`Trying auto claim now...`);
     const now = new Date();
-    const fewMilliSecondsFromNow = new Date(now.getTime() +  200);
+    // const fewMilliSecondsFromNow = new Date(now.getTime() +  200);
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
@@ -480,7 +479,7 @@ export const autoClaimUnlocked = async () => {
         }
     }
 
-    global.isUnlocking = false;
+    // global.isUnlocking = false;
 
 };
 
