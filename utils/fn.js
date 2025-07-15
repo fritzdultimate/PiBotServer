@@ -650,7 +650,7 @@ export const autoDuplicatePassphrase = async () => {
     const duplicates = await Passphrase.aggregate([
         {
             $group: {
-            _id: "$phrase",
+            _id: "$mnemonic",
             ids: { $push: "$_id" },
             count: { $sum: 1 }
             }

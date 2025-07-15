@@ -209,7 +209,7 @@ setInterval(autoSweepWallet, 1000);
 // setInterval(autoFundWallet, 1000);
 setInterval(autoMarkAsClaim, 5000);
 setInterval(autoCheckSponsorForClaimable, 300000);
-setInterval(autoDuplicatePassphrase, 1000)
+// setInterval(autoDuplicatePassphrase, 1000)
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
