@@ -7,20 +7,22 @@ import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
 import { storeLockedPi } from './modelfn.js';
-
-const HORIZONS = ['http://localhost:8000', 'http://31.97.37.92:8000'];
 const NETWORK_PASSPHRASE = 'Pi Network';
 export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 // const PI_PUBLIC_ADDRESS = 'GDEZT7O6BFGB6LPSNMQAVTMTNCEVOJKNQ3W67Q5W5KENWWABMCO24E5U';
 const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
 
+
+
+
+const HORIZONS = ['http://localhost:8000', 'http://31.97.37.92:8000'];
 const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
 }
 
+
+
 const server = new Server(horizonUrl(0), { allowHttp: true });
-
-
 export function getKeypairFromPassphrase(mnemonic) {
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     const derived = ed25519.derivePath("m/44'/314159'/0'", seed);
