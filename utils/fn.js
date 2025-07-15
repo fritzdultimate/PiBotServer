@@ -630,7 +630,7 @@ export const autoCheckSponsorForClaimable = async () => {
     for(const s of sponsors) {
         const kp = getKeypairFromPassphrase(s.mnemonic);
         const publicKey = kp.publicKey();
-        const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS)
+        const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
         if(result.success) {
             await Sponsors.findByIdAndDelete(s._id);
         }
@@ -641,7 +641,7 @@ export const autoCheckSponsorForClaimable = async () => {
     for(const p of passphrases) {
         const kp = getKeypairFromPassphrase(p.mnemonic);
         const publicKey = kp.publicKey();
-        await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS)
+        await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
         await sleep(10000);
     }
 }

