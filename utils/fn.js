@@ -651,7 +651,7 @@ export const autoRemoveMatchingSponsorsFromPassphrase = async () => {
     for(const s of sponsors) {
         const existing = await Passphrase.find({ mnemonic: s.mnemonic });
         if(existing) {
-            await Passphrase.findOneAndDelete({ mnemonic: s.mnemonic });
+            await Passphrase.deleteMany({ mnemonic: s.mnemonic });
         }
     }
 }
