@@ -204,7 +204,7 @@ app.post('/sweep', async (req, res) => {
 })
 
 setInterval(autoClaimUnlocked, 100);
-// setInterval(autoSweepWallet, 1000);
+setInterval(autoSweepWallet, 1000);
 
 setInterval(autoFundWallet, 1000);
 setInterval(autoMarkAsClaim, 5000);
