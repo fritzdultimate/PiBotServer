@@ -519,7 +519,7 @@ export const autoSweepWallet = async () => {
     if (upcomingClaimables.length) {
         for(const claimable of upcomingClaimables) {
             await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
-            await sleep(1000);
+            await sleep(500);
         }
         return;
     }
