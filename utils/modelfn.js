@@ -26,6 +26,8 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
 
                 if (predicate?.not?.abs_before) {
                     claimableAt = predicate.not.abs_before; // this means claimable *after* that time
+                } else if(predicate.unconditional) {
+                    claimableAt = new Date();
                 }
 
                 const existing = await Passphrase.findOne({ mnemonic, balanceId: record.id });
