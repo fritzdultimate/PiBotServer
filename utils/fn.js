@@ -199,8 +199,8 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
     // const limit = pLimit(30)
     const results = await Promise.all(
         // allTxs.map(xdr => limit(() => submitTransaction(xdr)))
-        allTxs.map(xdr => submitTransaction(xdr, randomServer())
-    ));
+        allTxs.map(xdr => submitTransaction(xdr, randomServer()))
+    );
 
     return results;
 }
