@@ -132,7 +132,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    .setTimeout(0)
+    // .setTimeout(0)
     .build();
 
   	tx.sign(mainKp);
