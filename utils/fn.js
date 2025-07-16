@@ -456,7 +456,7 @@ export const autoClaimUnlocked = async () => {
             let success = false;
 
             while(!success && tries < MAX_FLOOD_COUNT) {
-                const result = FloodchannelTransaction(
+                const result = await FloodchannelTransaction(
                     p.mnemonic,
                     p.balanceId,
                     PI_PUBLIC_ADDRESS,
