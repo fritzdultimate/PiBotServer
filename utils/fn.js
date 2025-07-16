@@ -610,26 +610,6 @@ export const autoFundWallet = async () => {
     global.isFunding = false;
 };
 
-export const autoMarkAsClaim = async () => {
-
-    const now = new Date();
-    const inThirtySeconds = new Date(now.getTime() + 30 * 1000);
-
-    const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: inThirtySeconds },
-        status: 'pending'
-    });
-
-    for(const p of readyPassphrases) {
-        await Passphrase.updateOne(
-            { _id: p._id },
-            { $set: { status: 'claimed' } }
-        );
-        console.log(`🕒 Marked as claimed (claimableAt passed 30s ago)`);
-    }
-
-};
-
 export const autoCheckSponsorForClaimable = async () => {
     const sponsors = await Sponsors.find();
 
