@@ -439,7 +439,9 @@ export function getBalance(account) {
 export const autoClaimUnlocked = async () => {
     if(global.isUnlocking) return;
     global.isUnlocking = true;
+
     console.log(`Trying auto claim now...`);
+
     const now = new Date();
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
@@ -452,30 +454,32 @@ export const autoClaimUnlocked = async () => {
 
             let tries = 0;
             let success = false;
+
             while(!success && tries < MAX_FLOOD_COUNT) {
-                FloodchannelTransaction(
+                const result = FloodchannelTransaction(
                     p.mnemonic,
                     p.balanceId,
                     PI_PUBLIC_ADDRESS,
                     p.amount
-                ).then(async (result) => {
-                    const success = result.find(r => r.hash);
-
-                    if (success) {
-                        console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
-                        await Passphrase.updateOne(
-                            { _id: p._id },
-                            { $set: { status: 'claimed' } }
-                        );
-                        success = true;
-                    }
-                });
+                );
+                const found = result.find((r) => r.hash);
+                if (found) {
+                    console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
+                    await Passphrase.updateOne(
+                        { _id: p._id },
+                        { $set: { status: "claimed" } }
+                    );
+                    success = true;
+                    break;
+                }
                 tries++;
             }
-            await Passphrase.updateOne(
-                { _id: p._id },
-                { $set: { status: 'failed' } }
-            );
+            if (!success) {
+                await Passphrase.updateOne(
+                    { _id: p._id },
+                    { $set: { status: "failed" } }
+                );
+            }
 
             
 
