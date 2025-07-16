@@ -467,7 +467,10 @@ export const autoClaimUnlocked = async () => {
                         { $set: { status: 'claimed' } }
                     );
                 } else {
-                    console.log(`❌ Failed to claim for balanceId: ${p.balanceId}, amount: ${p.amount}, mnemonic: ${p.mnemonic}`);
+                    await Passphrase.updateOne(
+                        { _id: p._id },
+                        { $set: { status: 'failed' } }
+                    );
                     
                 }
             });
