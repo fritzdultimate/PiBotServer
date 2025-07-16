@@ -635,17 +635,17 @@ export const autoFundWallet = async () => {
 };
 
 export const autoCheckSponsorForClaimable = async () => {
-    const sponsors = await Sponsors.find();
+    // const sponsors = await Sponsors.find();
 
-    for(const s of sponsors) {
-        const kp = getKeypairFromPassphrase(s.mnemonic);
-        const publicKey = kp.publicKey();
-        const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
-        if(result && result.success) {
-            await Sponsors.findByIdAndDelete(s._id);
-        }
-        await sleep(10000)
-    }
+    // for(const s of sponsors) {
+    //     const kp = getKeypairFromPassphrase(s.mnemonic);
+    //     const publicKey = kp.publicKey();
+    //     const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
+    //     if(result && result.success) {
+    //         await Sponsors.findByIdAndDelete(s._id);
+    //     }
+    //     await sleep(10000)
+    // }
 
     const passphrases = await Passphrase.find();
     for(const p of passphrases) {
