@@ -473,7 +473,7 @@ export const autoClaimUnlocked = async () => {
                 const claimUnix = new Date(p.claimableAt).getTime();
                 const diff = claimUnix - now.getTime();
                 if (diff > 2000) {
-                    await sleep(Math.min(diff - 500, 1000)); // Sleep a bit until ~1s before time
+                    await sleep(Math.min(diff - 500, 1000));
                     continue;
                 }
 
