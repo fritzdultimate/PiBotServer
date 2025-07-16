@@ -525,7 +525,7 @@ export const autoSweepWallet = async () => {
     }
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
-    if (upcomingClaimables.length) {
+    if (upcomingClaimables.length > 0) {
         for(const claimable of upcomingClaimables) {
             await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
             await sleep(500);
