@@ -449,14 +449,14 @@ export const autoClaimUnlocked = async () => {
     // console.log(`Trying auto claim now...`);
 
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 5000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 8000);
 
     const readyPassphrases = await Passphrase.find({
-        // claimableAt: { $lte: now },
-        claimableAt: {
-            $gt: now,
-            $lte: fiveSecondsFromNow
-        },
+        claimableAt: { $lte: fiveSecondsFromNow },
+        // claimableAt: {
+        //     $gt: now,
+        //     $lte: fiveSecondsFromNow
+        // },
         status: 'pending'
     });
 
@@ -472,7 +472,7 @@ export const autoClaimUnlocked = async () => {
 
                 const claimUnix = new Date(p.claimableAt).getTime();
                 const diff = claimUnix - now.getTime();
-                if (diff > 2000) {
+                if (diff > 3000) {
                     await sleep(Math.min(diff - 500, 1000));
                     continue;
                 }
