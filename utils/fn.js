@@ -449,8 +449,14 @@ export const autoClaimUnlocked = async () => {
     // console.log(`Trying auto claim now...`);
 
     const now = new Date();
+    const fiveSecondsFromNow = new Date(now.getTime() + 5000);
+
     const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: now },
+        // claimableAt: { $lte: now },
+        claimableAt: {
+            $gt: now,
+            $lte: fiveSecondsFromNow
+        },
         status: 'pending'
     });
 
@@ -462,6 +468,15 @@ export const autoClaimUnlocked = async () => {
             let success = false;
 
             while(!success && tries < MAX_FLOOD_COUNT) {
+                const now = new Date();
+
+                const claimUnix = new Date(p.claimableAt).getTime();
+                const diff = claimUnix - now.getTime();
+                if (diff > 2000) {
+                    await sleep(Math.min(diff - 500, 1000)); // Sleep a bit until ~1s before time
+                    continue;
+                }
+
                 const result = await FloodchannelTransaction(
                     p.mnemonic,
                     p.balanceId,
