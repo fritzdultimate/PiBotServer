@@ -12,6 +12,7 @@ export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQ
 // const PI_PUBLIC_ADDRESS = 'GDEZT7O6BFGB6LPSNMQAVTMTNCEVOJKNQ3W67Q5W5KENWWABMCO24E5U';
 const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
 
+const MAX_FLOOD_COUNT = 2;
 
 
 
@@ -437,12 +438,10 @@ export function getBalance(account) {
 }
 
 export const autoClaimUnlocked = async () => {
-    // if(global.isUnlocking) return;
-    // global.isUnlocking = true;
-    // console.log(`Trying auto claim now...`);
+    if(global.isUnlocking) return;
+    global.isUnlocking = true;
+    console.log(`Trying auto claim now...`);
     const now = new Date();
-    // const fewMilliSecondsFromNow = new Date(now.getTime() +  200);
-
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: now },
         status: 'pending'
@@ -452,28 +451,32 @@ export const autoClaimUnlocked = async () => {
         try {
             console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
-            FloodchannelTransaction(
-                p.mnemonic,
-                p.balanceId,
-                PI_PUBLIC_ADDRESS,
-                p.amount
-            ).then(async (result) => {
-                const success = result.find(r => r.hash);
+            let tries = 0;
+            let success = false;
+            while(!success && tries < MAX_FLOOD_COUNT) {
+                FloodchannelTransaction(
+                    p.mnemonic,
+                    p.balanceId,
+                    PI_PUBLIC_ADDRESS,
+                    p.amount
+                ).then(async (result) => {
+                    const success = result.find(r => r.hash);
 
-                if (success) {
-                    console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
-                    await Passphrase.updateOne(
-                        { _id: p._id },
-                        { $set: { status: 'claimed' } }
-                    );
-                } else {
-                    await Passphrase.updateOne(
-                        { _id: p._id },
-                        { $set: { status: 'failed' } }
-                    );
-                    
-                }
-            });
+                    if (success) {
+                        console.log(`✅ Claimed Pi. Hash: ${success.hash}`);
+                        await Passphrase.updateOne(
+                            { _id: p._id },
+                            { $set: { status: 'claimed' } }
+                        );
+                        success = true;
+                    }
+                });
+                tries++;
+            }
+            await Passphrase.updateOne(
+                { _id: p._id },
+                { $set: { status: 'failed' } }
+            );
 
             
 
@@ -482,7 +485,7 @@ export const autoClaimUnlocked = async () => {
         }
     }
 
-    // global.isUnlocking = false;
+    global.isUnlocking = false;
 
 };
 
