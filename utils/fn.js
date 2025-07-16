@@ -440,7 +440,7 @@ export const autoClaimUnlocked = async () => {
     if(global.isUnlocking) return;
     global.isUnlocking = true;
 
-    console.log(`Trying auto claim now...`);
+    // console.log(`Trying auto claim now...`);
 
     const now = new Date();
     const readyPassphrases = await Passphrase.find({
