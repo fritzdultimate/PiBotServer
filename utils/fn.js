@@ -484,6 +484,7 @@ export const autoClaimUnlocked = async () => {
                     p.amount,
                     p.claimableAt
                 );
+                console.log(result[0]);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
