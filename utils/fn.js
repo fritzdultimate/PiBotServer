@@ -104,15 +104,21 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     }
 }
 
-export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
+export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, claimableAt) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccount(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
+    const minTime = Math.floor(new Date(claimableAt).getTime() / 1000);
+	const maxTime = minTime + 30;
 
 	const tx = new TransactionBuilder(channelAccount, {
 		fee: '300000',
 		networkPassphrase: 'Pi Network',
+        timebounds: {
+            minTime,
+            maxTime
+        }
 
 	})
     .addOperation(Operation.claimClaimableBalance({
@@ -126,7 +132,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    .setTimeout(20)
+    .setTimeout(0)
     .build();
 
   	tx.sign(mainKp);
@@ -276,13 +282,13 @@ export async function getClaimableBalance(publicKey) {
         }
 }
 
-export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, claimableAt) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
-                const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount, claimableAt);
                 return await submitTransaction(xdr, horizonUrl(i));
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
@@ -460,7 +466,8 @@ export const autoClaimUnlocked = async () => {
                     p.mnemonic,
                     p.balanceId,
                     PI_PUBLIC_ADDRESS,
-                    p.amount
+                    p.amount,
+                    p.claimableAt
                 );
                 const found = result.find((r) => r.hash);
                 if (found) {
