@@ -16,7 +16,11 @@ const MAX_FLOOD_COUNT = 2;
 
 
 
-const HORIZONS = ['http://localhost:8000', 'http://31.97.37.92:8000'];
+const HORIZONS = [
+    'http://localhost:8000', 
+    'http://31.97.37.92:8000',
+    '31.97.122.182:8000' //latest
+];
 const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
 }
