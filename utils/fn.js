@@ -114,11 +114,10 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const accountData  = await getAccount(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
-    const minTime = Math.floor(new Date(claimableAt).getTime() / 1000);
-	const maxTime = minTime + 30;
+    const spendableBalance = await getSpendableBalance(channelKp.publicKey());
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: '300000',
+		fee: spendableBalance.toString(),
 		networkPassphrase: 'Pi Network',
         // timebounds: {
         //     minTime,
@@ -325,7 +324,12 @@ export async function FloodFeeBumpTransaction(mainPhrase, balanceId, recipient, 
     return { success: false, error: "No sponsored accounts found"}
 }
 
+async function getSpendableBalance(publicKey) {
+    const accountData  = await getAccount(publicKey);
+    const balanceString = getBalance(accountData);
 
+    return parseFloat(balanceString) - 0.99;
+} 
 
 
 export async function sweepWallet(mainPhrase, recipient) {
