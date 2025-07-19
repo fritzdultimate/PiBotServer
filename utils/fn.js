@@ -547,7 +547,7 @@ async function getUpcomingClaimables(start = 0) {
     const tenMinutesFromNow = new Date(now.getTime() + tenMin);
     const upcomingClaimables = await Passphrase.find({
         claimableAt: {
-            $gt: xMinutesFrom,
+            $gte: xMinutesFrom,
             $lte: tenMinutesFromNow
         },
         status: 'pending'
