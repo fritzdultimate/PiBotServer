@@ -292,13 +292,13 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
+            const server = horizonUrl(i);
             try {
-                const server = horizonUrl(i);
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 const result = await submitTransaction(xdr, server);
                 return [server, result];
             } catch (err) {
-                return [server, err]
+                return [server, err.response, e.response.data]
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
             }
         }));
