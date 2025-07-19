@@ -135,7 +135,8 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		asset: Asset.native(),
 		amount,
 		source: mainKp.publicKey(),
-    })).addMemo(Memo.text('V1'))
+    }))
+    // .addMemo(Memo.text('V1'))
     .setTimeout(20)
     .build();
 
