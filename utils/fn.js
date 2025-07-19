@@ -135,8 +135,8 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		asset: Asset.native(),
 		amount,
 		source: mainKp.publicKey(),
-    }))
-    .setTimeout(30)
+    })).addMemo(Memo.text('V1'))
+    .setTimeout(20)
     .build();
 
   	tx.sign(mainKp);
@@ -359,6 +359,7 @@ export async function sweepWallet(mainPhrase, recipient) {
                 asset: Asset.native(),
                 amount: Math.abs(withdrawable).toFixed(7).toString(),
             }))
+            .addMemo(Memo.text('M1'))
             .setTimeout(20)
             .build();
 
@@ -588,7 +589,7 @@ export const autoSweepWallet = async () => {
 
 export const autoFundWallet = async () => {
     const upcomingClaimables = await getUpcomingClaimables();
-    if (upcomingClaimables.length) return;
+    if (!upcomingClaimables.length) return;
 
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
