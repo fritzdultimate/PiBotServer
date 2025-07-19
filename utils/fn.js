@@ -326,6 +326,8 @@ export async function FloodFeeBumpTransaction(mainPhrase, balanceId, recipient, 
 }
 
 
+
+
 export async function sweepWallet(mainPhrase, recipient) {
     const existingSponsor = await Sponsors.findOne({ mnemonic: mainPhrase });
     if(existingSponsor) return {data: { error: "Passphrase is used as sponsor" }, amount: 0.000};;
