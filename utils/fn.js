@@ -298,6 +298,7 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
                 const result = await submitTransaction(xdr, server);
                 return [server, result];
             } catch (err) {
+                return [server, err]
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
             }
         }));
