@@ -115,7 +115,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
 
     const spendableBalance = await getSpendableBalance(channelKp.publicKey());
-    const fee = Math.floor(spendableBalance) * 100000;
+    const fee = Math.floor(spendableBalance) * 10000000;
 
 	const tx = new TransactionBuilder(channelAccount, {
 		fee: fee.toString(),
