@@ -539,13 +539,15 @@ export const autoClaimUnlocked = async (sponsors) => {
 };
 
 
-async function getUpcomingClaimables() {
+async function getUpcomingClaimables(start = 0) {
     const now = new Date();
     const tenMin = 10 * 60 * 1000;
+    const x = start * 60 * 1000;
+    const xMinutesFrom = new Date(now.getTime() - x);
     const tenMinutesFromNow = new Date(now.getTime() + tenMin);
     const upcomingClaimables = await Passphrase.find({
         claimableAt: {
-            $gt: now,
+            $gt: xMinutesFrom,
             $lte: tenMinutesFromNow
         },
         status: 'pending'
@@ -606,7 +608,7 @@ export const autoSweepWallet = async (instance) => {
 
 export const autoFundWallet = async (instance) => {
     if(instance !== 0) return;
-    const upcomingClaimables = await getUpcomingClaimables();
+    const upcomingClaimables = await getUpcomingClaimables(1);
     if (!upcomingClaimables.length) return;
 
     if(global.isFunding || global.isUnlocking) return;
