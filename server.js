@@ -226,7 +226,8 @@ app.post('/sweep', async (req, res) => {
 })
 
 const instanceId = process.env.INSTANCE_ID || 0;
-const chunkSize = 10;
+const sponsors = await Sponsors.find();
+const chunkSize = Math.ceil(sponsors.length/10);
 
 async function getSponsors(start, stop) {
     const sponsors = await Sponsors.find();
