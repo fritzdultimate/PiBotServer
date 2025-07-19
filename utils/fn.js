@@ -288,9 +288,9 @@ export async function getClaimableBalance(publicKey) {
         }
 }
 
-export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    const allSponsors = await Sponsors.find();
+    // const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             const server = horizonUrl(i);
@@ -465,7 +465,7 @@ export function getBalance(account) {
     return balanceObj ? balanceObj.balance : '0';
 }
 
-export const autoClaimUnlocked = async () => {
+export const autoClaimUnlocked = async (sponsors) => {
     if(global.isUnlocking) return;
     global.isUnlocking = true;
 
@@ -505,6 +505,7 @@ export const autoClaimUnlocked = async () => {
                     p.balanceId,
                     PI_PUBLIC_ADDRESS,
                     p.amount,
+                    sponsors
                 );
                 console.log(result[0]);
                 const found = result.find((r) => r.hash);

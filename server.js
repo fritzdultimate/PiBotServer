@@ -6,6 +6,7 @@ import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
 import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
+import Sponsors from './models/Sponsors.js';
 dotenv.config();
 
 const app = express();
@@ -224,7 +225,21 @@ app.post('/sweep', async (req, res) => {
     
 })
 
-setInterval(autoClaimUnlocked, 100);
+const instanceId = process.env.INSTANCE_ID || 0;
+const chunkSize = 10;
+
+async function getSponsors(start, stop) {
+    const sponsors = await Sponsors.find();
+
+    return sponsors.slice(start, stop)
+}
+setInterval(async() => {
+    const sponsors = await getSponsors(instanceId * chunkSize, chunkSize);
+
+    console.log(`Instance ID`, instanceId);
+    console.log(sponsors);
+}, 1000)
+// setInterval(autoClaimUnlocked, 100);
 setInterval(autoSweepWallet, 1000);
 
 setInterval(autoFundWallet, 1000);
