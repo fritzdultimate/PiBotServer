@@ -238,6 +238,7 @@ setInterval(async() => {
     const sponsors = await getSponsors(instanceId * chunkSize, chunkSize);
 
     console.log(`Instance ID`, instanceId);
+    console.log(`Array length`, sponsors.length);
     console.log(sponsors);
 }, 1000)
 // setInterval(autoClaimUnlocked, 100);
