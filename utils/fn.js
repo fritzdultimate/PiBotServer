@@ -336,7 +336,7 @@ async function getSpendableBalance(publicKey) {
     const accountData  = await getAccount(publicKey);
     const balanceString = getBalance(accountData);
 
-    return parseFloat(balanceString) - 0.99;
+    return parseFloat(balanceString) - 0.98;
 } 
 
 
