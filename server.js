@@ -229,24 +229,16 @@ const instanceId = process.env.INSTANCE_ID || 0;
 const sponsors = await Sponsors.find();
 const chunkSize = Math.ceil(sponsors.length/10);
 
-async function getSponsors(start, stop) {
-    const sponsors = await Sponsors.find();
-
-    return sponsors.slice(start, stop)
-}
 setInterval(async() => {
-    const sponsors = await getSponsors(instanceId * chunkSize, chunkSize);
+    const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
 
-    console.log(`Instance ID`, instanceId);
-    console.log(`Array length`, sponsors.length);
-    console.log(sponsors);
-}, 1000)
-// setInterval(autoClaimUnlocked, 100);
-setInterval(autoSweepWallet, 1000);
+    autoClaimUnlocked(sponsorChunk);
+}, 100)
 
-setInterval(autoFundWallet, 1000);
-setInterval(autoCheckSponsorForClaimable, 300000);
-// setInterval(autoDuplicatePassphrase, 1000)
+setInterval(() => autoFundWallet(instanceId), 1000);
+setInterval(() => autoSweepWallet(instanceId), 1000);
+
+setInterval(() => autoCheckSponsorForClaimable(instanceId), 300000);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);

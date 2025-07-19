@@ -565,7 +565,8 @@ function arrayBatches(arr, batchSize = 100) {
     return batches;
 }
 
-export const autoSweepWallet = async () => {
+export const autoSweepWallet = async (instance) => {
+    if(instance !==3) return;
     if(global.isSweeping) {
 	    return;
     }
@@ -603,7 +604,8 @@ export const autoSweepWallet = async () => {
     global.isSweeping = false;
 };
 
-export const autoFundWallet = async () => {
+export const autoFundWallet = async (instance) => {
+    if(instance !== 0) return;
     const upcomingClaimables = await getUpcomingClaimables();
     if (!upcomingClaimables.length) return;
 
@@ -657,7 +659,8 @@ export const autoFundWallet = async () => {
     global.isFunding = false;
 };
 
-export const autoCheckSponsorForClaimable = async () => {
+export const autoCheckSponsorForClaimable = async (instance) => {
+    if(instance !== 6) return;
     // const sponsors = await Sponsors.find();
 
     // for(const s of sponsors) {
