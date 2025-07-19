@@ -118,7 +118,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const fee = Math.floor(spendableBalance * 10000000);
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: fee > 2000 ? fee.toString() : '200000',
+		fee: fee > 200000 ? fee.toString() : '200000',
 		networkPassphrase: 'Pi Network',
         // timebounds: {
         //     minTime,
