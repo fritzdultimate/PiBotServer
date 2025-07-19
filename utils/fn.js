@@ -109,7 +109,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     }
 }
 
-export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, claimableAt) {
+export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const accountData  = await getAccount(channelKp.publicKey());
     const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
@@ -287,14 +287,16 @@ export async function getClaimableBalance(publicKey) {
         }
 }
 
-export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, claimableAt) {
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
-                const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount, claimableAt);
-                return await submitTransaction(xdr, horizonUrl(i));
+                const server = horizonUrl(i);
+                const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                const result = await submitTransaction(xdr, server);
+                return [server, result];
             } catch (err) {
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
             }
@@ -497,7 +499,6 @@ export const autoClaimUnlocked = async () => {
                     p.balanceId,
                     PI_PUBLIC_ADDRESS,
                     p.amount,
-                    p.claimableAt
                 );
                 console.log(result[0]);
                 const found = result.find((r) => r.hash);
