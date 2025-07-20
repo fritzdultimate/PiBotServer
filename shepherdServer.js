@@ -63,6 +63,7 @@ const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
 
+// Auto Claim
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
 
@@ -128,6 +129,7 @@ setInterval(async() => {
     
 }, 100);
 
+
 async function getUpcomingClaimables(start = 0) {
     const now = new Date();
     const tenMin = 10 * 60 * 1000;
@@ -146,6 +148,8 @@ async function getUpcomingClaimables(start = 0) {
     return upcomingClaimables;
 }
 
+
+// Auto Fund
 setInterval(async() => {
     if(instanceId !== 0) return;
         const upcomingClaimables = await getUpcomingClaimables(1);
@@ -201,6 +205,7 @@ setInterval(async() => {
         global.isFunding = false;
 }, 1000);
 
+// Auto Sweep
 setInterval(async() => {
     if(instanceId !==1) return;
         if(global.isSweeping) {
