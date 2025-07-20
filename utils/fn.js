@@ -556,7 +556,7 @@ async function getUpcomingClaimables(start = 0) {
     return upcomingClaimables;
 }
 
-function arrayBatches(arr, batchSize = 100) {
+export function arrayBatches(arr, batchSize = 100) {
     const batches = [];
 
     for (let i = 0; i < arr.length; i += batchSize) {

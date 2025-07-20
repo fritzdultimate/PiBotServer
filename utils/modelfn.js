@@ -1,8 +1,9 @@
 import Passphrase from "../models/Passphrase.js";
+import Settings from "../models/Settings.js";
 import Sponsors from "../models/Sponsors.js";
 import { getClaimableBalance } from "./fn.js";
 
-export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress, local = false) {
+export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress, local = false, name = null) {
     // const existing = await Passphrase.findOne({ mnemonic });
     // if (existing) {
     //     return {success: false, message: 'Passphrase already exists' };
@@ -41,6 +42,7 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
                     claimableAt,
                     balanceId: record.id,
                     amount: record.amount,
+                    name
                 });
             }
         }
@@ -71,3 +73,16 @@ export async function storeSponsor(mnemonic, name) {
         const saved = await Sponsors.create({ mnemonic, name });
         return { success: true, message: 'Sponsor saved' };
 }
+
+export const upsertSettings = async (newSettings) => {
+    const updatedSettings = await Settings.findOneAndUpdate(
+        {},
+        { $set: newSettings },
+        {
+            new: true,
+            upsert: true
+        }
+    );
+
+    return updatedSettings;
+};
