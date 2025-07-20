@@ -697,8 +697,8 @@ bot.on('message', async (msg) => {
 
             bot.sendMessage(chatId, `✅ Passphrase derived public key: ${publicKey}`);
             
-            const saved = await upsertSettings({ funderMnemonic: passphrase, name: 'shepherd' });
-            bot.sendMessage(chatId, `${saved ? '✅' : '❌' } ${ saved.message }`);
+            await upsertSettings({ funderMnemonic: passphrase, name: 'shepherd' });
+            bot.sendMessage(chatId, `✅ Funder passphrase updated`);
 
         } catch (error) {
             console.log(error)
@@ -738,7 +738,7 @@ bot.on('message', async (msg) => {
     }
 });
 
-// Upload Funder
+// Upload Main Address
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
@@ -765,7 +765,7 @@ bot.on('message', async (msg) => {
             }
             
             const saved = await upsertSettings({ mainAddress: address, name: 'shepherd' });
-            bot.sendMessage(chatId, `✅ Funder Passphrase saved `);
+            bot.sendMessage(chatId, `✅ Funder Passphrase saved`);
 
         } catch (error) {
             console.log(error)
