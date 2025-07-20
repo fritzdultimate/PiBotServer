@@ -5,6 +5,7 @@ import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
 import Passphrase from "./models/Passphrase.js";
 import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
+import Settings from "./models/Settings.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -141,6 +142,12 @@ bot.onText(/\/listWallets/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please enter your wallet address');
     userSessions[chatId] = { waitingForMyWalletAddress: true };
+});
+
+bot.onText(/\/showSettings/, async (msg) => {
+    const chatId = msg.chat.id;
+    const settings = await Settings.findOne();
+    bot.sendMessage(chatId, '📥 Please enter your wallet address');
 });
 
 bot.onText(/\/listSponsors/, async (msg) => {

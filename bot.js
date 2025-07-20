@@ -34,6 +34,16 @@ bot.onText(/\/help/, (msg) => {
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
 });
 
+bot.onText(/\/stop/, (msg) => {
+    const chatId = msg.chat.id;
+
+    if (!userSessions[chatId]) {
+        userSessions[chatId] = {};
+    }
+    userSessions[chatId]['stopAll'] = true;
+    return bot.sendMessage(chatId, 'Stopping any running process');
+});
+
 const userSessions = {};
 
 bot.onText(/\/claim/, (msg) => {
@@ -234,13 +244,6 @@ bot.onText(/\/uploadSponsor/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase followed by label.\n\nFormat:\n`word1 word2 ... word24 name`', { parse_mode: 'Markdown' });
     userSessions[chatId] = { waitingForPassphraseAndName: true };
-});
-
-bot.onText(/\/stop/, (msg) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Stopping any running process');
-
-    userSessions[chatId]['stopAll'] = true;
 });
 
 
