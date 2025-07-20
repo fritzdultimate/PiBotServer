@@ -534,7 +534,7 @@ bot.on('message', async (msg) => {
 
             bot.sendMessage(chatId, `✅ Passphrase derived public key: ${publicKey}`);
             
-            const saved = await storeSponsor(passphrase, name)
+            const saved = await storeSponsor(passphrase, 'whoami5677')
             bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
 
         } catch (error) {
