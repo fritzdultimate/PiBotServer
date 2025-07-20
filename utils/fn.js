@@ -298,14 +298,14 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 const result = await submitTransaction(xdr, server);
-                return [server, result];
+                return result;
             } catch (err) {
                 const response = err?.response;
                 const data = response?.data;
 
                 console.error(`❌ Error building/submitting for channel ${i}:`, err);
 
-                return [server, response, data ?? err?.message ?? String(err)];
+                return data ?? err?.message ?? String(err);
             }
         }));
 

