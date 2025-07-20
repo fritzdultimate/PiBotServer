@@ -65,6 +65,9 @@ const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
 
+console.log(`Chuck size: ${chunkSize}`)
+console.log(`Sponsors: ${sponsors}`)
+
 // Auto Claim
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
