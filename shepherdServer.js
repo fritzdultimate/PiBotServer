@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 });
 
 
-const instanceId = process.env.INSTANCE_ID || 0;
+const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
 
