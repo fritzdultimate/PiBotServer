@@ -765,7 +765,7 @@ bot.on('message', async (msg) => {
             }
             
             const saved = await upsertSettings({ mainAddress: address, name: 'shepherd' });
-            bot.sendMessage(chatId, `${saved ? '✅' : '❌' } ${ saved.message }`);
+            bot.sendMessage(chatId, `✅ Funder Passphrase saved `);
 
         } catch (error) {
             console.log(error)
