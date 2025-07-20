@@ -42,7 +42,7 @@ bot.onText(/\/settings/, (msg) => {
 
 bot.onText(/\/help/, (msg) => {
     const helpText = `
-        📘 PiBot Commands:
+        📘 Bot Commands:
         /balance - Show Pi balance
         /claim - Claim unlocked Pi
         /search - Check if a wallet exists
@@ -55,6 +55,8 @@ bot.onText(/\/help/, (msg) => {
         /listPhrases - List all locked wallets
         /deleteWallet - Delete wallet from queue
         /stop - stops all running process
+        /settings - Set vital info for your bot
+        /showSettings - Show active settings
         `;
     return bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
 });
