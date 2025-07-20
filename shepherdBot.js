@@ -871,6 +871,9 @@ bot.on('message', async (msg) => {
 
         const checkInterval = setInterval(async () => {
             try {
+                if (!userSessions[chatId]?.isClaiming) {
+                    clearInterval(checkInterval);
+                }
                 const claimable = await getClaimableBalance(kp.publicKey());
                 const records = claimable?._embedded?.records || [];
 
