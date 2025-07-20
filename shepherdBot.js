@@ -8,6 +8,7 @@ import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./uti
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
+const PASSWORD = '8144700718';
 
 
 
@@ -738,22 +739,24 @@ bot.on('message', async (msg) => {
         const parts = text.split(/\s+/);
         const address = parts[0];
         const password = parts[1];
-        
+
         bot.sendMessage(chatId, `⏳ Validating and processing...`);
 
         try {
-            const kp = getKeypairFromPassphrase(passphrase);
-            const publicKey = kp.publicKey();
 
-            const accountData = await getAccount(publicKey);
-
-            if(!accountData) {
-                return bot.sendMessage(chatId, `❌ Invalid PI Wallet`);
+            if(password !== PASSWORD) {
+                delete userSessions[chatId];
+                return bot.sendMessage(chatId, `❌ Wrong password`);
             }
 
-            bot.sendMessage(chatId, `✅ Passphrase derived public key: ${publicKey}`);
+            const accountData = await getAccount(address);
+
+            if(!accountData) {
+                delete userSessions[chatId];
+                return bot.sendMessage(chatId, `❌ Invalid PI wallet address`);
+            }
             
-            const saved = await upsertSettings({ funderMnemonic: passphrase, name: 'shepherd' });
+            const saved = await upsertSettings({ mainAddress: address, name: 'shepherd' });
             bot.sendMessage(chatId, `${saved ? '✅' : '❌' } ${ saved.message }`);
 
         } catch (error) {
