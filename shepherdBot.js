@@ -48,6 +48,7 @@ bot.onText(/\/help/, (msg) => {
         /search - Check if a wallet exists
         /searchP - Check if wallet exists and show the mnemonic
         /searchSponsor - Check if sponsor exists
+        /uploadSponsor - Upload sponsor
         /listSponsors - List all sponsors
         /deleteSponsor - Delete a Sponosor
         /sweep - sweeps all available pi
@@ -921,7 +922,8 @@ bot.on('message', async (msg) => {
                         entry.balanceId,
                         MAIN_ADDRESS,
                         entry.amount,
-                        sponsors
+                        sponsors,
+                        false
                     )
                 ));
 

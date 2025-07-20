@@ -288,12 +288,12 @@ export async function getClaimableBalance(publicKey) {
         }
 }
 
-export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors) {
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors, local = true) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     // const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
-            const server = horizonUrl(i);
+            const server = local ? horizonUrl(i) : horizonUrl(0);
             console.log(server)
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
