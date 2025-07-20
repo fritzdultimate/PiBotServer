@@ -294,6 +294,7 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             const server = horizonUrl(i);
+            console.log(server)
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 const result = await submitTransaction(xdr, server);

@@ -227,7 +227,7 @@ app.post('/sweep', async (req, res) => {
 
 const instanceId = process.env.INSTANCE_ID || 0;
 const sponsors = await Sponsors.find();
-const chunkSize = Math.ceil(sponsors.length/10);
+const chunkSize = Math.ceil(sponsors.length/5);
 
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
