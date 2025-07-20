@@ -214,18 +214,13 @@ bot.onText(/\/listSponsors/, async (msg) => {
     const chunks = splitMessage(message);
     let i = 0;
     for (const chunk of chunks) {
-        const heading = i === 0 ? `📋 *List of Wallets: Page ${i+1} of ${chunks.length}*` : `⏳ *Contd: Page ${i+1} of ${chunks.length}*`;
+        const heading = i === 0 ? `📋 *List of Sponsors: Page ${i+1} of ${chunks.length}*` : `⏳ *Contd: Page ${i+1} of ${chunks.length}*`;
         await bot.sendMessage(chatId, `${heading}\n\n${chunk}`, {
             parse_mode: 'Markdown',
         });
 
         i++;
     }
-
-    
-    bot.sendMessage(chatId, `📋 *List of Sponsors:*\n\n${message}`, {
-      parse_mode: 'Markdown',
-    });
 
   } catch (err) {
     console.error('Error fetching sponsors:', err);
