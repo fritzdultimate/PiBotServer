@@ -10,6 +10,8 @@ import Sponsors from './models/Sponsors.js';
 import Settings from './models/Settings.js';
 dotenv.config();
 
+console.log('shep')
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
