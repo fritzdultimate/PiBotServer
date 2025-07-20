@@ -213,7 +213,7 @@ setInterval(async() => {
 
 // Auto Sweep
 setInterval(async() => {
-    if(instanceId !==1) return;
+    if(instanceId !==0) return;
     console.log(`Is sweeping from instance ${instanceId}`)
         if(global.isSweeping) {
             return;
