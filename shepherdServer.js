@@ -10,7 +10,6 @@ import Sponsors from './models/Sponsors.js';
 import Settings from './models/Settings.js';
 dotenv.config();
 
-console.log('shep')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,12 +29,6 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.use((req, res, next) => {
-    console.log('req.ip:', req.ip);
-    console.log('req.headers["x-forwarded-for"]:', req.headers['x-forwarded-for']);
-    console.log('req.socket.remoteAddress:', req.socket.remoteAddress);
-    next();
-});
 app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
@@ -65,9 +58,6 @@ const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
 
-console.log(`Chuck size: ${chunkSize}`)
-console.log(`Sponsors: ${sponsors}`)
-
 // Auto Claim
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
@@ -83,7 +73,6 @@ setInterval(async() => {
 
     for (const p of readyPassphrases) {
         try {
-            console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
             let tries = 0;
             let success = false;
@@ -106,7 +95,6 @@ setInterval(async() => {
                     sponsorChunk,
                     false
                 );
-                console.log(result[0]);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
@@ -168,7 +156,6 @@ setInterval(async() => {
     
         for (const p of sponsorsPhrase) {
             try {
-                // console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
     
     
                 const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
@@ -214,7 +201,6 @@ setInterval(async() => {
 // Auto Sweep
 setInterval(async() => {
     if(instanceId !==0) return;
-    console.log(`Is sweeping from instance ${instanceId}`)
         if(global.isSweeping) {
             return;
         }
@@ -233,12 +219,9 @@ setInterval(async() => {
         const passphraseBatches = arrayBatches(readyPassphrases, 80);
     
         for(const passphrases of passphraseBatches) {
-            console.log(passphrases)
             await Promise.all(passphrases.map(async (phrase, i) => {
                 try {
                     const result = await sweepWallet(phrase.mnemonic, MAIN_ADDRESS);
-                    console.log('Phrase', phrase.mnemonic)
-                    console.log(result)
                 } catch (e) {
                     if (e.response && e.response.data && e.response.data.extras) {
                         const extras = e.response.data.extras;
