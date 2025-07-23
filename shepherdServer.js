@@ -185,10 +185,10 @@ setInterval(async() => {
                     const success = result.data;
     
                     if (success.hash) {
-                        console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                        console.log(`✅ Shepherd funded ${result.amount} Pi. Hash: ${success.hash}`);
                         
                     } else {
-                        console.log(`❌ Failed to fund ${result.amount} PI}`);
+                        console.log(`❌ Shepherd Failed to fund ${result.amount} PI}`);
                     }
                 }
                 await sleep(1000);
