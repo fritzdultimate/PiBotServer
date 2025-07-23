@@ -551,7 +551,8 @@ async function getUpcomingClaimables(start = 0) {
             $gte: xMinutesFrom,
             $lte: tenMinutesFromNow
         },
-        status: 'pending'
+        status: 'pending',
+        name: { $in: [null, undefined] }
     });
 
     return upcomingClaimables;
@@ -584,7 +585,7 @@ export const autoSweepWallet = async (instance) => {
         return;
     }
 
-    const readyPassphrases = await Passphrase.find();
+    const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
     const passphraseBatches = arrayBatches(readyPassphrases, 80);
 
     for(const passphrases of passphraseBatches) {

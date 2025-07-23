@@ -146,16 +146,18 @@ async function getUpcomingClaimables(start = 0) {
 // Auto Fund
 setInterval(async() => {
     if(instanceId !== 0) return;
-        const upcomingClaimables = await getUpcomingClaimables(1);
-        if (!upcomingClaimables.length) return;
+        // const upcomingClaimables = await getUpcomingClaimables(1);
+        // if (!upcomingClaimables.length) return;
     
         if(global.isFunding || global.isUnlocking) return;
         global.isFunding = true;
     
         const sponsorsPhrase = await Sponsors.find( {name: 'shepherd'} );
+        console.log(`Shepherd is trying to fund`);
     
         for (const p of sponsorsPhrase) {
             try {
+                
     
     
                 const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
@@ -183,10 +185,10 @@ setInterval(async() => {
                     const success = result.data;
     
                     if (success.hash) {
-                        // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                        console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
                         
                     } else {
-                        // console.log(`❌ Failed to fund ${result.amount} PI}`);
+                        console.log(`❌ Failed to fund ${result.amount} PI}`);
                     }
                 }
                 await sleep(1000);
