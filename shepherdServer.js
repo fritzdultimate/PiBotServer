@@ -198,7 +198,7 @@ setInterval(async() => {
             }
         }
         global.isFunding = false;
-}, 1000);
+}, 10000);
 
 // Auto Sweep
 setInterval(async() => {
