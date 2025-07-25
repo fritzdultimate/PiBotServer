@@ -40,6 +40,7 @@ app.use((req, res, next) => {
 });
 
 await connectToDB();
+
 const settings = await Settings.findOne();
 const MAX_FLOOD_COUNT = Number(settings.maxFlood) || 3;
 const BOT_PHRASE = settings.funderMnemonic;
@@ -63,7 +64,7 @@ setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
 
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 8000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 7000);
     
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
