@@ -64,7 +64,7 @@ setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
 
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 7000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 8000);
     
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
