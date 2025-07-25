@@ -150,7 +150,6 @@ async function getUpcomingClaimables(start = 0) {
 
 // Auto Fund
 setInterval(async() => {
-    if(instanceId !== 0) return;
         const upcomingClaimables = await getUpcomingClaimables(0.5);
         if (!upcomingClaimables.length) return;
     
