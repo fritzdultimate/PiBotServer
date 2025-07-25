@@ -6,9 +6,9 @@ import Sponsors from "./models/Sponsors.js";
 import Passphrase from "./models/Passphrase.js";
 import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
 import Settings from "./models/Settings.js";
-
+const settings = await Settings.findOne();
 const token = '7940844852:AAEY5NwW8ORu6X45xuWEp4Klq_3sO17OH7o';
-const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
+const MAIN_ADDRESS = settings.mainAddress;
 const PASSWORD = '8144700718';
 
 
