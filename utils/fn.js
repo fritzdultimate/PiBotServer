@@ -481,7 +481,8 @@ export const autoClaimUnlocked = async (sponsors) => {
         //     $gt: now,
         //     $lte: fiveSecondsFromNow
         // },
-        status: 'pending'
+        status: 'pending',
+        name: { $in: [null, undefined] }
     });
 
     for (const p of readyPassphrases) {
