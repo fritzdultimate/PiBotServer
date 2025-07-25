@@ -309,7 +309,7 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     // const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
-            const server = local ? horizonUrl(i) : horizonUrl(0);
+            const server = horizonUrl(i);
             console.log(`Using server: ${server}`)
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
