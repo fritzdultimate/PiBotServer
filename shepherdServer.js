@@ -150,8 +150,8 @@ async function getUpcomingClaimables(start = 0) {
 // Auto Fund
 setInterval(async() => {
     if(instanceId !== 0) return;
-        // const upcomingClaimables = await getUpcomingClaimables(1);
-        // if (!upcomingClaimables.length) return;
+        const upcomingClaimables = await getUpcomingClaimables(1);
+        if (!upcomingClaimables.length) return;
     
         if(global.isFunding || global.isUnlocking) return;
         global.isFunding = true;
@@ -202,7 +202,7 @@ setInterval(async() => {
             }
         }
         global.isFunding = false;
-}, 1200000);
+}, 1000);
 
 // Auto Sweep
 setInterval(async() => {
