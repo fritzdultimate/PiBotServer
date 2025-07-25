@@ -112,6 +112,7 @@ setInterval(async() => {
                     break;
                 }
                 tries++;
+                await sleep(999);
             }
             if (!success) {
                 await Passphrase.updateOne(
