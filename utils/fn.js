@@ -268,8 +268,24 @@ export async function submitTransaction(txXdr, horizon) {
         );
         return res.data;
     } catch (err) {
-        // console.log('❌ Client error submitting TX:', err);
-        return { success: false, error: err.response?.data || err.message}
+        const error = err.response?.data;
+
+        if (error && error.extras) {
+            const { result_codes, envelope_xdr, result_xdr } = error.extras;
+            return {
+                success: false,
+                reason: result_codes,  // includes transaction and operation-level error codes
+                result_xdr,
+                envelope_xdr,
+                error,
+            };
+        }
+
+        return {
+            success: false,
+            message: error?.detail || err.message,
+            error,
+        };
     }
 }
 
@@ -298,6 +314,9 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 const result = await submitTransaction(xdr, server);
+                if (!result.success) {
+                    console.error("❌ Transaction failed:", result.reason);
+                }
                 return result;
             } catch (err) {
                 const response = err?.response;

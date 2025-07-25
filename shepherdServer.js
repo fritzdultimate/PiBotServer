@@ -99,7 +99,7 @@ setInterval(async() => {
                     sponsorChunk,
                     false
                 );
-                console.log(result);
+                // console.log(result);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
