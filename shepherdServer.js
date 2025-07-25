@@ -58,8 +58,6 @@ const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
 
-console.log(`We are at instance ID ${instanceId}`)
-
 // Auto Claim
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
@@ -73,6 +71,7 @@ setInterval(async() => {
         status: 'pending'
     });
     console.log(`Trying to claim ${readyPassphrases.length} wallets`)
+    console.log(`We are at instance ID ${instanceId}`)
 
     for (const p of readyPassphrases) {
         console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
@@ -153,7 +152,7 @@ setInterval(async() => {
         const upcomingClaimables = await getUpcomingClaimables(1);
         if (!upcomingClaimables.length) return;
     
-        if(global.isFunding || global.isUnlocking) return;
+        if(global.isFunding) return;
         global.isFunding = true;
     
         const sponsorsPhrase = await Sponsors.find( {name: 'shepherd'} );
