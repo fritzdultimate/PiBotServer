@@ -131,7 +131,7 @@ setInterval(async() => {
 
 async function getUpcomingClaimables(start = 0) {
     const now = new Date();
-    const tenMin = 10 * 60 * 1000;
+    const tenMin = 20 * 60 * 1000;
     const x = start * 60 * 1000;
     const xMinutesFrom = new Date(now.getTime() - x);
     const tenMinutesFromNow = new Date(now.getTime() + tenMin);
