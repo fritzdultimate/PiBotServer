@@ -72,6 +72,7 @@ setInterval(async() => {
     });
     console.log(`Trying to claim ${readyPassphrases.length} wallets`)
     console.log(`We are at instance ID ${instanceId}`)
+    console.log(`Max flood: ${MAX_FLOOD_COUNT}`)
 
     for (const p of readyPassphrases) {
         console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
@@ -81,7 +82,6 @@ setInterval(async() => {
             let success = false;
 
             while(!success && tries < MAX_FLOOD_COUNT) {
-                console.log(`Max flood: ${MAX_FLOOD_COUNT}`)
                 const now = new Date();
 
                 const claimUnix = new Date(p.claimableAt).getTime();
