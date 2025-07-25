@@ -152,6 +152,8 @@ async function getUpcomingClaimables(start = 0) {
 setInterval(async() => {
         const upcomingClaimables = await getUpcomingClaimables(0.5);
         if (!upcomingClaimables.length) return;
+        if(global.isFunding) return;
+        global.isFunding = true;
     
         const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
         console.log(`Shepherd is trying to fund`);
@@ -196,12 +198,13 @@ setInterval(async() => {
                     // console.log(`sponsor balance: ${change}`)
                     // console.log(`bot balance: ${botBalance}`)
                 }
-                await sleep(1000);
+                await sleep(5000);
     
             } catch (err) {
                 // console.error('❌ Error funding Pi:', err.message || err);
             }
         }
+        global.isFunding = false;
 }, 1000);
 
 // Auto Sweep
