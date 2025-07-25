@@ -81,6 +81,7 @@ setInterval(async() => {
             let success = false;
 
             while(!success && tries < MAX_FLOOD_COUNT) {
+                console.log(`Max flood: ${MAX_FLOOD_COUNT}`)
                 const now = new Date();
 
                 const claimUnix = new Date(p.claimableAt).getTime();
@@ -98,6 +99,7 @@ setInterval(async() => {
                     sponsorChunk,
                     false
                 );
+                console.log(result);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
@@ -124,7 +126,7 @@ setInterval(async() => {
         }
     }
     
-}, 100);
+}, 5000);
 
 
 async function getUpcomingClaimables(start = 0) {
