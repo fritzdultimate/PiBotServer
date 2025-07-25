@@ -6,9 +6,7 @@ import Sponsors from "./models/Sponsors.js";
 import Passphrase from "./models/Passphrase.js";
 import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
 import Settings from "./models/Settings.js";
-const settings = await Settings.findOne();
 const token = '7940844852:AAEY5NwW8ORu6X45xuWEp4Klq_3sO17OH7o';
-const MAIN_ADDRESS = settings.mainAddress;
 const PASSWORD = '8144700718';
 
 
@@ -16,6 +14,9 @@ const PASSWORD = '8144700718';
 const bot = new TelegramBot(token, { polling: true });
 await connectToDB();
 let userSessions = {};
+
+const settings = await Settings.findOne();
+const MAIN_ADDRESS = settings.mainAddress;
 
 bot.onText(/\/start/, (msg) => {
     bot.sendMessage(msg.chat.id, "Welcome! Type /help to see commands, by @fritzdecode");
