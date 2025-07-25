@@ -151,18 +151,15 @@ async function getUpcomingClaimables(start = 0) {
 // Auto Fund
 setInterval(async() => {
     if(instanceId !== 0) return;
-        const upcomingClaimables = await getUpcomingClaimables(1);
+        const upcomingClaimables = await getUpcomingClaimables(0.5);
         if (!upcomingClaimables.length) return;
     
-        if(global.isFunding) return;
-        global.isFunding = true;
-    
-        const sponsorsPhrase = await Sponsors.find( {name: 'shepherd'} );
+        const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
         console.log(`Shepherd is trying to fund`);
     
-        for (const p of sponsorsPhrase) {
+        for (const p of sponsorChunk) {
             try {
-                
+                console.log(`Funding ${p.mnemonic}`)
     
     
                 const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
@@ -202,7 +199,6 @@ setInterval(async() => {
                 // console.error('❌ Error funding Pi:', err.message || err);
             }
         }
-        global.isFunding = false;
 }, 1000);
 
 // Auto Sweep
