@@ -128,7 +128,7 @@ setInterval(async() => {
         }
     }
     
-}, 5000);
+}, 100);
 
 
 async function getUpcomingClaimables(start = 0) {
