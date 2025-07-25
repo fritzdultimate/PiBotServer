@@ -71,9 +71,9 @@ setInterval(async() => {
         name: 'shepherd',
         status: 'pending'
     });
-    console.log(`Trying to claim ${readyPassphrases.length} wallets`)
-    console.log(`We are at instance ID ${instanceId}`)
-    console.log(`Max flood: ${MAX_FLOOD_COUNT}`)
+    // console.log(`Trying to claim ${readyPassphrases.length} wallets`)
+    // console.log(`We are at instance ID ${instanceId}`)
+    // console.log(`Max flood: ${MAX_FLOOD_COUNT}`)
 
     for (const p of readyPassphrases) {
         console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
@@ -196,9 +196,12 @@ setInterval(async() => {
                         console.log(`❌ Shepherd Failed to fund ${result.amount} PI}`);
                     }
                 } else {
-                    // console.log(`Skipping`)
-                    // console.log(`sponsor balance: ${change}`)
-                    // console.log(`bot balance: ${botBalance}`)
+                    if(botBalance < Math.abs(change)) {
+                        console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
+                    }
+                    if(change => 0) {
+                        console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
+                    }
                 }
                 await sleep(5000);
     
