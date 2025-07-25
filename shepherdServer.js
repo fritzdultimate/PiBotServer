@@ -191,6 +191,10 @@ setInterval(async() => {
                     } else {
                         console.log(`❌ Shepherd Failed to fund ${result.amount} PI}`);
                     }
+                } else {
+                    console.log(`Skipping`)
+                    console.log(`sponsor balance: ${change}`)
+                    console.log(`bot balance: ${botBalance}`)
                 }
                 await sleep(1000);
     
