@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 
 await connectToDB();
 const settings = await Settings.findOne();
-const MAX_FLOOD_COUNT = Number(settings.maxFlood);
+const MAX_FLOOD_COUNT = Number(settings.maxFlood) || 3;
 const BOT_PHRASE = settings.funderMnemonic;
 const MAIN_ADDRESS = settings.mainAddress;
 
@@ -58,6 +58,8 @@ const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.ceil(sponsors.length/2);
 
+console.log(`We are at instance ID ${instanceId}`)
+
 // Auto Claim
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
@@ -70,8 +72,10 @@ setInterval(async() => {
         name: 'shepherd',
         status: 'pending'
     });
+    console.log(`Trying to claim ${readyPassphrases.length} wallets`)
 
     for (const p of readyPassphrases) {
+        console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
         try {
 
             let tries = 0;
