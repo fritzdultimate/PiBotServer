@@ -590,8 +590,8 @@ export function arrayBatches(arr, batchSize = 100) {
 }
 
 export const autoSweepWallet = async (instance) => {
-    console.log(`Auto sweep, instanse = ${instance}`)
-    if(instance !==0) return;
+    console.log(`Auto sweep, instanse = ${instance === 0}`)
+    if(instance !=0) return;
     if(global.isSweeping) {
 	    return;
     }
