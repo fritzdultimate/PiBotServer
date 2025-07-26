@@ -592,9 +592,6 @@ export function arrayBatches(arr, batchSize = 100) {
 export const autoSweepWallet = async (instance) => {
     console.log(`Auto sweep, instanse = ${instance === 0}`)
     if(instance !=0) return;
-    if(global.isSweeping) {
-	    return;
-    }
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
     if (upcomingClaimables.length > 0) {
