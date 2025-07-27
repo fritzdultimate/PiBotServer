@@ -157,7 +157,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
                         ? `${s.mnemonic.slice(0, 7)}....${s.mnemonic.slice(-7)}`
                         : 'Unknown';
 
-                    resolve(`${index + 1}. ${phraseShort} - *${balance.toFixed(7)} PI*`);
+                    resolve(`${index + 1}. ${phraseShort} - *${balance.toFixed(7)} PI* \n ✅ PubKey: ${kp.publicKey()} \n`);
                         completed++;
                         progressMessage();
                     } catch (e) {
