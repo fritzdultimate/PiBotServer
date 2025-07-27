@@ -310,7 +310,6 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             const server = horizonUrl(i);
-            console.log(`Using server: ${server}`)
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 const result = await submitTransaction(xdr, server);
@@ -528,7 +527,6 @@ export const autoClaimUnlocked = async (sponsors) => {
                     p.amount,
                     sponsors
                 );
-                console.log(result[0]);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
@@ -609,8 +607,7 @@ export const autoSweepWallet = async (instance) => {
     for(const passphrases of passphraseBatches) {
         await Promise.all(passphrases.map(async (phrase, i) => {
             try {
-                const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
-                console.log('Phrase', phrase.mnemonic)
+                await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
             } catch (e) {
                 if (e.response && e.response.data && e.response.data.extras) {
                     const extras = e.response.data.extras;
@@ -638,7 +635,6 @@ export const autoFundWallet = async (instance) => {
 
     for (const p of sponsorsPhrase) {
         try {
-            // console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
 
 
             const sponsorKp = getKeypairFromPassphrase(p.mnemonic);

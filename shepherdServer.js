@@ -71,9 +71,6 @@ setInterval(async() => {
         name: 'shepherd',
         status: 'pending'
     });
-    // console.log(`Trying to claim ${readyPassphrases.length} wallets`)
-    // console.log(`We are at instance ID ${instanceId}`)
-    // console.log(`Max flood: ${MAX_FLOOD_COUNT}`)
 
     for (const p of readyPassphrases) {
         console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
@@ -100,7 +97,6 @@ setInterval(async() => {
                     sponsorChunk,
                     false
                 );
-                // console.log(result);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
@@ -158,11 +154,9 @@ setInterval(async() => {
         global.isFunding = true;
     
         const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
-        console.log(`Shepherd is trying to fund`);
     
         for (const p of sponsorChunk) {
             try {
-                console.log(`Funding ${p.mnemonic}`)
     
     
                 const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
@@ -197,10 +191,10 @@ setInterval(async() => {
                     }
                 } else {
                     if(botBalance < Math.abs(change)) {
-                        console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
+                        // console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
                     }
-                    if(change => 0) {
-                        console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
+                    if(change >= 0) {
+                        // console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
                     }
                 }
                 await sleep(5000);
