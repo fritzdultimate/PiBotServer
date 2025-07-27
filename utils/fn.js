@@ -628,7 +628,7 @@ export const autoFundWallet = async (instance) => {
     const upcomingClaimables = await getUpcomingClaimables(1);
     if (!upcomingClaimables.length) return;
 
-    if(global.isFunding || global.isUnlocking) return;
+    if(global.isFunding) return;
     global.isFunding = true;
 
     const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
