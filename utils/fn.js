@@ -632,7 +632,7 @@ export const autoFundWallet = async (instance) => {
     global.isFunding = true;
 
     const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
-
+    console.log(sponsorsPhrase)
     for (const p of sponsorsPhrase) {
         try {
 
