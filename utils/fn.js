@@ -624,8 +624,8 @@ export const autoSweepWallet = async (instance) => {
 };
 
 export const autoFundWallet = async (instance) => {
-    console.log(`Calling auto fund, with instance ${instance}, instance is a ${typeof instance}`)
     if(instance !== 0) return;
+    console.log(`Calling auto fund, with instance ${instance}, instance is a ${typeof instance}`)
     const upcomingClaimables = await getUpcomingClaimables(1);
     if (!upcomingClaimables.length) return;
 
