@@ -653,49 +653,43 @@ export const autoFundWallet = async (instance) => {
         return;
     };
 
-    for(let i = 0; i < maxRetries; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(start + chunkSize, sponsors.length);
-        const sponsorChunk = sponsors.slice(start, end);
+    for(const p of sponsors) {
 
         const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
         const botAccountData = await getAccount(BotKP.publicKey());
         const botBalanceString = getBalance(botAccountData);
         const botBalance = parseFloat(botBalanceString) - 1.98;
+        try {
+            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+            const accountData  = await getAccount(sponsorKp.publicKey());
 
-        await Promise.all(sponsorChunk.map(async (p, i) => {
-            try {
-                const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-                const accountData  = await getAccount(sponsorKp.publicKey());
+            const balanceString = getBalance(accountData);
+            const actualBalance = parseFloat(balanceString);
+            const targetBalance = 0.08;
+            const reserve = 0.98;
+            const changeNeeded = targetBalance - (actualBalance - reserve);
 
-                const balanceString = getBalance(accountData);
-                const actualBalance = parseFloat(balanceString);
-                const targetBalance = 0.08;
-                const reserve = 0.98;
-                const changeNeeded = targetBalance - (actualBalance - reserve);
+            if (changeNeeded > 0 && botBalance > changeNeeded) {
+                const result = await fundWallet(
+                    BOT_PHRASE,
+                    sponsorKp.publicKey(),
+                    changeNeeded.toFixed(7)
+                );
 
-                if (changeNeeded > 0 && botBalance > changeNeeded) {
-                    const result = await fundWallet(
-                        BOT_PHRASE,
-                        sponsorKp.publicKey(),
-                        changeNeeded.toFixed(7)
-                    );
+                const success = result.data;
 
-                    const success = result.data;
-
-                    if (success.hash) {
-                        // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
-                        
-                    } else {
-                        // console.log(`❌ Failed to fund ${result.amount} PI}`);
-                    }
+                if (success.hash) {
+                    // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    
+                } else {
+                    // console.log(`❌ Failed to fund ${result.amount} PI}`);
                 }
-
-            } catch (err) {
-                console.error('❌ Error funding Pi:', err.message || err);
             }
-        }));
-        await sleep(5000);
+
+        } catch (err) {
+            console.error('❌ Error funding Pi:', err.message || err);
+        }
+        await sleep(1000);
     }
     global.isFunding = false;
 };
