@@ -654,9 +654,11 @@ export const autoSweepSponsor = async (instance) => {
             }
         };
 
-        global.isSweepingSponsor = false;
+        
     } catch(err) {
         console.log(`Something went wrong, sweeping sponsors`)
+    } finally {
+        global.isSweepingSponsor = false;
     }
 }
 
