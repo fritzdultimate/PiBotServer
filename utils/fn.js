@@ -654,14 +654,14 @@ export const autoSweepSponsor = async (instance) => {
         }
         return;
     };
-    
+
     global.isSweepingSponsor = false;
 }
 
 export const autoFundWallet = async (instance) => {
     if(instance != 0) return;
     if(global.isFunding || global.isUnlocking) return;
-    console.log(`Funder bot`)
+    // console.log(`Funder bot`)
 
     let upcomingClaimables = await getUpcomingClaimables();
 
