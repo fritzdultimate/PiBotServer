@@ -628,17 +628,18 @@ export const autoFundWallet = async (instance) => {
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
 
-    let upcomingClaimables = await getUpcomingClaimables(1);
+    let upcomingClaimables = await getUpcomingClaimables(3, 0.5);
+
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    let maxRetries = 10;
+    let maxRetries = 30;
     let retries = 0;
     const chunkSize = Math.ceil(sponsors.length / maxRetries);
     if (!upcomingClaimables.length) {
         while(!upcomingClaimables.length && retries < maxRetries) {
-            upcomingClaimables = await getUpcomingClaimables(1);
+            upcomingClaimables = await getUpcomingClaimables(3, 0.5);
 
             const start = retries * chunkSize;
-            const end = start + chunkSize;
+            const end = Math.min(start + chunkSize, sponsors.length);
             const sponsorChunk = sponsors.slice(start, end);
 
             await Promise.all(sponsorChunk.map(async (sponsor, i) => {
@@ -652,46 +653,52 @@ export const autoFundWallet = async (instance) => {
         return;
     };
 
-    for (const p of sponsors) {
-        try {
+    for(let i = 0; i < maxRetries; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, sponsors.length);
+        const sponsorChunk = sponsors.slice(start, end);
 
+        const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
+        const botAccountData = await getAccount(BotKP.publicKey());
+        const botBalanceString = getBalance(botAccountData);
+        const botBalance = parseFloat(botBalanceString) - 1.98;
 
-            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-            const accountData  = await getAccount(sponsorKp.publicKey());
+        await Promise.all(sponsorChunk.map(async (p, i) => {
+            try {
+                const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+                const accountData  = await getAccount(sponsorKp.publicKey());
 
-            const balanceString = getBalance(accountData);
-            const balance = parseFloat(balanceString) - 0.98;
+                const balanceString = getBalance(accountData);
+                const balance = parseFloat(balanceString) - 0.98;
+                const change = balance - 0.06;
 
-            const change = balance - 0.06;
+                const actualBalance = parseFloat(balanceString);
+                const targetBalance = 0.06;
+                const reserve = 0.98;
+                const changeNeeded = targetBalance - (actualBalance - reserve);
 
-            const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
-            const botAccountData = await getAccount(BotKP.publicKey());
-            const botBalanceString = getBalance(botAccountData);
-            const botBalance = parseFloat(botBalanceString) - 1.98;
+                if (changeNeeded > 0 && botBalance > changeNeeded) {
+                    const result = await fundWallet(
+                        BOT_PHRASE,
+                        sponsorKp.publicKey(),
+                        changeNeeded.toFixed(7)
+                    );
 
+                    const success = result.data;
 
-
-            if((change < 0) && (botBalance > Math.abs(change))) {
-                const result = await fundWallet(
-                    BOT_PHRASE,
-                    sponsorKp.publicKey(),
-                    Math.abs(change).toFixed(7)
-                );
-
-                const success = result.data;
-
-                if (success.hash) {
-                    // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
-                    
-                } else {
-                    // console.log(`❌ Failed to fund ${result.amount} PI}`);
+                    if (success.hash) {
+                        // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                        
+                    } else {
+                        // console.log(`❌ Failed to fund ${result.amount} PI}`);
+                    }
                 }
-            }
-            await sleep(5000);
 
-        } catch (err) {
-            // console.error('❌ Error funding Pi:', err.message || err);
-        }
+            } catch (err) {
+                // console.error('❌ Error funding Pi:', err.message || err);
+            }
+        }));
+        await sleep(5000);
     }
     global.isFunding = false;
 };
