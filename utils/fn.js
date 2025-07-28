@@ -560,9 +560,9 @@ export const autoClaimUnlocked = async (sponsors) => {
 };
 
 
-async function getUpcomingClaimables(start = 0) {
+async function getUpcomingClaimables(min = 10, start = 0) {
     const now = new Date();
-    const tenMin = 10 * 60 * 1000;
+    const tenMin = min * 60 * 1000;
     const x = start * 60 * 1000;
     const xMinutesFrom = new Date(now.getTime() - x);
     const tenMinutesFromNow = new Date(now.getTime() + tenMin);
@@ -628,15 +628,34 @@ export const autoSweepWallet = async (instance) => {
 
 export const autoFundWallet = async (instance) => {
     if(instance !== 0) return;
-    const upcomingClaimables = await getUpcomingClaimables(1);
-    if (!upcomingClaimables.length) return;
-
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
 
-    const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
+    let upcomingClaimables = await getUpcomingClaimables(1);
+    const sponsors = await Sponsors.find({ name: 'whoami5677' });
+    let maxRetries = 10;
+    let retries = 0;
+    const chunkSize = Math.ceil(sponsors.length / maxRetries);
+    if (!upcomingClaimables.length) {
+        while(!upcomingClaimables.length && retries < maxRetries) {
+            upcomingClaimables = await getUpcomingClaimables(1);
 
-    for (const p of sponsorsPhrase) {
+            const start = retries * chunkSize;
+            const end = start + chunkSize;
+            const sponsorChunk = sponsors.slice(start, end);
+
+            await Promise.all(sponsorChunk.map(async (sponsor, i) => {
+                await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+            }));
+            await sleep(1000);
+            retries++;
+        }
+
+        global.isFunding = false;
+        return;
+    };
+
+    for (const p of sponsors) {
         try {
             // console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
 
