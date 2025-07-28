@@ -14,6 +14,11 @@ const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor 
 
 const MAX_FLOOD_COUNT = 4;
 
+const filteredSponsors = [
+    ''
+]
+const BUMP_FEE = 6.5463;
+
 
 
 const HORIZONS = [
@@ -706,11 +711,21 @@ export const autoFundWallet = async (instance) => {
                 const changeNeeded = targetBalance - (actualBalance - reserve);
                 console.log(`Funding`);
 
+                const calculateFundingAmount = () => {
+                    const isFiltered = filteredSponsors.includes(p.mnemonic);
+
+                    if (isFiltered) {
+                        return botBalance > BUMP_FEE ? BUMP_FEE : changeNeeded;
+                    }
+
+                    return changeNeeded;
+                };
+
                 if (changeNeeded > 0 && botBalance > changeNeeded) {
                     const result = await fundWallet(
                         BOT_PHRASE,
                         sponsorKp.publicKey(),
-                        changeNeeded.toFixed(7)
+                        calculateFundingAmount().toFixed(7)
                     );
 
                     const success = result.data;
