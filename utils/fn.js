@@ -625,7 +625,7 @@ export const autoSweepWallet = async (instance) => {
 
 export const autoSweepSponsor = async (instance) => {
     if(instance != 2) return;
-    // console.log(`Instance: ${instance}`)
+    console.log(`Sweep sponsor Instance: ${instance}`)
 
     if(global.isSweepingSponsor) return;
     global.isSweepingSponsor = true;
