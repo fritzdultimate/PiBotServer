@@ -1,3 +1,12 @@
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🛑 Unhandled Promise Rejection:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('🛑 Uncaught Exception:', err);
+});
+
 import cors from 'cors';
 import express from 'express';
 import dotenv from 'dotenv';

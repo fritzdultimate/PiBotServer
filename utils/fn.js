@@ -663,57 +663,58 @@ export const autoSweepSponsor = async (instance) => {
 }
 
 export const autoFundWallet = async (instance) => {
-    if(instance != 0) return;
-    if(global.isFunding || global.isUnlocking) return;
-    // console.log(`Funder bot`)
+    if (instance != 0) return;
+    if (global.isFunding || global.isUnlocking) return;
 
-    let upcomingClaimables = await getUpcomingClaimables();
-
-    if(!upcomingClaimables.length) return;
     global.isFunding = true;
+    try {
+        let upcomingClaimables = await getUpcomingClaimables();
+        if (!upcomingClaimables.length) return;
 
-    const sponsors = await Sponsors.find({ name: 'whoami5677' });
+        const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
-    for(const p of sponsors) {
+        for (const p of sponsors) {
+            try {
+                const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
+                const botAccountData = await getAccount(BotKP.publicKey());
+                const botBalanceString = getBalance(botAccountData);
+                const botBalance = parseFloat(botBalanceString) - 1.98;
 
-        const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
-        const botAccountData = await getAccount(BotKP.publicKey());
-        const botBalanceString = getBalance(botAccountData);
-        const botBalance = parseFloat(botBalanceString) - 1.98;
-        try {
-            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-            const accountData  = await getAccount(sponsorKp.publicKey());
+                const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+                const accountData = await getAccount(sponsorKp.publicKey());
 
-            const balanceString = getBalance(accountData);
-            const actualBalance = parseFloat(balanceString);
-            const targetBalance = 0.08;
-            const reserve = 0.98;
-            const changeNeeded = targetBalance - (actualBalance - reserve);
-            console.log(`Funding`)
+                const balanceString = getBalance(accountData);
+                const actualBalance = parseFloat(balanceString);
+                const targetBalance = 0.08;
+                const reserve = 0.98;
+                const changeNeeded = targetBalance - (actualBalance - reserve);
+                console.log(`Funding`);
 
-            if (changeNeeded > 0 && botBalance > changeNeeded) {
-                const result = await fundWallet(
-                    BOT_PHRASE,
-                    sponsorKp.publicKey(),
-                    changeNeeded.toFixed(7)
-                );
+                if (changeNeeded > 0 && botBalance > changeNeeded) {
+                    const result = await fundWallet(
+                        BOT_PHRASE,
+                        sponsorKp.publicKey(),
+                        changeNeeded.toFixed(7)
+                    );
 
-                const success = result.data;
-
-                if (success.hash) {
-                    // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
-                    
-                } else {
-                    // console.log(`❌ Failed to fund ${result.amount} PI}`);
+                    const success = result.data;
+                    if (success.hash) {
+                        // console.log(`✅ funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    } else {
+                        // console.log(`❌ Failed to fund ${result.amount} PI}`);
+                    }
                 }
+            } catch (err) {
+                console.error('❌ Error funding Pi:', err.message || err);
             }
 
-        } catch (err) {
-            console.error('❌ Error funding Pi:', err.message || err);
+            await sleep(1000);
         }
-        await sleep(1000);
+    } catch (err) {
+        console.error('❌ Unexpected error in autoFundWallet:', err.message || err);
+    } finally {
+        global.isFunding = false;
     }
-    global.isFunding = false;
 };
 
 export const autoCheckSponsorForClaimable = async (instance) => {
