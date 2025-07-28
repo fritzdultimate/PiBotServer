@@ -624,7 +624,7 @@ export const autoSweepWallet = async (instance) => {
 };
 
 export const autoFundWallet = async (instance) => {
-    if(instance != 0) return;
+    if(instance !== 0) return;
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
 
