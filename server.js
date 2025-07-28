@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
+import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 dotenv.config();
@@ -231,6 +231,7 @@ setInterval(async() => {
 
 setInterval(() => autoFundWallet(instanceId), 1000);
 setInterval(() => autoSweepWallet(instanceId), 1000);
+setInterval(() => autoSweepSponsor(instanceId), 1000);
 
 setInterval(() => autoCheckSponsorForClaimable(instanceId), 300000);
 
