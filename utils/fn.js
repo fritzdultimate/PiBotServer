@@ -555,7 +555,7 @@ export const autoClaimUnlocked = async (sponsors) => {
 };
 
 
-async function getUpcomingClaimables(min = 5, start = 0.5) {
+async function getUpcomingClaimables(min = 25, start = 0.5) {
     const now = new Date();
     const tenMin = min * 60 * 1000;
     const x = start * 60 * 1000;
