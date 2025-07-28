@@ -623,6 +623,38 @@ export const autoSweepWallet = async (instance) => {
     global.isSweeping = false;
 };
 
+export const autoSweepSponsor = async (instance) => {
+    if(instance != 2) return;
+
+    if(global.isFunding || global.isUnlocking || global.isSweepingSponsor) return;
+    global.isSweepingSponsor = true;
+
+    let upcomingClaimables = await getUpcomingClaimables();
+
+    const sponsors = await Sponsors.find({ name: 'whoami5677' });
+    let maxRetries = 10;
+    let retries = 0;
+    const chunkSize = Math.ceil(sponsors.length / maxRetries);
+    if (!upcomingClaimables.length) {
+        while(!upcomingClaimables.length && retries < maxRetries && !global.isFunding) {
+            upcomingClaimables = await getUpcomingClaimables();
+
+            const start = retries * chunkSize;
+            const end = Math.min(start + chunkSize, sponsors.length);
+            const sponsorChunk = sponsors.slice(start, end);
+
+            await Promise.all(sponsorChunk.map(async (sponsor, i) => {
+                await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+            }));
+            await sleep(500);
+            retries++;
+        }
+
+        global.isSweepingSponsor = false;
+        return;
+    };
+}
+
 export const autoFundWallet = async (instance) => {
     if(instance != 0) return;
     if(global.isFunding || global.isUnlocking) return;
@@ -630,30 +662,9 @@ export const autoFundWallet = async (instance) => {
 
     let upcomingClaimables = await getUpcomingClaimables();
 
-    console.log(upcomingClaimables.length);
+    if(!upcomingClaimables.length) return;
 
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    // let maxRetries = 10;
-    // let retries = 0;
-    // const chunkSize = Math.ceil(sponsors.length / maxRetries);
-    // if (!upcomingClaimables.length) {
-    //     while(!upcomingClaimables.length && retries < maxRetries) {
-    //         upcomingClaimables = await getUpcomingClaimables();
-
-    //         const start = retries * chunkSize;
-    //         const end = Math.min(start + chunkSize, sponsors.length);
-    //         const sponsorChunk = sponsors.slice(start, end);
-
-    //         await Promise.all(sponsorChunk.map(async (sponsor, i) => {
-    //             await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-    //         }));
-    //         await sleep(1000);
-    //         retries++;
-    //     }
-
-    //     global.isFunding = false;
-    //     return;
-    // };
 
     for(const p of sponsors) {
 
