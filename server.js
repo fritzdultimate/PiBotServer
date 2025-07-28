@@ -28,12 +28,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use((req, res, next) => {
-    console.log('req.ip:', req.ip);
-    console.log('req.headers["x-forwarded-for"]:', req.headers['x-forwarded-for']);
-    console.log('req.socket.remoteAddress:', req.socket.remoteAddress);
-    next();
-});
-app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
     // const allowedIPs = ['197.210.84.31'];
@@ -227,7 +221,7 @@ app.post('/sweep', async (req, res) => {
 
 const instanceId = process.env.INSTANCE_ID || 0;
 const sponsors = await Sponsors.find();
-const chunkSize = Math.ceil(sponsors.length/5);
+const chunkSize = Math.ceil(sponsors.length/3);
 
 setInterval(async() => {
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);

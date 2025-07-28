@@ -310,7 +310,6 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             const server = horizonUrl(i);
-            console.log(`Using server: ${server}`)
             try {
                 const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
                 const result = await submitTransaction(xdr, server);
@@ -528,7 +527,6 @@ export const autoClaimUnlocked = async (sponsors) => {
                     p.amount,
                     sponsors
                 );
-                console.log(result[0]);
                 const found = result.find((r) => r.hash);
                 if (found) {
                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
@@ -590,8 +588,8 @@ export function arrayBatches(arr, batchSize = 100) {
 }
 
 export const autoSweepWallet = async (instance) => {
-    console.log(`Auto sweep, instanse = ${instance === 0}`)
-    if(instance !=0) return;
+    if(instance !=1) return;
+    if(global.isSweeping) return;
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
     if (upcomingClaimables.length > 0) {
@@ -609,8 +607,7 @@ export const autoSweepWallet = async (instance) => {
     for(const passphrases of passphraseBatches) {
         await Promise.all(passphrases.map(async (phrase, i) => {
             try {
-                const result = await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
-                console.log('Phrase', phrase.mnemonic)
+                await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
             } catch (e) {
                 if (e.response && e.response.data && e.response.data.extras) {
                     const extras = e.response.data.extras;
@@ -629,35 +626,18 @@ export const autoSweepWallet = async (instance) => {
 export const autoFundWallet = async (instance) => {
     if(instance !== 0) return;
     if(global.isFunding || global.isUnlocking) return;
+    if(instance != 0) return;
+    const upcomingClaimables = await getUpcomingClaimables();
+    if (!upcomingClaimables.length) return;
+    console.log(`Bot is funding............`)
+
+    if(global.isFunding) return;
     global.isFunding = true;
 
-    let upcomingClaimables = await getUpcomingClaimables(1);
-    const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    let maxRetries = 10;
-    let retries = 0;
-    const chunkSize = Math.ceil(sponsors.length / maxRetries);
-    if (!upcomingClaimables.length) {
-        while(!upcomingClaimables.length && retries < maxRetries) {
-            upcomingClaimables = await getUpcomingClaimables(1);
-
-            const start = retries * chunkSize;
-            const end = start + chunkSize;
-            const sponsorChunk = sponsors.slice(start, end);
-
-            await Promise.all(sponsorChunk.map(async (sponsor, i) => {
-                await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-            }));
-            await sleep(1000);
-            retries++;
-        }
-
-        global.isFunding = false;
-        return;
-    };
-
-    for (const p of sponsors) {
+    const sponsorsPhrase = await Sponsors.find( {name: 'whoami5677'} );
+    console.log(sponsorsPhrase)
+    for (const p of sponsorsPhrase) {
         try {
-            // console.log(`🔄 funding for: ${p.mnemonic.slice(0, 10)}...`);
 
 
             const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
