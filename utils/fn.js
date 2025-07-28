@@ -652,10 +652,10 @@ export const autoSweepSponsor = async (instance) => {
             await sleep(500);
             retries++;
         }
-
-        global.isSweepingSponsor = false;
         return;
     };
+    
+    global.isSweepingSponsor = false;
 }
 
 export const autoFundWallet = async (instance) => {
