@@ -669,9 +669,6 @@ export const autoFundWallet = async (instance) => {
                 const accountData  = await getAccount(sponsorKp.publicKey());
 
                 const balanceString = getBalance(accountData);
-                const balance = parseFloat(balanceString) - 0.98;
-                const change = balance - 0.06;
-
                 const actualBalance = parseFloat(balanceString);
                 const targetBalance = 0.06;
                 const reserve = 0.98;
