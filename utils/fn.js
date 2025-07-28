@@ -15,7 +15,7 @@ const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor 
 const MAX_FLOOD_COUNT = 4;
 
 const filteredSponsors = [
-    ''
+    'GDN3WLQ4WP6SD3LFHHGITDFD2JDIXHFWYIGLKWN53YPR72D4J2JBNNDA'
 ]
 const BUMP_FEE = 6.5463;
 
