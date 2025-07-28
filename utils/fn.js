@@ -629,8 +629,6 @@ export const autoSweepSponsor = async (instance) => {
     if(global.isSweepingSponsor) return;
     global.isSweepingSponsor = true;
 
-    console.log(`Sweep sponsor Instance: ${instance}`)
-
     let upcomingClaimables = await getUpcomingClaimables();
 
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
