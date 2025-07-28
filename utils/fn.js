@@ -118,7 +118,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     // const fee = Math.floor(spendableBalance * 10000000);
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: '300000',
+		fee: '400000',
 		networkPassphrase: 'Pi Network',
         // timebounds: {
         //     minTime,
@@ -670,7 +670,7 @@ export const autoFundWallet = async (instance) => {
 
                 const balanceString = getBalance(accountData);
                 const actualBalance = parseFloat(balanceString);
-                const targetBalance = 0.06;
+                const targetBalance = 0.08;
                 const reserve = 0.98;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
 
