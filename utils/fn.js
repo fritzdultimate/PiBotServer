@@ -629,31 +629,35 @@ export const autoSweepSponsor = async (instance) => {
     if(global.isSweepingSponsor) return;
     global.isSweepingSponsor = true;
 
-    let upcomingClaimables = await getUpcomingClaimables();
+    try {
+        let upcomingClaimables = await getUpcomingClaimables();
 
-    const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    let maxRetries = 10;
-    let retries = 0;
-    const chunkSize = Math.ceil(sponsors.length / maxRetries);
-    if (!upcomingClaimables.length) {
-        while(!upcomingClaimables.length && retries < maxRetries && !global.isFunding) {
-            upcomingClaimables = await getUpcomingClaimables();
+        const sponsors = await Sponsors.find({ name: 'whoami5677' });
+        let maxRetries = 10;
+        let retries = 0;
+        const chunkSize = Math.ceil(sponsors.length / maxRetries);
+        if (!upcomingClaimables.length) {
+            while(!upcomingClaimables.length && retries < maxRetries && !global.isFunding) {
+                upcomingClaimables = await getUpcomingClaimables();
 
-            const start = retries * chunkSize;
-            const end = Math.min(start + chunkSize, sponsors.length);
-            const sponsorChunk = sponsors.slice(start, end);
+                const start = retries * chunkSize;
+                const end = Math.min(start + chunkSize, sponsors.length);
+                const sponsorChunk = sponsors.slice(start, end);
 
-            console.log(`Sweeping ${sponsorChunk.length} wallets`)
+                console.log(`Sweeping ${sponsorChunk.length} wallets`)
 
-            await Promise.all(sponsorChunk.map(async (sponsor, i) => {
-                await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-            }));
-            await sleep(500);
-            retries++;
-        }
-    };
+                await Promise.all(sponsorChunk.map(async (sponsor, i) => {
+                    await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+                }));
+                await sleep(500);
+                retries++;
+            }
+        };
 
-    global.isSweepingSponsor = false;
+        global.isSweepingSponsor = false;
+    } catch(err) {
+        console.log(`Something went wrong, sweeping sponsors`)
+    }
 }
 
 export const autoFundWallet = async (instance) => {
