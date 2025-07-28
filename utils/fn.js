@@ -659,6 +659,7 @@ export const autoSweepSponsor = async (instance) => {
 export const autoFundWallet = async (instance) => {
     if(instance != 0) return;
     if(global.isFunding || global.isUnlocking) return;
+    console.log(`Funder bot`)
 
     let upcomingClaimables = await getUpcomingClaimables();
 
