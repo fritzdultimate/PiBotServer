@@ -492,10 +492,6 @@ export const autoClaimUnlocked = async (sponsors) => {
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
-        // claimableAt: {
-        //     $gt: now,
-        //     $lte: fiveSecondsFromNow
-        // },
         status: 'pending',
         name: { $in: [null, undefined] }
     });
@@ -531,6 +527,7 @@ export const autoClaimUnlocked = async (sponsors) => {
                         { _id: p._id },
                         { $set: { status: "claimed" } }
                     );
+                    global.lastClaimedOrFailedAt = new Date();
                     success = true;
                     break;
                 }
@@ -541,6 +538,7 @@ export const autoClaimUnlocked = async (sponsors) => {
                     { _id: p._id },
                     { $set: { status: "failed" } }
                 );
+                global.lastClaimedOrFailedAt = new Date();
             }
 
             
@@ -626,11 +624,25 @@ export const autoSweepWallet = async (instance) => {
 export const autoSweepSponsor = async (instance) => {
     if(instance != 2) return;
 
-    if(global.isSweepingSponsor) return;
+    if(global.isSweepingSponsor || global.isFunding || global.isUnlocking) return;
+    
+    const now = new Date();
+    const lastActivity = global.lastClaimedOrFailedAt || new Date(0);
+    const minutesSinceLast = (now - new Date(lastActivity)) / (1000 * 60);
+    if (minutesSinceLast < 3) return;
+
     global.isSweepingSponsor = true;
 
     try {
-        let upcomingClaimables = await getUpcomingClaimables(25, 4);
+        
+        const in30mins = new Date(now.getTime() + 30 * 60 * 1000);
+        const upcomingClaimables = await Passphrase.find({
+            claimableAt: { $lte: in30mins },
+            status: 'pending',
+            name: { $in: [null, undefined] }
+        });
+
+        if (upcomingClaimables.length > 0) return;
 
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
         let maxRetries = 10;
