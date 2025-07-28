@@ -628,30 +628,30 @@ export const autoFundWallet = async (instance) => {
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
 
-    let upcomingClaimables = await getUpcomingClaimables();
+    // let upcomingClaimables = await getUpcomingClaimables();
 
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    let maxRetries = 10;
-    let retries = 0;
-    const chunkSize = Math.ceil(sponsors.length / maxRetries);
-    if (!upcomingClaimables.length) {
-        while(!upcomingClaimables.length && retries < maxRetries) {
-            upcomingClaimables = await getUpcomingClaimables();
+    // let maxRetries = 10;
+    // let retries = 0;
+    // const chunkSize = Math.ceil(sponsors.length / maxRetries);
+    // if (!upcomingClaimables.length) {
+    //     while(!upcomingClaimables.length && retries < maxRetries) {
+    //         upcomingClaimables = await getUpcomingClaimables();
 
-            const start = retries * chunkSize;
-            const end = Math.min(start + chunkSize, sponsors.length);
-            const sponsorChunk = sponsors.slice(start, end);
+    //         const start = retries * chunkSize;
+    //         const end = Math.min(start + chunkSize, sponsors.length);
+    //         const sponsorChunk = sponsors.slice(start, end);
 
-            await Promise.all(sponsorChunk.map(async (sponsor, i) => {
-                await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-            }));
-            await sleep(1000);
-            retries++;
-        }
+    //         await Promise.all(sponsorChunk.map(async (sponsor, i) => {
+    //             await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+    //         }));
+    //         await sleep(1000);
+    //         retries++;
+    //     }
 
-        global.isFunding = false;
-        return;
-    };
+    //     global.isFunding = false;
+    //     return;
+    // };
 
     for(const p of sponsors) {
 
