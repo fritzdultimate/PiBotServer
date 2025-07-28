@@ -636,7 +636,7 @@ export const autoSweepSponsor = async (instance) => {
     try {
         
         const in30mins = new Date(now.getTime() + 30 * 60 * 1000);
-        const upcomingClaimables = await Passphrase.find({
+        let upcomingClaimables = await Passphrase.find({
             claimableAt: { $lte: in30mins },
             status: 'pending',
             name: { $in: [null, undefined] }
@@ -650,7 +650,11 @@ export const autoSweepSponsor = async (instance) => {
         const chunkSize = Math.ceil(sponsors.length / maxRetries);
         if (!upcomingClaimables.length) {
             while(!upcomingClaimables.length && retries < maxRetries && !global.isFunding) {
-                upcomingClaimables = await getUpcomingClaimables(25, 4);
+                upcomingClaimables = await Passphrase.find({
+                    claimableAt: { $lte: in30mins },
+                    status: 'pending',
+                    name: { $in: [null, undefined] }
+                });
 
                 const start = retries * chunkSize;
                 const end = Math.min(start + chunkSize, sponsors.length);
