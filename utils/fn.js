@@ -659,11 +659,11 @@ export const autoSweepSponsor = async (instance) => {
 export const autoFundWallet = async (instance) => {
     if(instance != 0) return;
     if(global.isFunding || global.isUnlocking) return;
-    global.isFunding = true;
 
     let upcomingClaimables = await getUpcomingClaimables();
 
     if(!upcomingClaimables.length) return;
+    global.isFunding = true;
 
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
