@@ -627,7 +627,7 @@ export const autoSweepSponsor = async (instance) => {
     if(instance != 2) return;
     // console.log(`Instance: ${instance}`)
 
-    if(global.isFunding || global.isUnlocking || global.isSweepingSponsor) return;
+    if(global.isSweepingSponsor) return;
     global.isSweepingSponsor = true;
 
     let upcomingClaimables = await getUpcomingClaimables();
@@ -643,6 +643,8 @@ export const autoSweepSponsor = async (instance) => {
             const start = retries * chunkSize;
             const end = Math.min(start + chunkSize, sponsors.length);
             const sponsorChunk = sponsors.slice(start, end);
+
+            console.log(`Sweeping ${sponsorChunk.length} wallets`)
 
             await Promise.all(sponsorChunk.map(async (sponsor, i) => {
                 await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
