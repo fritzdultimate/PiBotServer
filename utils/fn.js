@@ -625,10 +625,11 @@ export const autoSweepWallet = async (instance) => {
 
 export const autoSweepSponsor = async (instance) => {
     if(instance != 2) return;
-    console.log(`Sweep sponsor Instance: ${instance}`)
 
     if(global.isSweepingSponsor) return;
     global.isSweepingSponsor = true;
+
+    console.log(`Sweep sponsor Instance: ${instance}`)
 
     let upcomingClaimables = await getUpcomingClaimables();
 
@@ -652,7 +653,6 @@ export const autoSweepSponsor = async (instance) => {
             await sleep(500);
             retries++;
         }
-        return;
     };
 
     global.isSweepingSponsor = false;
