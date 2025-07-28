@@ -631,7 +631,7 @@ export const autoFundWallet = async (instance) => {
     let upcomingClaimables = await getUpcomingClaimables(3, 0.5);
 
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    let maxRetries = 30;
+    let maxRetries = 20;
     let retries = 0;
     const chunkSize = Math.ceil(sponsors.length / maxRetries);
     if (!upcomingClaimables.length) {
