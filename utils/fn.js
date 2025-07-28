@@ -668,7 +668,7 @@ export const autoSweepSponsor = async (instance) => {
 
         
     } catch(err) {
-        console.log(`Something went wrong, sweeping sponsors`)
+        console.log(`Something went wrong, sweeping sponsors`, err)
     } finally {
         global.isSweepingSponsor = false;
     }
