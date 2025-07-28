@@ -555,7 +555,7 @@ export const autoClaimUnlocked = async (sponsors) => {
 };
 
 
-async function getUpcomingClaimables(min = 10, start = 0) {
+async function getUpcomingClaimables(min = 12, start = 0.5) {
     const now = new Date();
     const tenMin = min * 60 * 1000;
     const x = start * 60 * 1000;
@@ -628,15 +628,15 @@ export const autoFundWallet = async (instance) => {
     if(global.isFunding || global.isUnlocking) return;
     global.isFunding = true;
 
-    let upcomingClaimables = await getUpcomingClaimables(3, 0.5);
+    let upcomingClaimables = await getUpcomingClaimables();
 
     const sponsors = await Sponsors.find({ name: 'whoami5677' });
-    let maxRetries = 20;
+    let maxRetries = 10;
     let retries = 0;
     const chunkSize = Math.ceil(sponsors.length / maxRetries);
     if (!upcomingClaimables.length) {
         while(!upcomingClaimables.length && retries < maxRetries) {
-            upcomingClaimables = await getUpcomingClaimables(3, 0.5);
+            upcomingClaimables = await getUpcomingClaimables();
 
             const start = retries * chunkSize;
             const end = Math.min(start + chunkSize, sponsors.length);
