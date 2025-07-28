@@ -630,7 +630,7 @@ export const autoSweepSponsor = async (instance) => {
     global.isSweepingSponsor = true;
 
     try {
-        let upcomingClaimables = await getUpcomingClaimables();
+        let upcomingClaimables = await getUpcomingClaimables(25, 4);
 
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
         let maxRetries = 10;
@@ -638,7 +638,7 @@ export const autoSweepSponsor = async (instance) => {
         const chunkSize = Math.ceil(sponsors.length / maxRetries);
         if (!upcomingClaimables.length) {
             while(!upcomingClaimables.length && retries < maxRetries && !global.isFunding) {
-                upcomingClaimables = await getUpcomingClaimables();
+                upcomingClaimables = await getUpcomingClaimables(25, 4);
 
                 const start = retries * chunkSize;
                 const end = Math.min(start + chunkSize, sponsors.length);
