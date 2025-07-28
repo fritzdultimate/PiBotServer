@@ -668,6 +668,7 @@ export const autoFundWallet = async (instance) => {
             const targetBalance = 0.08;
             const reserve = 0.98;
             const changeNeeded = targetBalance - (actualBalance - reserve);
+            console.log(`Funding`)
 
             if (changeNeeded > 0 && botBalance > changeNeeded) {
                 const result = await fundWallet(
