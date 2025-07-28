@@ -552,7 +552,7 @@ export const autoClaimUnlocked = async (sponsors) => {
 
     global.isUnlocking = false;
 
-};
+}
 
 
 async function getUpcomingClaimables(min = 25, start = 0.5) {
