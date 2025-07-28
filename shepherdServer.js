@@ -165,7 +165,7 @@ setInterval(async() => {
                 const balanceString = getBalance(accountData);
                 const balance = parseFloat(balanceString) - 0.98;
     
-                const change = balance - 0.06;
+                const change = balance - 0.08;
     
                 const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
                 const botAccountData = await getAccount(BotKP.publicKey());
