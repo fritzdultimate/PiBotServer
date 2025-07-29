@@ -14,7 +14,7 @@ const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor 
 
 const MAX_FLOOD_COUNT = 4;
 
-const filteredSponsors = [
+const firstFilteredSponsors = [
     'GDV2POWRVXELMWGWTTBBXIQSW3PKVWKGI43FD2NJURU6NTBK4QNZXEMJ',
     'GCQOB5VOELVMHW4BN4KFBI2WUR6IES7IT6FXSDR2PXCCDJDR2NEWO2KZ',
     'GAXXHWD25JCUMJCB5GEFOOIDJKCSABHAAECRJMUCUY6A7RHQBADDVMN5',
@@ -25,6 +25,9 @@ const filteredSponsors = [
     'GCDLTGDKDZLHL5QQUWCX6L6SORWAVG43W4MIHQF5YD3M6N5UUO4E3WBH',
     'GAWPSXRXKWMPMCTBBLR47M5FBONIK4O4FE6LSOOX47LVTUV4WWP77BWV',
     'GCFJPFW4WIGQU3DAC325ZIE5YSWOJQETWAIANTQ6ORXMW7LJ43SYBTEC',
+]
+
+const secondFilteredSponsors = [
     'GCA6VUL6D3X5DJGA2R6DS7RNKZFM3CZPAJOGO6IJEE4BPSMJ57W4C2WM',
     'GBZCDRUOO6MMP4XZTKBTTDCIFKLGHMJRXQCY4A4PKM5FTNAEE7DIJGNX',
     'GAR7T3F7VIQH2NJYQLQDOU5VJCBIGDAHXUVWV7F6HUNLLMZW2ALR3775',
@@ -41,7 +44,8 @@ const filteredSponsors = [
     'GDVWGQ5YI5S5FEHOPN5LVXPM5ONW2TLXQA7BMXZAXZRUCICXHQWL7O63', //r
     'GC4TU6WM2Q6ECZCFUBYGWQ7MN7SBHSHRDX4HC4CXCUH3AAT7EZGIEGEB', //r
 ]
-const BUMP_FEE = 2.7654321;
+const FIRST_BUMP_FEE = 2.7654321;
+const SECOND_BUMP_FEE = 1.0654321;
 
 
 
@@ -736,10 +740,15 @@ export const autoFundWallet = async (instance) => {
                 console.log(`Funding`);
 
                 const calculateFundingAmount = () => {
-                    const isFiltered = filteredSponsors.includes(sponsorKp.publicKey());
+                    const isInFirstFiltered = firstFilteredSponsors.includes(sponsorKp.publicKey());
+                    const isInSecondFiltered = secondFilteredSponsors.includes(sponsorKp.publicKey());
 
-                    if (isFiltered) {
-                        return botBalance > BUMP_FEE ? BUMP_FEE : changeNeeded;
+                    if (isInFirstFiltered) {
+                        return botBalance > FIRST_BUMP_FEE ? FIRST_BUMP_FEE : changeNeeded;
+                    }
+
+                    if (isInSecondFiltered) {
+                        return botBalance > SECOND_BUMP_FEE ? SECOND_BUMP_FEE : changeNeeded;
                     }
 
                     return changeNeeded;
