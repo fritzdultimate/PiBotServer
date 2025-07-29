@@ -743,6 +743,10 @@ export const autoFundWallet = async (instance) => {
                     const isInFirstFiltered = firstFilteredSponsors.includes(sponsorKp.publicKey());
                     const isInSecondFiltered = secondFilteredSponsors.includes(sponsorKp.publicKey());
 
+                    if(sponsorKp.publicKey() === 'GDN3WLQ4WP6SD3LFHHGITDFD2JDIXHFWYIGLKWN53YPR72D4J2JBNNDA') {
+                        return botBalance > 6.45748 ? 6.45748 : changeNeeded;
+                    }
+
                     if (isInFirstFiltered) {
                         return botBalance > FIRST_BUMP_FEE ? FIRST_BUMP_FEE : changeNeeded;
                     }
