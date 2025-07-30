@@ -102,6 +102,7 @@ setInterval(async() => {
                     break;
                 }
                 tries++;
+                await sleep(100);
             }
             if (!success) {
                 await Passphrase.updateOne(
@@ -117,7 +118,7 @@ setInterval(async() => {
         }
     }
 
-    global.isClaiming = true;
+    global.isClaiming = false;
     
 }, 100);
 
