@@ -61,6 +61,7 @@ const chunkSize = Math.ceil(sponsors.length/2);
 
 // Auto Claim
 setInterval(async() => {
+    console.log(`⏳ Instance ${instanceId} checking ${sponsorChunk.length} sponsors`);
     if(global.isClaiming) return;
     global.isClaiming = true;
 
