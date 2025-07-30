@@ -89,8 +89,7 @@ setInterval(async() => {
                     p.balanceId,
                     MAIN_ADDRESS,
                     p.amount,
-                    sponsorChunk,
-                    false
+                    sponsorChunk
                 );
                 const found = result.find((r) => r.hash);
                 if (found) {

@@ -348,9 +348,8 @@ export async function getClaimableBalance(publicKey) {
         }
 }
 
-export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors, local = true) {
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    // const allSponsors = await Sponsors.find();
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             const server = horizonUrl(i);
@@ -548,14 +547,6 @@ export const autoClaimUnlocked = async (sponsors) => {
             let success = false;
 
             while(!success && tries < MAX_FLOOD_COUNT) {
-                const now = new Date();
-
-                // const claimUnix = new Date(p.claimableAt).getTime();
-                // const diff = claimUnix - now.getTime();
-                // if (diff > 3000) {
-                //     await sleep(Math.min(diff - 500, 1000));
-                //     continue;
-                // }
 
                 const result = await FloodchannelTransaction(
                     p.mnemonic,
