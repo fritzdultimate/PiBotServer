@@ -435,8 +435,8 @@ export async function sweepWallet(mainPhrase, recipient) {
                 asset: Asset.native(),
                 amount: Math.abs(withdrawable).toFixed(7).toString(),
             }))
-            .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 18)))
-            .setTimeout(20)
+            .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
+            .setTimeout(randomBetweenStartAdnEnd())
             .build();
 
         tx.sign(mainKp);
