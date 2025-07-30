@@ -61,11 +61,11 @@ const chunkSize = Math.ceil(sponsors.length/2);
 
 // Auto Claim
 setInterval(async() => {
-    console.log(`⏳ Instance ${instanceId} checking ${sponsorChunk.length} sponsors`);
     if(global.isClaiming) return;
     global.isClaiming = true;
 
     const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
+    console.log(`⏳ Instance ${instanceId} checking ${sponsorChunk.length} sponsors`);
 
     const now = new Date();
     const fiveSecondsFromNow = new Date(now.getTime() + 6000);
