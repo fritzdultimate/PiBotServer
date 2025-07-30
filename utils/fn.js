@@ -96,6 +96,13 @@ export async function getAccount(publicKey) {
     }
 }
 
+function generateUniqueMemo(prefix = 'PiA') {
+  const time = Date.now().toString(36);
+  const rand = Math.random().toString(36).slice(2, 6);
+  const memoStr = `${prefix}-${time}-${rand}`.slice(0, 28);
+  return Memo.text(memoStr);
+}
+
 export async function buildAndSubmitMultiSigTx(passphrase) {
 
     const kp = getSDKKeypairFromPassphrase(passphrase);
@@ -424,7 +431,7 @@ export async function sweepWallet(mainPhrase, recipient) {
                 asset: Asset.native(),
                 amount: Math.abs(withdrawable).toFixed(7).toString(),
             }))
-            .addMemo(Memo.text('M1'))
+            .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 18)))
             .setTimeout(20)
             .build();
 
