@@ -642,7 +642,7 @@ export const autoSweepWallet = async (instance) => {
     const upcomingClaimables = await getUpcomingClaimables();
     if (upcomingClaimables.length > 0) {
         for(const claimable of upcomingClaimables) {
-            await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
+            await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS, true);
             await sleep(1000);
         }
         global.isSweeping = false;
@@ -657,7 +657,7 @@ export const autoSweepWallet = async (instance) => {
             try {
                 const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
                 if(!existingSponsor) {
-                    await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                    await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS, true);
                 }
             } catch (e) {
                 if (e.response && e.response.data && e.response.data.extras) {
