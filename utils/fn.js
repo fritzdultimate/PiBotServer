@@ -11,6 +11,7 @@ const NETWORK_PASSPHRASE = 'Pi Network';
 export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 // const PI_PUBLIC_ADDRESS = 'GDEZT7O6BFGB6LPSNMQAVTMTNCEVOJKNQ3W67Q5W5KENWWABMCO24E5U';
 const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor shop borrow one rabbit pattern flight draw inflict wolf boy grit social black hand rate';
+const SWEEP_FEE_PAYER_PHRASE = '';
 
 const MAX_FLOOD_COUNT = 2;
 
@@ -402,56 +403,73 @@ async function getSpendableBalance(publicKey) {
 } 
 
 
-export async function sweepWallet(mainPhrase, recipient) {
+export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
+
+    const feePayerKp = getKeypairFromPassphrase(SWEEP_FEE_PAYER_PHRASE);
+    const feePayerAccountData  = await getAccount(feePayerKp.publicKey());
+    let feePayerAccount = new Account(feePayerKp.publicKey(), (BigInt(feePayerAccountData.sequence) + BigInt(0)).toString());
+    const feePayerSpendableBalance = parseFloat(getBalance(feePayerAccountData)) - 0.98;
+
+    const enoughFee = feePayerSpendableBalance >= 0.01;
 
     for (const i = 0; i < 1; i++) {
         const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
         const account = new Account(mainKp.publicKey(), seq);
         const balanceString = getBalance(accountData);
-        const baseFee = 100000;
+        const baseFee = enoughFee && useFeePayer ? feePayerSpendableBalance : 100000;
 
         const onePiInStroops = 10_000_000;
         const balance = parseFloat(balanceString);
-        const txCharge = baseFee/onePiInStroops;
+        const txCharge = 0.01;
         const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
         const minReserve = 0.98 + baseReserve;
         const epsilon = 1e-7;
-        const raw = balance - minReserve - txCharge;
+        const raw = balance - minReserve - (enoughFee && useFeePayer ? 0 : txCharge);
         const withdrawable = raw > epsilon ? raw : 0;
 
         if(withdrawable === 0) {
             return;
         }
 
-        const tx = new TransactionBuilder(account, {
+        const txAccountBuilder = enoughFee && useFeePayer ? feePayerAccount : account;
+
+        const tx = new TransactionBuilder(txAccountBuilder, {
             fee: baseFee.toString(),
             networkPassphrase: NETWORK_PASSPHRASE,
         })
             .addOperation(Operation.payment({
                 destination: recipient,
                 asset: Asset.native(),
-                amount: Math.abs(withdrawable).toFixed(7).toString(),
+                amount: withdrawable.toFixed(7),
             }))
             .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
             .setTimeout(randomBetweenStartAndEnd())
             .build();
 
         tx.sign(mainKp);
-        
-        const res = await axios.post(
-            `${randomServer()}/transactions`,
-            `tx=${encodeURIComponent(tx.toXDR())}`,
-            { 
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }
-        );
-
-        if(res.data.hash) {
-            // console.log(`Sweeped ${withdrawable.toFixed(7)}`)
-            return {data: res.data, amount: withdrawable.toFixed(7)};
+        if(enoughFee && useFeePayer) {
+            tx.sign(feePayerKp);
         }
+
+        try {
+            const res = await axios.post(
+                `${randomServer()}/transactions`,
+                `tx=${encodeURIComponent(tx.toXDR())}`,
+                { 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                }
+            );
+
+            if(res.data.hash) {
+                // console.log(`Sweeped ${withdrawable.toFixed(7)}`)
+                return {data: res.data, amount: withdrawable.toFixed(7)};
+            }
+        } catch (error) {
+            return { error: error.message, amount: 0.000 };
+        }
+        
     }
 	
 
