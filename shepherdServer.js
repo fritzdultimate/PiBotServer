@@ -57,14 +57,16 @@ app.get('/', (req, res) => {
 
 const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
-const chunkSize = Math.ceil(sponsors.length/2);
+const chunkSize = Math.floor(sponsors.length/2);
 
 // Auto Claim
 setInterval(async() => {
     if(global.isClaiming) return;
     global.isClaiming = true;
 
-    const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
+    const start = instanceId * chunkSize;
+    const end = start + chunkSize;
+    const sponsorChunk = sponsors.slice(start, end);
     console.log(`⏳ Instance ${instanceId} checking ${sponsorChunk.length} sponsors`);
     console.log(`There are total of ${sponsors.length} sponsors`);
 
