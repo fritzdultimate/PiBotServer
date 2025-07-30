@@ -103,7 +103,7 @@ function generateUniqueMemo(prefix = 'PiA') {
   return Memo.text(memoStr);
 }
 
-function randomBetweenStartAdnEnd(start = 18, end = 25) {
+function randomBetweenStartAndEnd(start = 18, end = 25) {
   return Math.floor(Math.random() * (end - start + 1)) + start;
 }
 
@@ -182,7 +182,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		source: mainKp.publicKey(),
     }))
     .addMemo(generateUniqueMemo(channelKp.publicKey().slice(15, 22)))
-    .setTimeout(randomBetweenStartAdnEnd())
+    .setTimeout(randomBetweenStartAndEnd())
     .build();
 
   	tx.sign(mainKp);
@@ -436,7 +436,7 @@ export async function sweepWallet(mainPhrase, recipient) {
                 amount: Math.abs(withdrawable).toFixed(7).toString(),
             }))
             .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
-            .setTimeout(randomBetweenStartAdnEnd())
+            .setTimeout(randomBetweenStartAndEnd())
             .build();
 
         tx.sign(mainKp);
