@@ -67,7 +67,7 @@ setInterval(async() => {
     const start = instanceId * chunkSize;
     const end = start + chunkSize;
     const sponsorChunk = sponsors.slice(start, end);
-    console.log(`⏳ Instance ${instanceId} checking ${sponsorChunk.length} sponsors`);
+    // console.log(`⏳ Instance ${instanceId} checking ${sponsorChunk.length} sponsors`);
 
     const now = new Date();
     const fiveSecondsFromNow = new Date(now.getTime() + 6000);
