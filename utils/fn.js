@@ -44,8 +44,8 @@ const secondFilteredSponsors = [
     'GDVWGQ5YI5S5FEHOPN5LVXPM5ONW2TLXQA7BMXZAXZRUCICXHQWL7O63', //r
     'GC4TU6WM2Q6ECZCFUBYGWQ7MN7SBHSHRDX4HC4CXCUH3AAT7EZGIEGEB', //r
 ]
-const FIRST_BUMP_FEE = 0.3954321;
-const SECOND_BUMP_FEE = 0.2654321;
+const FIRST_BUMP_FEE = 0.31;
+const SECOND_BUMP_FEE = 0.26;
 
 
 
@@ -532,7 +532,7 @@ export const autoClaimUnlocked = async (sponsors) => {
     // console.log(`Trying auto claim now...`);
 
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 2000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 6000);
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
