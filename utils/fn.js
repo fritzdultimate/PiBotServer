@@ -410,7 +410,7 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
     const feePayerKp = getKeypairFromPassphrase(SWEEP_FEE_PAYER_PHRASE);
     const feePayerAccountData  = await getAccount(feePayerKp.publicKey());
     const feePayerAccount = new Account(feePayerKp.publicKey(), (BigInt(feePayerAccountData.sequence) + BigInt(0)).toString());
-    const feePayerSpendableBalance = Math.floor(parseFloat((getBalance(feePayerAccountData)) - 0.98) * 0.5);
+    const feePayerSpendableBalance = parseFloat((getBalance(feePayerAccountData)) - 0.98);
 
     const enoughFee = feePayerSpendableBalance >= 0.01;
 
@@ -418,7 +418,7 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
         const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
         const account = new Account(mainKp.publicKey(), seq);
         const balanceString = getBalance(accountData);
-        const baseFee = enoughFee && useFeePayer ? feePayerSpendableBalance : 100000;
+        const baseFee = enoughFee && useFeePayer ? Math.floor(feePayerSpendableBalance * 10000000) : 100000;
 
         const onePiInStroops = 10_000_000;
         const balance = parseFloat(balanceString);
