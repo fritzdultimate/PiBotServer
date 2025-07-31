@@ -662,9 +662,9 @@ export const autoSweepWallet = async (instance) => {
             } catch (e) {
                 if (e.response && e.response.data && e.response.data.extras) {
                     const extras = e.response.data.extras;
-                    // console.log('Transaction failed:', extras);
+                    console.log('Transaction failed:', extras);
                 } else {
-                    // console.error('Unknown error:', e);
+                    console.error('Unknown error:', e);
                 }
             }
         }));
