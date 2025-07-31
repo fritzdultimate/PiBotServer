@@ -45,8 +45,8 @@ const secondFilteredSponsors = [
     'GDVWGQ5YI5S5FEHOPN5LVXPM5ONW2TLXQA7BMXZAXZRUCICXHQWL7O63', //r
     'GC4TU6WM2Q6ECZCFUBYGWQ7MN7SBHSHRDX4HC4CXCUH3AAT7EZGIEGEB', //r
 ]
-const FIRST_BUMP_FEE = 0.31;
-const SECOND_BUMP_FEE = 0.26;
+const FIRST_BUMP_FEE = 0.1;
+const SECOND_BUMP_FEE = 0.08;
 
 
 
@@ -549,7 +549,7 @@ export const autoClaimUnlocked = async (sponsors) => {
     // console.log(`Trying auto claim now...`);
 
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 6000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 1000);
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
@@ -754,7 +754,7 @@ export const autoFundWallet = async (instance) => {
 
                 const balanceString = getBalance(accountData);
                 const actualBalance = parseFloat(balanceString);
-                const targetBalance = 0.08;
+                const targetBalance = 0.06;
                 const reserve = 0.98;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
                 console.log(`Funding`);
