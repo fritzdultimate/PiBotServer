@@ -463,7 +463,7 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
             );
 
             if(res.data.hash) {
-                // console.log(`Sweeped ${withdrawable.toFixed(7)}`)
+                console.log(`Sweeped ${withdrawable.toFixed(7)}`)
                 return {data: res.data, amount: withdrawable.toFixed(7)};
             }
         } catch (error) {
