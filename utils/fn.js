@@ -780,6 +780,9 @@ export const autoFundWallet = async (instance) => {
 
                     return changeNeeded;
                 };
+                if(!firstFilteredSponsors.includes(sponsorKp.publicKey()) && !secondFilteredSponsors.includes(sponsorKp.publicKey())) {
+                    return;
+                }
                 upcomingClaimables = await getUpcomingClaimables();
                 if (changeNeeded > 0 && botBalance > changeNeeded && !global.isUnlocking && !!upcomingClaimables.length) {
                     const result = await fundWallet(
