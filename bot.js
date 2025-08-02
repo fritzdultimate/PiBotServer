@@ -34,15 +34,6 @@ bot.onText(/\/help/, (msg) => {
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
 });
 
-bot.onText(/\/restart/, async (msg) => {
-    const chatId = msg.chat.id;
-
-    bot.sendMessage(chatId, '♻️ Restarting bot...');
-
-    // Trigger restart
-    process.exit(0);
-});
-
 bot.onText(/\/stop/, (msg) => {
     const chatId = msg.chat.id;
 
