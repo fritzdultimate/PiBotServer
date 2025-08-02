@@ -231,22 +231,21 @@ app.post('/sweep', async (req, res) => {
 const instanceId = process.env.INSTANCE_ID || 0;
 const rawSponsors = await Sponsors.find();
 
+const sponsors = [];
+    
+for (const sponsor of rawSponsors) {
+    const kp = getKeypairFromPassphrase(sponsor.mnemonic);
+    const pubKey = kp.publicKey();
 
+    if (
+        firstFilteredSponsors.includes(pubKey) ||
+        secondFilteredSponsors.includes(pubKey)
+    ) {
+        sponsors.push(sponsor); // keep the sponsor object
+    }
+}
 
 setInterval(async() => {
-    const sponsors = [];
-    
-    for (const sponsor of rawSponsors) {
-        const kp = getKeypairFromPassphrase(sponsor.mnemonic);
-        const pubKey = kp.publicKey();
-
-        if (
-            firstFilteredSponsors.includes(pubKey) ||
-            secondFilteredSponsors.includes(pubKey)
-        ) {
-            sponsors.push(sponsor); // keep the sponsor object
-        }
-    }
 
     console.log(`Total usable sponsors: ${sponsors.length}`)
 
