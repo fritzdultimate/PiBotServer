@@ -231,11 +231,11 @@ app.post('/sweep', async (req, res) => {
 const instanceId = process.env.INSTANCE_ID || 0;
 const rawSponsors = await Sponsors.find();
 
-const sponsors = [];
-
 
 
 setInterval(async() => {
+    const sponsors = [];
+    
     for (const sponsor of rawSponsors) {
         const kp = getKeypairFromPassphrase(sponsor.mnemonic);
         const pubKey = kp.publicKey();
