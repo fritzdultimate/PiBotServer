@@ -40,10 +40,8 @@ export const firstFilteredSponsors = [
     'GCQSIIRFY66IMRQGHMRMFZJLP5TMG6BNJGOYXLZG3YJAHDZOYFFD76FQ',
     'GAQXQZWUZWMGJX72BJENUT6VSLU6PTLZJ5SYULGLN6F5SIYXYGZTC4ZX',
     'GCSWQMKTFIH24VBRPFVSAHMLQDQ6RTDVKMOBNZTXF4ASBLOOMRGBUQB6',
-    'GCXJOVQWVRMQABCBLN35EWIVUQAZVONWBCI6JUWMP3HSVU23A64E4DSU'
-]
-
-export const secondFilteredSponsors = [
+    'GCXJOVQWVRMQABCBLN35EWIVUQAZVONWBCI6JUWMP3HSVU23A64E4DSU',
+    
     'GCA6VUL6D3X5DJGA2R6DS7RNKZFM3CZPAJOGO6IJEE4BPSMJ57W4C2WM',
     'GBZCDRUOO6MMP4XZTKBTTDCIFKLGHMJRXQCY4A4PKM5FTNAEE7DIJGNX',
     'GAR7T3F7VIQH2NJYQLQDOU5VJCBIGDAHXUVWV7F6HUNLLMZW2ALR3775',
@@ -65,8 +63,8 @@ export const secondFilteredSponsors = [
     'GBA42LBGW45ZXAM2DC4UO5YU2XRH23EQXJME2IPGWVIDGK242SXDMCCX',
     'GAPT37TWU524VH7HOKZJQCXYKPNFCXKYDWVDWIWZVPSIYZO3ZUEQ6L5R'
 ]
+
 const FIRST_BUMP_FEE = 5.7654321;
-const SECOND_BUMP_FEE = 2.7654321;
 
 
 
@@ -779,17 +777,11 @@ export const autoFundWallet = async (instance) => {
                         return botBalance > FIRST_BUMP_FEE ? FIRST_BUMP_FEE : changeNeeded;
                     }
 
-                    if (isInSecondFiltered) {
-                        return botBalance > SECOND_BUMP_FEE ? SECOND_BUMP_FEE : changeNeeded;
-                    }
-
                     return changeNeeded;
                 };
-                if(!firstFilteredSponsors.includes(sponsorKp.publicKey()) && !secondFilteredSponsors.includes(sponsorKp.publicKey())) {
-                    return;
-                }
+                
                 upcomingClaimables = await getUpcomingClaimables();
-                if (changeNeeded > 0 && botBalance > changeNeeded && !global.isUnlocking && !!upcomingClaimables.length) {
+                if (changeNeeded > 0 && botBalance > changeNeeded && !global.isUnlocking && !!upcomingClaimables.length && firstFilteredSponsors.includes(sponsorKp.publicKey())) {
                     const result = await fundWallet(
                         BOT_PHRASE,
                         sponsorKp.publicKey(),
