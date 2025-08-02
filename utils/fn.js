@@ -781,7 +781,7 @@ export const autoFundWallet = async (instance) => {
                     return changeNeeded;
                 };
 
-                if (changeNeeded > 0 && botBalance > changeNeeded) {
+                if (changeNeeded > 0 && botBalance > changeNeeded && !global.isUnlocking) {
                     const result = await fundWallet(
                         BOT_PHRASE,
                         sponsorKp.publicKey(),
