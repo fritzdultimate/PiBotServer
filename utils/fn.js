@@ -101,7 +101,7 @@ export async function getAccount(publicKey) {
 function generateUniqueMemo(prefix = 'PiA') {
   const time = Date.now().toString(36);
   const rand = Math.random().toString(36).slice(2, 6);
-  const memoStr = `PM:${prefix}/${time.toUpperCase()}/${rand.toUpperCase()}`.slice(0, 28);
+  const memoStr = `PiMaster:${prefix}/${time.toUpperCase()}/${rand.toUpperCase()}`.slice(0, 28);
   return Memo.text(memoStr);
 }
 
