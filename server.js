@@ -233,23 +233,25 @@ const rawSponsors = await Sponsors.find();
 
 const sponsors = [];
 
-for (const sponsor of rawSponsors) {
-    const kp = getKeypairFromPassphrase(sponsor.mnemonic);
-    const pubKey = kp.publicKey();
 
-    if (
-        firstFilteredSponsors.includes(pubKey) ||
-        secondFilteredSponsors.includes(pubKey)
-    ) {
-        sponsors.push(sponsor); // keep the sponsor object
-    }
-}
-
-console.log(`Filterd Sponsors: ${sponsors.length}`);
-
-const chunkSize = Math.ceil(sponsors.length/3);
 
 setInterval(async() => {
+    for (const sponsor of rawSponsors) {
+        const kp = getKeypairFromPassphrase(sponsor.mnemonic);
+        const pubKey = kp.publicKey();
+
+        if (
+            firstFilteredSponsors.includes(pubKey) ||
+            secondFilteredSponsors.includes(pubKey)
+        ) {
+            sponsors.push(sponsor); // keep the sponsor object
+        }
+    }
+
+    console.log(`Total usable sponsors: ${sponsors.length}`)
+
+    const chunkSize = Math.ceil(sponsors.length/3);
+
     const start = instanceId * chunkSize;
     const end = start + chunkSize;
     const sponsorChunk = sponsors.slice(start, end);
