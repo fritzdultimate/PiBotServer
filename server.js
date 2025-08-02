@@ -241,7 +241,7 @@ for (const sponsor of rawSponsors) {
         firstFilteredSponsors.includes(pubKey) ||
         secondFilteredSponsors.includes(pubKey)
     ) {
-        sponsors.push(sponsor); // keep the sponsor object
+        sponsors.push(sponsor);
     }
 }
 
