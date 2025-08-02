@@ -247,7 +247,7 @@ for (const sponsor of rawSponsors) {
 
 setInterval(async() => {
 
-    console.log(`Total usable sponsors: ${sponsors.length}`)
+    // console.log(`Total usable sponsors: ${sponsors.length}`)
 
     const chunkSize = Math.ceil(sponsors.length/3);
 
