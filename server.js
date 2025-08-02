@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, secondFilteredSponsors, sweepWallet } from './utils/fn.js';
+import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 dotenv.config();
@@ -237,10 +237,7 @@ for (const sponsor of rawSponsors) {
     const kp = getKeypairFromPassphrase(sponsor.mnemonic);
     const pubKey = kp.publicKey();
 
-    if (
-        firstFilteredSponsors.includes(pubKey) ||
-        secondFilteredSponsors.includes(pubKey)
-    ) {
+    if (firstFilteredSponsors.includes(pubKey)) {
         sponsors.push(sponsor);
     }
 }
