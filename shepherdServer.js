@@ -12,7 +12,7 @@ dotenv.config();
 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.set('trust proxy', 1);
 
 const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app'];
