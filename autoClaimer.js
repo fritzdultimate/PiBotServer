@@ -29,20 +29,19 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
 
     try {
         while (retries < MAX_FLOOD_COUNT) {
-            retries++;
             console.log(`Storing xdrs ${retries} times`);
             const xdrs = [];
 
             for (const s of sponsors) {
                 try {
-                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount);
+                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
                     console.log(`Prebuilt and Presigned xdr: ${xdr}`);
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
                 }
             }
-
+            retries++;
             pendingXDRs[time].push(xdrs);
         }
 
@@ -102,7 +101,6 @@ export async function autoSubmitXDR() {
         let success = false;
         let balanceId = null;
         for(const xdrs of xdrGroup) {
-            console.log(`Here: ${xdrs}`)
             const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
                 try {
@@ -133,7 +131,7 @@ export async function autoSubmitXDR() {
                 { $set: { status: "failed" } }
             );
         }
-        // delete pendingXDRs[key];
+        delete pendingXDRs[key];
     }
     global.isSubmittingTx = false;
 }

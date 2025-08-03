@@ -10,13 +10,10 @@ function generateUniqueMemo(prefix = 'PiA') {
   return Memo.text(memoStr);
 }
 
-export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
+export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, i) {
     try {
-        console.log(`channelPhrase: ${channelPhrase}`)
-        console.log(`balanceid: ${balanceId}`)
-        console.log(`recipient: ${recipient}`)
-        console.log(`amount: ${amount}`)
-        console.log(`mainkp: ${mainKp}`)
+        
+
         const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
         const publicKey = channelKp.publicKey();
 
@@ -25,7 +22,9 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             getSpendableBalance(publicKey)
         ]);
 
-        const channelAccount = new Account(publicKey, accountData.sequence);
+        const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
+
+        const channelAccount = new Account(publicKey, seq);
         const spendableBalance = spendable * 0.5;
         const fee = Math.floor(spendableBalance * 10000000);
 
