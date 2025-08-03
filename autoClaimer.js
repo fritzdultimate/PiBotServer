@@ -112,4 +112,4 @@ export async function autoSubmitXDR() {
 }
 
 setInterval(autoPrepareForClaiming, 1000);
-// setInterval(autoSubmitXDR, 100);
+setInterval(autoSubmitXDR, 100);
