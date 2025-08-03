@@ -56,15 +56,17 @@ export async function autoPrepareForClaiming() {
         status: 'pending',
         name: { $in: [null, undefined] }
     });
-    if(!readyPassphrases.length) return;
-
-    for(const p of readyPassphrases) {
-        const timeKey = new Date(p.claimableAt).toISOString();
-        if(!pendingXDRs.hasOwnProperty(timeKey)) {
-            console.log(`Using key: ${timeKey}`);
-            await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
+    if(readyPassphrases.length) {
+        for(const p of readyPassphrases) {
+            const timeKey = new Date(p.claimableAt).toISOString();
+            if(!pendingXDRs.hasOwnProperty(timeKey)) {
+                console.log(`Using key: ${timeKey}`);
+                await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
+            }
         }
-    }
+    };
+
+    
     global.isPreparing = false;
 }
 
