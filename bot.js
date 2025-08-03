@@ -116,7 +116,7 @@ bot.onText(/\/listSpnsrs/, async (msg) => {
   const chatId = msg.chat.id;
 
   try {
-    const sponsors = await Sponsors.find();
+    const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
     if (sponsors.length === 0) {
         return bot.sendMessage(chatId, '❌ No sponsors found.');
