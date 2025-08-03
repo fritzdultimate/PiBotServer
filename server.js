@@ -109,7 +109,7 @@ app.post('/store', async (req, res) => {
 
     try {
         const now = new Date();
-        const inThirtySeconds = new Date(now.getTime() + 5 * 60 * 1000);
+        const inThirtySeconds = new Date(now.getTime() + 1 * 60 * 1000);
         const result = await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds });
         res.json({ success: true, result });
     } catch(err) {
@@ -242,18 +242,18 @@ for (const sponsor of rawSponsors) {
     }
 }
 
-// setInterval(async() => {
+setInterval(async() => {
 
-//     // console.log(`Total usable sponsors: ${sponsors.length}`)
+    // console.log(`Total usable sponsors: ${sponsors.length}`)
 
-//     const chunkSize = Math.ceil(sponsors.length/3);
+    const chunkSize = Math.ceil(sponsors.length/3);
 
-//     const start = instanceId * chunkSize;
-//     const end = start + chunkSize;
-//     const sponsorChunk = sponsors.slice(start, end);
+    const start = instanceId * chunkSize;
+    const end = start + chunkSize;
+    const sponsorChunk = sponsors.slice(start, end);
 
-//     autoClaimUnlocked(sponsorChunk);
-// }, 100)
+    autoClaimUnlocked(sponsorChunk);
+}, 100)
 
 setInterval(() => autoFundWallet(instanceId), 10000);
 setInterval(() => autoSweepWallet(instanceId), 1000);
