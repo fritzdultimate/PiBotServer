@@ -11,43 +11,48 @@ function generateUniqueMemo(prefix = 'PiA') {
 }
 
 export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
-    const passphrase = await Passphrase.findOne({ balanceId });
+    try {
 
-    const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
-    const publicKey = channelKp.publicKey();
+        const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
+        const publicKey = channelKp.publicKey();
 
-    const [accountData, spendable] = await Promise.all([
-        getAccount(publicKey),
-        getSpendableBalance(publicKey)
-    ]);
+        const [accountData, spendable] = await Promise.all([
+            getAccount(publicKey),
+            getSpendableBalance(publicKey)
+        ]);
 
-    const channelAccount = new Account(publicKey, accountData.sequence);
-    const spendableBalance = spendable * 0.5;
-    const fee = Math.floor(spendableBalance * 10000000);
+        const channelAccount = new Account(publicKey, accountData.sequence);
+        const spendableBalance = spendable * 0.5;
+        const fee = Math.floor(spendableBalance * 10000000);
 
-    const txBuilder = new TransactionBuilder(channelAccount, {
-        fee: fee.toString(),
-        networkPassphrase: 'Pi Network',
-    })
-    .addOperation(Operation.claimClaimableBalance({
-        balanceId,
-        source: mainKp.publicKey(),
-    }))
-    .addOperation(Operation.payment({
-        destination: recipient,
-        asset: Asset.native(),
-        amount,
-        source: mainKp.publicKey(),
-    }))
-    .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
-    .setTimeout(20)
-    .build();
+        const txBuilder = new TransactionBuilder(channelAccount, {
+            fee: fee.toString(),
+            networkPassphrase: 'Pi Network',
+        })
+        .addOperation(Operation.claimClaimableBalance({
+            balanceId,
+            source: mainKp.publicKey(),
+        }))
+        .addOperation(Operation.payment({
+            destination: recipient,
+            asset: Asset.native(),
+            amount,
+            source: mainKp.publicKey(),
+        }))
+        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        .setTimeout(20)
+        .build();
 
-    txBuilder.sign(mainKp);
-    txBuilder.sign(channelKp);
+        txBuilder.sign(mainKp);
+        txBuilder.sign(channelKp);
 
-    return txBuilder.toXDR();
+        return txBuilder.toXDR();
+    } catch (err) {
+        console.error(`Error in prebuildAndSignChannelTx for channel ${channelPhrase.slice(0, 5)}...:`, err);
+        return null;
+    }
 }
+
 
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, sponsors) {
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
