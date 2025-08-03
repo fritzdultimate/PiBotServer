@@ -29,6 +29,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
         const xdrs = [];
         for(const s of sponsors) {
             const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount);
+            console.log(`Prebuilt and Presigned xdr: ${xdr}`);
             xdrs.push(xdr);
         }
         retries++;
@@ -42,6 +43,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
 // ]
 
 export async function autoPrepareForClaiming() {
+    if(global.isPreparing) return;
+    global.isPreparing = true;
     console.log(`autoPrepare is running`)
     console.log(`XDRS: ${JSON.stringify(pendingXDRs)}`)
     console.log(`XDRS Keys: ${JSON.stringify(Object.keys(pendingXDRs))}`)
@@ -62,6 +65,7 @@ export async function autoPrepareForClaiming() {
             await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
         }
     }
+    global.isPreparing = false;
 }
 
 export async function autoSubmitXDR() {
