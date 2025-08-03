@@ -9,7 +9,7 @@ const pendingXDRs = {};
 const rawSponsors = await Sponsors.find();
 
 const sponsors = [];
-const MAX_FLOOD_COUNT = 1;
+const MAX_FLOOD_COUNT = 4;
 let CURRENT_KEY = null;
     
 for (const sponsor of rawSponsors) {
@@ -95,7 +95,7 @@ export async function autoSubmitXDR() {
         const now = new Date();
         const claimableAt = new Date(key);
         console.log(`Difference in sec ${now-claimableAt}`);
-        if((now - claimableAt) <= 0) continue;
+        if((now - claimableAt) <= -2000) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
         let success = false;
