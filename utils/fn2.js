@@ -24,6 +24,9 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
+        console.log(seq)
+        console.log(`inx: ${inx}`)
+
         const channelAccount = new Account(publicKey, seq);
         const spendableBalance = spendable * 0.5;
         const fee = Math.floor(spendableBalance * 10000000);
