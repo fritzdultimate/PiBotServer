@@ -36,6 +36,10 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
                     console.log(`Prebuilt and Presigned xdr: ${xdr}`);
                     xdrs.push(xdr);
                 } catch (innerErr) {
+                    console.log(`MainPhrase: ${mainPhrase}`)
+                    console.log(`balanceid: ${balanceId}`)
+                    console.log(`recipient: ${recipient}`)
+                    console.log(`amount: ${amount}`)
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
                 }
             }
