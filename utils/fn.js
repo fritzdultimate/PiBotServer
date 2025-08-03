@@ -569,7 +569,7 @@ export const autoClaimUnlocked = async (sponsors) => {
     // console.log(`Trying auto claim now...`);
 
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 1000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 2000);
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
