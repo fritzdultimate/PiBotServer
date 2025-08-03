@@ -188,10 +188,6 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 	const tx = new TransactionBuilder(channelAccount, {
 		fee: fee.toString(),
 		networkPassphrase: 'Pi Network',
-        // timebounds: {
-        //     minTime,
-        //     maxTime
-        // }
 
 	})
     .addOperation(Operation.claimClaimableBalance({
@@ -205,7 +201,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		amount,
 		source: mainKp.publicKey(),
     }))
-    .addMemo(generateUniqueMemo(channelKp.publicKey().slice(15, 22)))
+    .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
     .setTimeout(20)
     .build();
 
