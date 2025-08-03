@@ -108,22 +108,23 @@ export async function autoSubmitXDR() {
                     const result = await submitTransaction(xdr.xdr, server);
                     balanceId = xdr.balanceId;
                     console.log(`✅ Submitted on ${server}`, result);
+                    return result;
 
-                    const found = result?.hash;
-                    if (found) {
-                        console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
-                        await Passphrase.updateOne(
-                            { balanceId: xdr.balanceId },
-                            { $set: { status: "claimed" } }
-                        );
-                        // global.lastClaimedOrFailedAt = new Date();
-                        success = true;
-                        return;
-                    }
                 } catch (err) {
                     console.error(`❌ Submit error on ${server}:`, err?.response?.data || err.message);
                 }
             }));
+            const found = result.find((r) => r.hash);
+            if (found) {
+                console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
+                await Passphrase.updateOne(
+                    { balanceId: balanceId },
+                    { $set: { status: "claimed" } }
+                );
+                // global.lastClaimedOrFailedAt = new Date();
+                success = true;
+                return;
+            }
             console.log(result)
         }
         if(!success) {
