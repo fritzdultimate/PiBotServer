@@ -34,16 +34,19 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee: '11000000',
             networkPassphrase: 'Pi Network',
+            withMuxing: true
         })
         .addOperation(Operation.claimClaimableBalance({
             balanceId,
             source: mainKp.publicKey(),
+            withMuxing: true
         }))
         .addOperation(Operation.payment({
             destination: recipient,
             asset: Asset.native(),
             amount,
             source: mainKp.publicKey(),
+            withMuxing: true
         }))
         .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(1800)

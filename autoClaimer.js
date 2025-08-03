@@ -1,7 +1,7 @@
 import { connectToDB } from "./db.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
-import { firstFilteredSponsors, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, submitTransaction } from "./utils/fn.js";
+import { firstFilteredSponsors, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, submitTransaction } from "./utils/fn.js";
 import { prebuildAndSignChannelTx } from "./utils/fn2.js";
 
 await connectToDB();
@@ -78,7 +78,7 @@ export async function autoPrepareForClaiming() {
             console.log(`Using key: ${timeKey}`);
             console.log(`Key exist: ${pendingXDRs.hasOwnProperty(timeKey)}`);
             if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
-                await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
+                await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_MUXED_ADDRESS, p.amount, timeKey);
             }
         }
     };
