@@ -9,7 +9,7 @@ const pendingXDRs = {};
 const rawSponsors = await Sponsors.find();
 
 const sponsors = [];
-const MAX_FLOOD_COUNT = 4;
+const MAX_FLOOD_COUNT = 2;
 let CURRENT_KEY = null;
     
 for (const sponsor of rawSponsors) {
