@@ -100,6 +100,7 @@ export async function autoSubmitXDR() {
 
         let success = false;
         let balanceId = null;
+
         for(const xdrs of xdrGroup) {
             const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
@@ -108,7 +109,7 @@ export async function autoSubmitXDR() {
                     balanceId = xdr.balanceId;
                     console.log(`✅ Submitted on ${server}`, result);
 
-                    const found = result.find((r) => r.hash);
+                    const found = result?.hash;
                     if (found) {
                         console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
                         await Passphrase.updateOne(

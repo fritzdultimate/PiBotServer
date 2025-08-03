@@ -10,7 +10,7 @@ function generateUniqueMemo(prefix = 'PiA') {
   return Memo.text(memoStr);
 }
 
-export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, i) {
+export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, inx) {
     try {
         
 
@@ -22,7 +22,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             getSpendableBalance(publicKey)
         ]);
 
-        const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
+        const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
         const channelAccount = new Account(publicKey, seq);
         const spendableBalance = spendable * 0.5;
