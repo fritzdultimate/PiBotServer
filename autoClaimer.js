@@ -130,7 +130,7 @@ export async function autoSubmitXDR() {
                 { $set: { status: "failed" } }
             );
         }
-        delete pendingXDRs[key];
+        // delete pendingXDRs[key];
     }
     global.isSubmittingTx = false;
 }
