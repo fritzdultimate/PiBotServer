@@ -27,7 +27,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
 
     try {
         while (retries < MAX_FLOOD_COUNT) {
-            console.log(`Storing xdrs ${retries + 1} times`);
+            retries++;
+            console.log(`Storing xdrs ${retries} times`);
             const xdrs = [];
 
             for (const s of sponsors) {
@@ -40,12 +41,11 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
                 }
             }
 
-            retries++;
             pendingXDRs[time].push(xdrs);
         }
 
         console.log(`XDRS:`, pendingXDRs[time]);
-        console.log(`XDRS:`, pendingXDRs[time][0].length);
+        console.log(`XDRS Length:`, pendingXDRs[time][0].length);
     } catch (err) {
         console.error(`Error in getXDRsReady:`, err);
     }
@@ -59,9 +59,11 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
 export async function autoPrepareForClaiming() {
     if(global.isPreparing) return;
     global.isPreparing = true;
+    
     console.log(`autoPrepare is running`)
     console.log(`XDRS: ${JSON.stringify(pendingXDRs)}`)
-    console.log(`XDRS Keys: ${JSON.stringify(Object.keys(pendingXDRs))}`)
+    console.log(`XDRS Keys: ${JSON.stringify(Object.keys(pendingXDRs))}`);
+
     const now = new Date();
     const aMinuteFromNow = new Date(now.getTime() + (10 * 1000 * 60));
 
@@ -73,8 +75,9 @@ export async function autoPrepareForClaiming() {
     if(readyPassphrases.length) {
         for(const p of readyPassphrases) {
             const timeKey = new Date(p.claimableAt).toISOString();
+            console.log(`Using key: ${timeKey}`);
+            console.log(`Key exist: ${pendingXDRs.hasOwnProperty(timeKey)}`);
             if(!pendingXDRs.hasOwnProperty(timeKey)) {
-                console.log(`Using key: ${timeKey}`);
                 await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
             }
         }
@@ -113,4 +116,4 @@ export async function autoSubmitXDR() {
 }
 
 setInterval(autoPrepareForClaiming, 1000);
-setInterval(autoSubmitXDR, 100);
+// setInterval(autoSubmitXDR, 100);
