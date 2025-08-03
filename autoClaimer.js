@@ -35,7 +35,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount);
                     console.log(`Prebuilt and Presigned xdr: ${xdr}`);
-                    xdrs.push(xdr);
+                    xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
                 }
@@ -96,18 +96,39 @@ export async function autoSubmitXDR() {
         if((now - claimableAt) < -6000) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
+        let success = false;
+        let balanceId = null;
         for(const xdrs of xdrGroup) {
             console.log(`Here: ${xdrs}`)
             const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
                 try {
-                    const result = await submitTransaction(xdr, server);
+                    const result = await submitTransaction(xdr.xdr, server);
+                    balanceId = xdr.balanceId;
                     console.log(`✅ Submitted on ${server}`, result);
+
+                    const found = result.find((r) => r.hash);
+                    if (found) {
+                        console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
+                        await Passphrase.updateOne(
+                            { balanceId: xdr.balanceId },
+                            { $set: { status: "claimed" } }
+                        );
+                        // global.lastClaimedOrFailedAt = new Date();
+                        success = true;
+                        return;
+                    }
                 } catch (err) {
                     console.error(`❌ Submit error on ${server}:`, err?.response?.data || err.message);
                 }
             }));
             console.log(result)
+        }
+        if(!success) {
+            await Passphrase.updateOne(
+                { balanceId: balanceId },
+                { $set: { status: "failed" } }
+            );
         }
         delete pendingXDRs[key];
     }
