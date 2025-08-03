@@ -198,7 +198,10 @@ bot.onText(/\/listPhrs/, async (msg) => {
   const chatId = msg.chat.id;
 
   try {
-    const passphrases = await Passphrase.find().sort({ claimableAt: 1 });
+    const passphrases = await Passphrase.find({
+        status: 'pending',
+        name: { $in: [null, undefined] }
+    }).sort({ claimableAt: 1 });
 
     if (passphrases.length === 0) {
       return bot.sendMessage(chatId, '❌ No wallet found.');
