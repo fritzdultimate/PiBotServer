@@ -98,6 +98,8 @@ export async function autoSubmitXDR() {
         if((now - claimableAt) < -6000) continue;
         const xdrGroup = pendingXDRs[key];
 
+        console.log(xdrGroup)
+
         for(const xdrs of xdrGroup) {
             const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
@@ -110,7 +112,7 @@ export async function autoSubmitXDR() {
             }));
             console.log(result)
         }
-        delete pendingXDRs[key];
+        // delete pendingXDRs[key];
     }
     global.isSubmittingTx = false;
 }
