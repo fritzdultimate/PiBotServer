@@ -22,21 +22,34 @@ for (const sponsor of rawSponsors) {
 
 async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
-    pendingXDRs[time] = []
+    pendingXDRs[time] = [];
     let retries = 0;
-    while(retries < MAX_FLOOD_COUNT) {
-        console.log(`Storing xdrs ${retries + 1 } times`)
-        const xdrs = [];
-        for(const s of sponsors) {
-            const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount);
-            console.log(`Prebuilt and Presigned xdr: ${xdr}`);
-            xdrs.push(xdr);
+
+    try {
+        while (retries < MAX_FLOOD_COUNT) {
+            console.log(`Storing xdrs ${retries + 1} times`);
+            const xdrs = [];
+
+            for (const s of sponsors) {
+                try {
+                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount);
+                    console.log(`Prebuilt and Presigned xdr: ${xdr}`);
+                    xdrs.push(xdr);
+                } catch (innerErr) {
+                    console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
+                }
+            }
+
+            retries++;
+            pendingXDRs[time].push(xdrs);
         }
-        retries++;
-        pendingXDRs[time].push(xdrs);
+
+        console.log(`XDRS:`, pendingXDRs[time]);
+    } catch (err) {
+        console.error(`Error in getXDRsReady:`, err);
     }
-    console.log(`XDRS: ${pendingXDRs[time]}`)
 }
+
 
 // [
 //     'time' => [[], []]
