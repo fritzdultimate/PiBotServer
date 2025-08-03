@@ -66,7 +66,7 @@ export async function autoPrepareForClaiming() {
     console.log(`XDRS: ${JSON.stringify(pendingXDRs)}`)
     console.log(`XDRS Keys: ${JSON.stringify(Object.keys(pendingXDRs))}`)
     const now = new Date();
-    const aMinuteFromNow = new Date(now.getTime() + (8 * 1000 * 60));
+    const aMinuteFromNow = new Date(now.getTime() + (10 * 1000 * 60));
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: aMinuteFromNow },
