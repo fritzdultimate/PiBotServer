@@ -78,7 +78,7 @@ export async function autoSubmitXDR() {
             const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
                 try {
-                    const result = await submitTransaction(xdr.xdr, server);
+                    const result = await submitTransaction(xdr, server);
                     console.log(`✅ Submitted on ${server}`, result);
                 } catch (err) {
                     console.error(`❌ Submit error on ${server}:`, err?.response?.data || err.message);
@@ -92,4 +92,4 @@ export async function autoSubmitXDR() {
 }
 
 setInterval(autoPrepareForClaiming, 1000);
-setInterval(autoSubmitXDR, 100);
+// setInterval(autoSubmitXDR, 100);

@@ -46,12 +46,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
     txBuilder.sign(mainKp);
     txBuilder.sign(channelKp);
 
-    return {
-        xdr: txBuilder.toXDR(),
-        hash: txBuilder.hash().toString('hex'),
-        channel: channelKp.publicKey(),
-        submitAt: passphrase.claimableAt
-    };
+    return txBuilder.toXDR();
 }
 
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, sponsors) {
