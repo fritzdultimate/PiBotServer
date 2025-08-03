@@ -12,7 +12,11 @@ function generateUniqueMemo(prefix = 'PiA') {
 
 export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
     try {
-
+        console.log(`channelPhrase: ${channelPhrase}`)
+        console.log(`balanceid: ${balanceId}`)
+        console.log(`recipient: ${recipient}`)
+        console.log(`amount: ${amount}`)
+        console.log(`mainkp: ${mainKp}`)
         const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
         const publicKey = channelKp.publicKey();
 
