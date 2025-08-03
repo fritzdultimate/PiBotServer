@@ -61,8 +61,6 @@ export async function autoPrepareForClaiming() {
     global.isPreparing = true;
     
     console.log(`autoPrepare is running`)
-    console.log(`XDRS: ${JSON.stringify(pendingXDRs)}`)
-    console.log(`XDRS Keys: ${JSON.stringify(Object.keys(pendingXDRs))}`);
 
     const now = new Date();
     const aMinuteFromNow = new Date(now.getTime() + (10 * 1000 * 60));
@@ -96,11 +94,10 @@ export async function autoSubmitXDR() {
         const claimableAt = new Date(key);
         console.log(`Difference in sec ${now-claimableAt}`);
         if((now - claimableAt) < -6000) continue;
-        const xdrGroup = pendingXDRs[key];
-
-        console.log(xdrGroup)
+        const xdrGroup = pendingXDRs[key]; // [[], []]
 
         for(const xdrs of xdrGroup) {
+            console.log(`Here: ${xdrs}`)
             const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
                 try {
