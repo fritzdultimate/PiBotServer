@@ -9,7 +9,7 @@ const pendingXDRs = {};
 const rawSponsors = await Sponsors.find();
 
 const sponsors = [];
-const MAX_FLOOD_COUNT = 2;
+const MAX_FLOOD_COUNT = 1;
 let CURRENT_KEY = null;
     
 for (const sponsor of rawSponsors) {
@@ -102,7 +102,7 @@ export async function autoSubmitXDR() {
         let balanceId = null;
 
         for(const xdrs of xdrGroup) {
-            const result = await Promise.allSettled(xdrs.map(async (xdr, i) => {
+            const result = await Promise.all(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
