@@ -125,7 +125,6 @@ export async function autoSubmitXDR() {
                 success = true;
                 return;
             }
-            console.log(result)
         }
         if(!success) {
             await Passphrase.updateOne(
@@ -138,5 +137,16 @@ export async function autoSubmitXDR() {
     global.isSubmittingTx = false;
 }
 
+async function autoMarkAsClaimable() {
+    const now = new Date();
+    const threeMinutesAgo = new Date(now.getTime() - 3 * 60 * 1000);
+
+    await Passphrase.updateMany(
+        { claimableAt: { $lt: threeMinutesAgo }, status: 'pending' },
+        { $set: { status: 'failed' } }
+    );
+}
+
 setInterval(autoPrepareForClaiming, 1000);
+setInterval(autoMarkAsClaimable, 1000);
 setInterval(autoSubmitXDR, 100);
