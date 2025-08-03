@@ -10,7 +10,7 @@ const rawSponsors = await Sponsors.find();
 
 const sponsors = [];
 const MAX_FLOOD_COUNT = 2;
-const CURRENT_KEY = null;
+let CURRENT_KEY = null;
     
 for (const sponsor of rawSponsors) {
     const kp = getKeypairFromPassphrase(sponsor.mnemonic);
