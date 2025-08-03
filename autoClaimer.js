@@ -109,7 +109,7 @@ export async function autoSubmitXDR() {
             }));
             console.log(result)
         }
-        // delete pendingXDRs[key];
+        delete pendingXDRs[key];
     }
     global.isSubmittingTx = false;
 }

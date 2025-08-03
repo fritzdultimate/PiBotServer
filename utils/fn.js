@@ -709,7 +709,7 @@ export const autoSweepSponsor = async (instance) => {
         if (upcomingClaimables.length > 0) return;
 
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
-        let maxRetries = 2;
+        let maxRetries = 10;
         let retries = 0;
         const chunkSize = Math.ceil(sponsors.length / maxRetries);
         if (!upcomingClaimables.length) {
