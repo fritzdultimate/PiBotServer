@@ -45,6 +45,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
         }
 
         console.log(`XDRS:`, pendingXDRs[time]);
+        console.log(`XDRS:`, pendingXDRs[time][0].length);
     } catch (err) {
         console.error(`Error in getXDRsReady:`, err);
     }
