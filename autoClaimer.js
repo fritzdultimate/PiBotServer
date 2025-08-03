@@ -42,6 +42,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
 // ]
 
 export async function autoPrepareForClaiming() {
+    console.log(`autoPrepare is running`)
     const now = new Date();
     const aMinuteFromNow = new Date(now.getTime() + (8 * 1000 * 60));
 
