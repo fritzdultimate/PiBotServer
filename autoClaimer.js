@@ -1,7 +1,7 @@
 import { connectToDB } from "./db.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
-import { firstFilteredSponsors, getKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, submitTransaction } from "./utils/fn.js";
+import { firstFilteredSponsors, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, submitTransaction } from "./utils/fn.js";
 import { prebuildAndSignChannelTx } from "./utils/fn2.js";
 
 await connectToDB();
@@ -21,7 +21,7 @@ for (const sponsor of rawSponsors) {
 }
 
 async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
-    const mainKp = getKeypairFromPassphrase(mainPhrase);
+    const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
     pendingXDRs[time] = [];
     let retries = 0;
 
