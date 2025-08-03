@@ -41,6 +41,7 @@ export const firstFilteredSponsors = [
     'GAQXQZWUZWMGJX72BJENUT6VSLU6PTLZJ5SYULGLN6F5SIYXYGZTC4ZX',
     'GCSWQMKTFIH24VBRPFVSAHMLQDQ6RTDVKMOBNZTXF4ASBLOOMRGBUQB6',
     'GCXJOVQWVRMQABCBLN35EWIVUQAZVONWBCI6JUWMP3HSVU23A64E4DSU',
+    'GANBKBPDM4ZYYY6D4PTG4VNKIVPA2ZETWBAAFNYZCZUM2UNPID5OJQ6Z',
     
     'GCA6VUL6D3X5DJGA2R6DS7RNKZFM3CZPAJOGO6IJEE4BPSMJ57W4C2WM',
     'GBZCDRUOO6MMP4XZTKBTTDCIFKLGHMJRXQCY4A4PKM5FTNAEE7DIJGNX',
@@ -174,10 +175,14 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
 
 export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
-    const accountData  = await getAccount(channelKp.publicKey());
-    const channelAccount = new Account(channelKp.publicKey(), accountData.sequence);
+    const publicKey = channelKp.publicKey();
 
-    const spendableBalance = await getSpendableBalance(channelKp.publicKey()) * 0.5;
+    const [accountData, spendable] = await Promise.all([
+		getAccount(publicKey),
+		getSpendableBalance(publicKey)
+	]);
+    const channelAccount = new Account(publicKey, accountData.sequence);
+    const spendableBalance = spendable * 0.5;
     const fee = Math.floor(spendableBalance * 10000000);
 
 	const tx = new TransactionBuilder(channelAccount, {
@@ -201,7 +206,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 		source: mainKp.publicKey(),
     }))
     .addMemo(generateUniqueMemo(channelKp.publicKey().slice(15, 22)))
-    .setTimeout(randomBetweenStartAndEnd())
+    .setTimeout(20)
     .build();
 
   	tx.sign(mainKp);
