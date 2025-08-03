@@ -69,7 +69,7 @@ const FIRST_BUMP_FEE = 3.7654321;
 
 
 
-const HORIZONS = [
+export const HORIZONS = [
     'http://localhost:8000', 
     'http://31.97.37.92:8000',
     'http://31.97.56.56:8000', //noble
@@ -414,7 +414,7 @@ export async function FloodFeeBumpTransaction(mainPhrase, balanceId, recipient, 
     return { success: false, error: "No sponsored accounts found"}
 }
 
-async function getSpendableBalance(publicKey) {
+export async function getSpendableBalance(publicKey) {
     const accountData  = await getAccount(publicKey);
     const balanceString = getBalance(accountData);
 

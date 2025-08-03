@@ -1,0 +1,88 @@
+
+import { Account, Asset, Memo, Operation, TransactionBuilder } from "stellar-sdk";
+import { getAccount, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, getSpendableBalance, HORIZONS, submitTransaction } from "./fn.js";
+import Passphrase from "../models/Passphrase.js";
+
+function generateUniqueMemo(prefix = 'PiA') {
+  const time = Date.now().toString(36);
+  const rand = Math.random().toString(36).slice(2, 6);
+  const memoStr = `PiMaster:${prefix}/${time.toUpperCase()}/${rand.toUpperCase()}`.slice(0, 28);
+  return Memo.text(memoStr);
+}
+
+export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
+    const passphrase = await Passphrase.findOne({ balanceId });
+
+    const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
+    const publicKey = channelKp.publicKey();
+
+    const [accountData, spendable] = await Promise.all([
+        getAccount(publicKey),
+        getSpendableBalance(publicKey)
+    ]);
+
+    const channelAccount = new Account(publicKey, accountData.sequence);
+    const spendableBalance = spendable * 0.5;
+    const fee = Math.floor(spendableBalance * 10000000);
+
+    const txBuilder = new TransactionBuilder(channelAccount, {
+        fee: fee.toString(),
+        networkPassphrase: 'Pi Network',
+    })
+    .addOperation(Operation.claimClaimableBalance({
+        balanceId,
+        source: mainKp.publicKey(),
+    }))
+    .addOperation(Operation.payment({
+        destination: recipient,
+        asset: Asset.native(),
+        amount,
+        source: mainKp.publicKey(),
+    }))
+    .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+    .setTimeout(20)
+    .build();
+
+    txBuilder.sign(mainKp);
+    txBuilder.sign(channelKp);
+
+    return {
+        xdr: txBuilder.toXDR(),
+        hash: txBuilder.hash().toString('hex'),
+        channel: channelKp.publicKey(),
+        submitAt: passphrase.claimableAt
+    };
+}
+
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, sponsors) {
+    const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
+    if(sponsors) {
+        const result = await Promise.all(sponsors.map(async (sponsor, i) => {
+            const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
+            try {
+                const data = await prebuildAndSignChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                scheduleSubmission(data, server);
+                return { success: true, channel: sponsor.name || `#${i}` };
+            } catch (err) {
+                console.error(`❌ Error on channel ${i}:`, err?.response?.data || err.message);
+                return { success: false, channel: sponsor.name || `#${i}`, error: err.message };
+            }
+        }));
+
+        return result;
+    }
+    return { success: false, error: "No sponsored accounts found"}
+}
+
+function scheduleSubmission({ xdr, hash, channel, submitAt }, server) {
+	const delay = Math.max(0, submitAt - Date.now());
+
+	setTimeout(async () => {
+        try {
+            const result = await submitTransaction(xdr, server);
+            console.log(`✅ Submitted tx ${hash} via ${channel} on ${server}`, result);
+        } catch (err) {
+            console.error(`❌ Submission failed for tx ${hash} on ${server}:`, err?.response?.data || err.message);
+        }
+  }, delay);
+}
