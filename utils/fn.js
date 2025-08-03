@@ -771,7 +771,6 @@ export const autoFundWallet = async (instance) => {
 
                 const calculateFundingAmount = () => {
                     const isInFirstFiltered = firstFilteredSponsors.includes(sponsorKp.publicKey());
-                    const isInSecondFiltered = secondFilteredSponsors.includes(sponsorKp.publicKey());
 
                     if (isInFirstFiltered) {
                         return botBalance > FIRST_BUMP_FEE ? FIRST_BUMP_FEE : changeNeeded;
@@ -779,7 +778,7 @@ export const autoFundWallet = async (instance) => {
 
                     return changeNeeded;
                 };
-                
+
                 upcomingClaimables = await getUpcomingClaimables();
                 if (changeNeeded > 0 && botBalance > changeNeeded && !global.isUnlocking && !!upcomingClaimables.length && firstFilteredSponsors.includes(sponsorKp.publicKey())) {
                     const result = await fundWallet(
