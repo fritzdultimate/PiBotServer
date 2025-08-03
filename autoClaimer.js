@@ -10,6 +10,7 @@ const rawSponsors = await Sponsors.find();
 
 const sponsors = [];
 const MAX_FLOOD_COUNT = 2;
+const CURRENT_KEY = null;
     
 for (const sponsor of rawSponsors) {
     const kp = getKeypairFromPassphrase(sponsor.mnemonic);
@@ -21,6 +22,7 @@ for (const sponsor of rawSponsors) {
 }
 
 async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
+    CURRENT_KEY = time;
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
     pendingXDRs[time] = [];
     let retries = 0;
@@ -70,12 +72,13 @@ export async function autoPrepareForClaiming() {
         status: 'pending',
         name: { $in: [null, undefined] }
     });
+
     if(readyPassphrases.length) {
         for(const p of readyPassphrases) {
             const timeKey = new Date(p.claimableAt).toISOString();
             console.log(`Using key: ${timeKey}`);
             console.log(`Key exist: ${pendingXDRs.hasOwnProperty(timeKey)}`);
-            if(!pendingXDRs.hasOwnProperty(timeKey)) {
+            if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
                 await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
             }
         }
