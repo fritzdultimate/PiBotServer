@@ -237,23 +237,23 @@ for (const sponsor of rawSponsors) {
     const kp = getKeypairFromPassphrase(sponsor.mnemonic);
     const pubKey = kp.publicKey();
 
-    if (firstFilteredSponsors.includes(pubKey)) {
+    if (!firstFilteredSponsors.includes(pubKey)) {
         sponsors.push(sponsor);
     }
 }
 
-// setInterval(async() => {
+setInterval(async() => {
 
-//     // console.log(`Total usable sponsors: ${sponsors.length}`)
+    // console.log(`Total usable sponsors: ${sponsors.length}`)
 
-//     const chunkSize = Math.ceil(sponsors.length/3);
+    const chunkSize = Math.ceil(sponsors.length/3);
 
-//     const start = instanceId * chunkSize;
-//     const end = start + chunkSize;
-//     const sponsorChunk = sponsors.slice(start, end);
+    const start = instanceId * chunkSize;
+    const end = start + chunkSize;
+    const sponsorChunk = sponsors.slice(start, end);
 
-//     autoClaimUnlocked(sponsorChunk);
-// }, 100)
+    autoClaimUnlocked(sponsorChunk);
+}, 100)
 
 setInterval(() => autoFundWallet(instanceId), 10000);
 setInterval(() => autoSweepWallet(instanceId), 1000);
