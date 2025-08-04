@@ -71,7 +71,7 @@ export const firstFilteredSponsors = [
     'GAPT37TWU524VH7HOKZJQCXYKPNFCXKYDWVDWIWZVPSIYZO3ZUEQ6L5R'
 ]
 
-const FIRST_BUMP_FEE = 3.7654321;
+const FIRST_BUMP_FEE = 3.3;
 
 
 
