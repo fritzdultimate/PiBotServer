@@ -32,7 +32,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const fee = Math.floor(spendableBalance * 10000000);
 
         const txBuilder = new TransactionBuilder(channelAccount, {
-            fee: '700000',
+            fee: '7000000',
             networkPassphrase: 'Pi Network',
             withMuxing: true
         })
