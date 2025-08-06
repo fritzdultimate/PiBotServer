@@ -32,7 +32,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
             console.log(`Storing xdrs ${retries} times`);
             const xdrs = [];
 
-            for (const s of sponsors) {
+            for (const s of rawSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
                     console.log(`Prebuilt and Presigned xdr: ${xdr}`);
