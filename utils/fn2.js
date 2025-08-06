@@ -1,6 +1,6 @@
 
 import { Account, Asset, Memo, Operation, TransactionBuilder } from "stellar-sdk";
-import { getAccount, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, getSpendableBalance, HORIZONS, submitTransaction } from "./fn.js";
+import { firstFilteredSponsors, getAccount, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, getSpendableBalance, HORIZONS, submitTransaction } from "./fn.js";
 import Passphrase from "../models/Passphrase.js";
 
 function generateUniqueMemo(prefix = 'PiA') {
@@ -29,10 +29,12 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
 
         const channelAccount = new Account(publicKey, seq);
         const spendableBalance = spendable * 0.5;
-        const fee = Math.floor(spendableBalance * 10000000);
+
+        const isInFirstFilteredArray = firstFilteredSponsors.includes(channelKp.publicKey());
+        const fee = isInFirstFilteredArray ? '1000000' : '200200';
 
         const txBuilder = new TransactionBuilder(channelAccount, {
-            fee: '1000000',
+            fee,
             networkPassphrase: 'Pi Network',
             withMuxing: true
         })
