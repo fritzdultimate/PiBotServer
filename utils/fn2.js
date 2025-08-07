@@ -31,7 +31,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const spendableBalance = spendable * 0.5;
 
         const isInFirstFilteredArray = firstFilteredSponsors.includes(channelKp.publicKey());
-        const fee = isInFirstFilteredArray ? '1000000' : '200200';
+        const fee = isInFirstFilteredArray ? '300000' : '200200';
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
