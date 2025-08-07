@@ -64,7 +64,7 @@ export async function autoPrepareForClaiming() {
     console.log(`autoPrepare is running`)
 
     const now = new Date();
-    const aMinuteFromNow = new Date(now.getTime() + (10 * 1000 * 60));
+    const aMinuteFromNow = new Date(now.getTime() + (2 * 1000 * 60));
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: aMinuteFromNow },
