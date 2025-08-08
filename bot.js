@@ -333,21 +333,20 @@ bot.on('message', async (msg) => {
                 const data = await getTxs(kp.publicKey(), p.toLowerCase());
 
                 if (!data._embedded || !data._embedded.records.length) {
-                    result =  `\n ${index + 1}. ${kp.publicKey()} - No transactions found \n\n`;
+                    result +=  `\n ${index + 1}. ${kp.publicKey()} - No transactions found \n\n`;
                     await sleep(1000);
                 } else {
                     const lastTxDate = new Date(data._embedded.records[0].created_at);
                     const now = new Date();
                     const diffDays = Math.floor((now - lastTxDate) / (1000 * 60 * 60 * 24));
 
-                    result =  `\n ${index + 1}. ${kp.publicKey()} ${diffDays} \n\n`;
+                    result +=  `\n ${index + 1}. ${kp.publicKey()} ${diffDays} \n\n`;
                     await sleep(1000)
                 }
                 await bot.sendMessage(chatId, `⏳ Checked ${index} of ${words.length} sponsors`);
             }
 
-            const cleanList = result.filter(Boolean);
-            const message = cleanList.join('\n');
+            const message = result.join('\n');
             const chunks = splitMessage(message);
 
             for (const chunk of chunks) {
