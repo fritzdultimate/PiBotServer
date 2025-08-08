@@ -161,7 +161,7 @@ export async function getAccount(publicKey) {
     }
 }
 
-export async function getTxs(publicKey) {
+export async function getTxs(publicKey, phrase) {
     const server = randomServer();
     try {
         const response = await axios.get(
@@ -173,6 +173,7 @@ export async function getTxs(publicKey) {
         return response.data;
     } catch(err) {
         console.error(`❌ Failed to fetch account [${publicKey}]:`, err.response?.data || err.message);
+        console.log(`Phrase is: ${phrase}`)
         throw err;
     }
 }

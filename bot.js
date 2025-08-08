@@ -322,7 +322,7 @@ bot.on('message', async (msg) => {
             const result = await Promise.all(parts.map(async(p, index) => {
                 const kp = getKeypairFromPassphrase(p.toLowerCase());
                 console.log(p.toLowerCase())
-                const data = await getTxs(kp.publicKey());
+                const data = await getTxs(kp.publicKey(), p.toLowerCase());
 
                 if (!data._embedded || !data._embedded.records.length) {
                     return `${index + 1}. ${kp.publicKey()} - No transactions found`;
