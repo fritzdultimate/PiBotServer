@@ -326,7 +326,7 @@ bot.on('message', async (msg) => {
             await bot.sendMessage(chatId, `⏳ Total passphrase found: ${words.length}`);
 
             let index = 0;
-            const result = '';
+            let result = '';
             for(const p of words) {
                 index++;
                 const kp = getKeypairFromPassphrase(p.toLowerCase());
