@@ -333,7 +333,7 @@ bot.on('message', async (msg) => {
                 const data = await getTxs(kp.publicKey(), p.toLowerCase());
 
                 if (!data._embedded || !data._embedded.records.length) {
-                    result +=  `\n ${index + 1}. ${kp.publicKey()} - No transactions found \n\n`;
+                    result +=  `\n ${index}. ${kp.publicKey()} - No transactions found \n\n`;
                     await sleep(1000);
                 } else {
                     const lastTxDate = new Date(data._embedded.records[0].created_at);
@@ -342,10 +342,10 @@ bot.on('message', async (msg) => {
 
                     const saved = await storeSponsor(p.toLowerCase(), 'whoami5677')
                     if(saved.success) {
-                        await bot.sendMessage(chatId, `⏳ Saved ${index} of ${words.length}`);
+                        await bot.sendMessage(chatId, `✅ Saved ${index} of ${words.length}`);
                     }
 
-                    result +=  `\n ${index + 1}. ${kp.publicKey()} - Last tx in ${diffDays} days(s) \n\n`;
+                    result +=  `\n ${index}. ${kp.publicKey()} - Last tx in ${diffDays} days(s) \n\n`;
                     await sleep(1000)
                 }
                 await bot.sendMessage(chatId, `⏳ Checked ${index} of ${words.length} sponsors`);
