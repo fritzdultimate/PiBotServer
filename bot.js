@@ -310,30 +310,38 @@ bot.on('message', async (msg) => {
     const text = msg.text.trim();
 
     if(userSessions[chatId]?.waitingForChunkPassphrase) {
-        const parts = text.split(/\n+/);
+        const words = text
+            .trim()
+            .split(/\s+/) // split by any whitespace
+            .slice(0, 24);
 
-        if(!parts.length) {
+        if(!words.length) {
             return bot.sendMessage(chatId, '❌ Invalid format. Paste complete passphrase');
         }
 
         try {
-            await bot.sendMessage(chatId, `⏳ Total passphrase found: ${parts.length}`);
+            await bot.sendMessage(chatId, `⏳ Total passphrase found: ${words.length}`);
 
-            const result = await Promise.all(parts.map(async(p, index) => {
+            const index = 0;
+            const result = '';
+            for(const p of words) {
+                index++;
                 const kp = getKeypairFromPassphrase(p.toLowerCase());
-                console.log(p.toLowerCase())
-                const data = await getTxs(kp.publicKey(), p.toLowerCase());
+                const data = await getTxs(kp.publicKey());
 
                 if (!data._embedded || !data._embedded.records.length) {
-                    return `${index + 1}. ${kp.publicKey()} - No transactions found`;
+                    result =  `\n ${index + 1}. ${kp.publicKey()} - No transactions found \n\n`;
+                    await sleep(1000);
+                } else {
+                    const lastTxDate = new Date(data._embedded.records[0].created_at);
+                    const now = new Date();
+                    const diffDays = Math.floor((now - lastTxDate) / (1000 * 60 * 60 * 24));
+
+                    result =  `\n ${index + 1}. ${kp.publicKey()} ${diffDays} \n\n`;
+                    await sleep(1000)
                 }
-
-                const lastTxDate = new Date(data._embedded.records[0].created_at);
-                const now = new Date();
-                const diffDays = Math.floor((now - lastTxDate) / (1000 * 60 * 60 * 24));
-
-                return `${index + 1}. ${kp.publicKey()} ${diffDays}`;
-            }))
+                await bot.sendMessage(chatId, `⏳ Checked ${index} of ${words.length} sponsors`);
+            }
 
             const cleanList = result.filter(Boolean);
             const message = cleanList.join('\n');

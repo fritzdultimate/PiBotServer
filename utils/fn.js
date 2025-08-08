@@ -161,11 +161,10 @@ export async function getAccount(publicKey) {
     }
 }
 
-export async function getTxs(publicKey, phrase) {
-    const server = randomServer();
+export async function getTxs(publicKey) {
     try {
         const response = await axios.get(
-            `${server}/accounts/${publicKey}/transactions?limit=2&order=desc`,
+            `https://api.mainnet.minepi.com/accounts/${publicKey}/transactions?limit=2&order=desc`,
             {
                 headers: { 'Content-Type': 'application/json' },
             }
