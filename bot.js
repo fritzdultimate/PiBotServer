@@ -321,9 +321,7 @@ bot.on('message', async (msg) => {
 
             const result = await Promise.all(parts.map(async(p, index) => {
                 const kp = getKeypairFromPassphrase(p.toLowerCase());
-                if(kp.publicKey() === 'GA65OBE3DHYVNE5BNLD3ZRRY75ZY4SLI2TGWHHMACOE7NEATLKOLKI63') {
-                    console.log(p.toLowerCase())
-                }
+                console.log(p.toLowerCase())
                 const data = await getTxs(kp.publicKey());
 
                 if (!data._embedded || !data._embedded.records.length) {
