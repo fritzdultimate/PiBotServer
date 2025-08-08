@@ -58,3 +58,10 @@ export function splitMessage(message, maxLength = 4096) {
     return result;
 }
 
+export function chunkArray(arr, size) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size).join(' '));
+  }
+  return result;
+}

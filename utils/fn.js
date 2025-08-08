@@ -172,7 +172,6 @@ export async function getTxs(publicKey, phrase) {
         return response.data;
     } catch(err) {
         console.error(`❌ Failed to fetch account [${publicKey}]:`, err.response?.data || err.message);
-        console.log(`Phrase is: ${phrase}`)
         throw err;
     }
 }

