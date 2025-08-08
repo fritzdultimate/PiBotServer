@@ -345,9 +345,7 @@ bot.on('message', async (msg) => {
                 }
                 await bot.sendMessage(chatId, `⏳ Checked ${index} of ${words.length} sponsors`);
             }
-
-            const message = result.join('\n');
-            const chunks = splitMessage(message);
+            const chunks = splitMessage(result);
 
             for (const chunk of chunks) {
                 await bot.sendMessage(chatId, `📋 *Uploading sponsors:*\n\n${chunk}`, {
