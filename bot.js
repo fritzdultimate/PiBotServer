@@ -29,6 +29,7 @@ bot.onText(/\/help/, (msg) => {
         /sweep - sweeps all available pi
         /uploadWallet - Upload a locked pi wallet with your valid wallet address
         /listWallets - Show all your uploaded wallet
+        /uploadManySponsor - Upload many sponsor
         /stop - stops all running process
         `;
     bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'Markdown' });
