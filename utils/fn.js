@@ -161,6 +161,22 @@ export async function getAccount(publicKey) {
     }
 }
 
+export async function getTxs(publicKey) {
+    const server = randomServer();
+    try {
+        const response = await axios.get(
+            `${server}/accounts/${publicKey}/transactions?limit=2&order=desc`,
+            {
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
+        return response.data;
+    } catch(err) {
+        // console.error(`❌ Failed to fetch account [${publicKey}]:`, err.response?.data || err.message);
+        throw err;
+    }
+}
+
 function generateUniqueMemo(prefix = 'PiA') {
   const time = Date.now().toString(36);
   const rand = Math.random().toString(36).slice(2, 6);

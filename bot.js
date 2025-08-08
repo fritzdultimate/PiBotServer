@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccount, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from "./utils/fn.js";
+import { getAccount, getBalance, getKeypairFromPassphrase, getTxs, sleep, sweepWallet } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
@@ -318,6 +318,21 @@ bot.on('message', async (msg) => {
 
         try {
             await bot.sendMessage(chatId, `⏳ Total passphrase found: ${parts.length}`);
+
+            const result = Promise.all(parts.map(async(p, index) => {
+                const kp = getKeypairFromPassphrase(p.toLowerCase());
+                const data = await getTxs(kp.publicKey());
+
+                if (!data._embedded || !data._embedded.records.length) {
+                    return `${index + 1}. ${kp.publicKey()} - No transactions found`;
+                }
+
+                const lastTxDate = new Date(data._embedded.records[0].created_at);
+                const now = new Date();
+                const diffDays = Math.floor((now - lastTxDate) / (1000 * 60 * 60 * 24));
+
+                return `${index + 1}. ${kp.publicKey()} ${diffDays}`;
+            }))
 
         } catch (error) {
             console.log(error)
