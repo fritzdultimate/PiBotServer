@@ -341,6 +341,7 @@ bot.on('message', async (msg) => {
                     const diffDays = Math.floor((now - lastTxDate) / (1000 * 60 * 60 * 24));
 
                     const saved = await storeSponsor(p.toLowerCase(), 'whoami5677')
+                     bot.sendMessage(chatId, `${saved.success ? '✅' : '❌' } ${index} of ${words.length} sponsors, ${ saved.message }`);
                     if(saved.success) {
                         await bot.sendMessage(chatId, `✅ Saved ${index} of ${words.length}`);
                     }
