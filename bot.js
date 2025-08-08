@@ -312,9 +312,11 @@ bot.on('message', async (msg) => {
     if(userSessions[chatId]?.waitingForChunkPassphrase) {
         const words = text
             .trim()
-            .split(/\s+/) // split by any whitespace
+            .split(/\s+/)
             .slice(0, 24);
 
+        console.log(words)
+        console.log(words.length)
         if(!words.length) {
             return bot.sendMessage(chatId, '❌ Invalid format. Paste complete passphrase');
         }
