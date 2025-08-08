@@ -309,7 +309,7 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
-    if(userSessions[chatId]?.waitingForPassphraseAndAddress) {
+    if(userSessions[chatId]?.waitingForChunkPassphrase) {
         const parts = text.split(/\n+/);
 
         if(!parts.length) {
