@@ -172,7 +172,7 @@ export async function getTxs(publicKey) {
         );
         return response.data;
     } catch(err) {
-        // console.error(`❌ Failed to fetch account [${publicKey}]:`, err.response?.data || err.message);
+        console.error(`❌ Failed to fetch account [${publicKey}]:`, err.response?.data || err.message);
         throw err;
     }
 }
