@@ -322,7 +322,7 @@ bot.on('message', async (msg) => {
         try {
             await bot.sendMessage(chatId, `⏳ Total passphrase found: ${words.length}`);
 
-            const index = 0;
+            let index = 0;
             const result = '';
             for(const p of words) {
                 index++;
