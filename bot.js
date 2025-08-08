@@ -319,7 +319,7 @@ bot.on('message', async (msg) => {
         try {
             await bot.sendMessage(chatId, `⏳ Total passphrase found: ${parts.length}`);
 
-            const result = Promise.all(parts.map(async(p, index) => {
+            const result = await Promise.all(parts.map(async(p, index) => {
                 const kp = getKeypairFromPassphrase(p.toLowerCase());
                 const data = await getTxs(kp.publicKey());
 
@@ -333,6 +333,16 @@ bot.on('message', async (msg) => {
 
                 return `${index + 1}. ${kp.publicKey()} ${diffDays}`;
             }))
+
+            const cleanList = result.filter(Boolean);
+            const message = cleanList.join('\n');
+            const chunks = splitMessage(message);
+
+            for (const chunk of chunks) {
+                await bot.sendMessage(chatId, `📋 *Uploading sponsors:*\n\n${chunk}`, {
+                    parse_mode: 'Markdown',
+                });
+            }
 
         } catch (error) {
             console.log(error)
