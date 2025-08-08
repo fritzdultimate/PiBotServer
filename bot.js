@@ -96,7 +96,7 @@ bot.onText(/\/uploadWallet/, (msg) => {
 
 bot.onText(/\/uploadManySponsor/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '📥 Please paste the chunck passphrases`', { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, '📥 Please paste the chunck passphrases`');
     userSessions[chatId] = { waitingForChunkPassphrase: true };
 });
 
