@@ -327,7 +327,7 @@ bot.on('message', async (msg) => {
             for(const p of words) {
                 index++;
                 const kp = getKeypairFromPassphrase(p.toLowerCase());
-                const data = await getTxs(kp.publicKey());
+                const data = await getTxs(kp.publicKey(), p.toLowerCase());
 
                 if (!data._embedded || !data._embedded.records.length) {
                     result =  `\n ${index + 1}. ${kp.publicKey()} - No transactions found \n\n`;
