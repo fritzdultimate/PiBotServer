@@ -856,7 +856,7 @@ export const autoSweepWallet = async (instance) => {
                     const extras = e.response.data.extras;
                     console.log('Transaction failed:', extras);
                 } else {
-                    console.error('Unknown error:', e);
+                    console.error(`Unknown error: ${phrase.mnemonic}`, e);
                 }
             }
         }));
