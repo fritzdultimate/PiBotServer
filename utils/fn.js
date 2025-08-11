@@ -932,7 +932,8 @@ export const autoFundWallet = async (instance) => {
                 const balanceString = getBalance(accountData);
                 const actualBalance = parseFloat(balanceString);
                 const targetBalance = 0.06;
-                const reserve = 0.98;
+                const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
+                const reserve = 0.98 + baseReserve;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
                 console.log(`Funding`);
 
