@@ -29,13 +29,11 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
 
     try {
         while (retries < MAX_FLOOD_COUNT) {
-            console.log(`Storing xdrs ${retries} times`);
             const xdrs = [];
 
             for (const s of sponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
-                    console.log(`Prebuilt and Presigned xdr: ${xdr}`);
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
@@ -45,8 +43,6 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
             pendingXDRs[time].push(xdrs);
         }
 
-        console.log(`XDRS:`, pendingXDRs[time]);
-        console.log(`XDRS Length:`, pendingXDRs[time][0].length);
     } catch (err) {
         console.error(`Error in getXDRsReady:`, err);
     }
@@ -75,8 +71,6 @@ export async function autoPrepareForClaiming() {
     if(readyPassphrases.length) {
         for(const p of readyPassphrases) {
             const timeKey = new Date(p.claimableAt).toISOString();
-            console.log(`Using key: ${timeKey}`);
-            console.log(`Key exist: ${pendingXDRs.hasOwnProperty(timeKey)}`);
             if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
                 await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
             }
@@ -91,10 +85,8 @@ export async function autoSubmitXDR() {
     if(global.isSubmittingTx) return;
     global.isSubmittingTx = true;
     for (const key in pendingXDRs) {
-        console.log(`Claiming for ${key}`);
         const now = new Date();
         const claimableAt = new Date(key);
-        console.log(`Difference in sec ${now-claimableAt}`);
         if((now - claimableAt) <= -2500) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
@@ -107,7 +99,6 @@ export async function autoSubmitXDR() {
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
                     balanceId = xdr.balanceId;
-                    console.log(`✅ Submitted on ${server}`, result);
                     return result;
 
                 } catch (err) {

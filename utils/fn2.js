@@ -17,21 +17,14 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
         const publicKey = channelKp.publicKey();
 
-        const [accountData, spendable] = await Promise.all([
-            getAccount(publicKey),
-            getSpendableBalance(publicKey)
-        ]);
+        const accountData = await  getSpendableBalance(publicKey)
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
-        console.log(seq)
-        console.log(`inx: ${inx}`)
-
         const channelAccount = new Account(publicKey, seq);
-        const spendableBalance = spendable * 0.5;
 
         const isInFirstFilteredArray = firstFilteredSponsors.includes(channelKp.publicKey());
-        const fee = isInFirstFilteredArray ? '300000' : '200200';
+        const fee = isInFirstFilteredArray ? '300000' : '200002';
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
