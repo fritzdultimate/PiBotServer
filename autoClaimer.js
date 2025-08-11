@@ -32,7 +32,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
             console.log(`Storing xdrs ${retries} times`);
             const xdrs = [];
 
-            for (const s of rawSponsors) {
+            for (const s of sponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
                     console.log(`Prebuilt and Presigned xdr: ${xdr}`);
@@ -78,7 +78,7 @@ export async function autoPrepareForClaiming() {
             console.log(`Using key: ${timeKey}`);
             console.log(`Key exist: ${pendingXDRs.hasOwnProperty(timeKey)}`);
             if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
-                await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_MUXED_ADDRESS, p.amount, timeKey);
+                await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
             }
         }
     };
