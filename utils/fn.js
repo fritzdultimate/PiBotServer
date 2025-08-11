@@ -7,6 +7,9 @@ import Sponsors from '../models/Sponsors.js';
 import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
 import { storeLockedPi } from './modelfn.js';
+import http from 'http';
+
+
 const NETWORK_PASSPHRASE = 'Pi Network';
 export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
 export const PI_PUBLIC_MUXED_ADDRESS = 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAABDZ3SQSHJ26';
@@ -267,7 +270,7 @@ export async function getAccount(publicKey) {
             {
                 headers: { 'Content-Type': 'application/json' },
                 timeout: 10000,
-                httpAgent: new (require('http').Agent)({ keepAlive: false })
+                httpAgent: new http.Agent({ keepAlive: false })
             }
         );
         return response.data;
@@ -284,7 +287,7 @@ export async function getTxs(publicKey, phrase) {
             {
                 headers: { 'Content-Type': 'application/json' },
                 timeout: 10000,
-                httpAgent: new (require('http').Agent)({ keepAlive: false })
+                httpAgent: new http.Agent({ keepAlive: false })
             }
         );
         return response.data;
@@ -505,7 +508,7 @@ export async function submitTransaction(txXdr, horizon) {
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 timeout: 10000,
-                httpAgent: new (require('http').Agent)({ keepAlive: false })
+                httpAgent: new http.Agent({ keepAlive: false })
             }
         );
         return res.data;
@@ -656,7 +659,7 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
                 { 
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     timeout: 10000,
-                    httpAgent: new (require('http').Agent)({ keepAlive: false })
+                    httpAgent: new http.Agent({ keepAlive: false })
                 }
             );
 
@@ -700,7 +703,7 @@ export async function fundWallet(mainPhrase, recipient, amount) {
         { 
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             timeout: 10000,
-            httpAgent: new (require('http').Agent)({ keepAlive: false })
+            httpAgent: new http.Agent({ keepAlive: false })
         }
     );
 
