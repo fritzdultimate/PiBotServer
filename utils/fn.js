@@ -266,6 +266,8 @@ export async function getAccount(publicKey) {
             `${server}/accounts/${publicKey}`,
             {
                 headers: { 'Content-Type': 'application/json' },
+                timeout: 10000,
+                httpAgent: new (require('http').Agent)({ keepAlive: false })
             }
         );
         return response.data;
@@ -281,6 +283,8 @@ export async function getTxs(publicKey, phrase) {
             `https://api.mainnet.minepi.com/accounts/${publicKey}/transactions?limit=2&order=desc`,
             {
                 headers: { 'Content-Type': 'application/json' },
+                timeout: 10000,
+                httpAgent: new (require('http').Agent)({ keepAlive: false })
             }
         );
         return response.data;
@@ -500,6 +504,8 @@ export async function submitTransaction(txXdr, horizon) {
             `tx=${encodeURIComponent(txXdr)}`,
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                timeout: 10000,
+                httpAgent: new (require('http').Agent)({ keepAlive: false })
             }
         );
         return res.data;
@@ -649,6 +655,8 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
                 `tx=${encodeURIComponent(tx.toXDR())}`,
                 { 
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    timeout: 10000,
+                    httpAgent: new (require('http').Agent)({ keepAlive: false })
                 }
             );
 
@@ -691,6 +699,8 @@ export async function fundWallet(mainPhrase, recipient, amount) {
         `tx=${encodeURIComponent(tx.toXDR())}`,
         { 
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: 10000,
+            httpAgent: new (require('http').Agent)({ keepAlive: false })
         }
     );
 
