@@ -95,7 +95,7 @@ export async function autoSubmitXDR() {
         const now = new Date();
         const claimableAt = new Date(key);
         console.log(`Difference in sec ${now-claimableAt}`);
-        if((now - claimableAt) <= -3000) continue;
+        if((now - claimableAt) <= -2500) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
         let success = false;
