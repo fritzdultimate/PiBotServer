@@ -428,12 +428,10 @@ export async function FloodChannelManualSequence(mainPhrase, balanceId, recipien
         const accountData  = await getAccount(channelKp.publicKey());
 
         let currentSeq = BigInt(accountData.sequence);
-        console.log(`Current Sequence: ${accountData.sequence}`)
 
         const numTx = 1;
         for (let i = 0; i < numTx; i++) {
             const seq = (currentSeq + BigInt(i)).toString();
-            console.log(`Using Sequence: ${seq}`)
             try {
                 const xdr = await buildManualSequenceTx(channelKp, mainKp, seq, balanceId, recipient, amount);
                 // allTxs.push(xdr);
@@ -572,7 +570,6 @@ export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, 
 export async function FloodFeeBumpTransaction(mainPhrase, balanceId, recipient, amount) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     const allSponsors = await Sponsors.find();
-    console.log(allSponsors);
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             try {
@@ -739,10 +736,8 @@ export const autoClaimUnlocked = async (sponsors) => {
     if(global.isUnlocking) return;
     global.isUnlocking = true;
 
-    // console.log(`Trying auto claim now...`);
-
     const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 2000);
+    const fiveSecondsFromNow = new Date(now.getTime() + 3500);
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: fiveSecondsFromNow },
@@ -752,7 +747,6 @@ export const autoClaimUnlocked = async (sponsors) => {
 
     for (const p of readyPassphrases) {
         try {
-            console.log(`🔄 Claiming for: ${p.mnemonic.slice(0, 10)}...`);
 
             let tries = 0;
             let success = false;
@@ -897,8 +891,6 @@ export const autoSweepSponsor = async (instance) => {
                 const start = retries * chunkSize;
                 const end = Math.min(start + chunkSize, sponsors.length);
                 const sponsorChunk = sponsors.slice(start, end);
-
-                console.log(`Sweeping ${sponsorChunk.length} wallets`)
 
                 await Promise.all(sponsorChunk.map(async (sponsor, i) => {
                     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);

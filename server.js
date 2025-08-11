@@ -201,11 +201,6 @@ app.post('/sweep', async (req, res) => {
             if (entries.length > 0) {
 
                 for(const entry of entries) {
-                    console.log(`Phrase: ${entry.mnemonic}`)
-                    console.log(`Balance ID: ${entry.balanceId}`)
-                    console.log(`Recipient: ${entry.recipient}`)
-                    console.log(`Amount: ${entry.amount}`)
-                    console.log(`Results: ${result}`)
 
                     const existing = await Passphrase.findOne({ balanceId: entry.balanceId });
                     if (!existing) {
