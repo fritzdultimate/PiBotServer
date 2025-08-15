@@ -42,6 +42,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
             retries++;
             pendingXDRs[time].push(xdrs);
         }
+        console.log(`The below is the pending xdr`);
+        console.log(pendingXDRs)
 
     } catch (err) {
         console.error(`Error in getXDRsReady:`, err);
@@ -60,7 +62,7 @@ export async function autoPrepareForClaiming() {
     console.log(`autoPrepare is running`)
 
     const now = new Date();
-    const aMinuteFromNow = new Date(now.getTime() + (2 * 1000 * 60));
+    const aMinuteFromNow = new Date(now.getTime() + (1000 * 60));
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: aMinuteFromNow },
@@ -105,6 +107,7 @@ export async function autoSubmitXDR() {
                     console.error(`❌ Submit error on ${server}:`, err?.response?.data || err.message);
                 }
             }));
+            console.log(result);
             const found = result.find((r) => r.hash);
             if (found) {
                 console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
