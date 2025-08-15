@@ -31,7 +31,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
 
-            for (const s of sponsors) {
+            for (const s of rawSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
                     xdrs.push({xdr, balanceId});
