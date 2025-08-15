@@ -241,13 +241,13 @@ setInterval(async() => {
 
     // console.log(`Total usable sponsors: ${sponsors.length}`)
 
-    const chunkSize = Math.ceil(sponsors.length/3);
+    // const chunkSize = Math.ceil(sponsors.length/3);
 
-    const start = instanceId * chunkSize;
-    const end = start + chunkSize;
-    const sponsorChunk = sponsors.slice(start, end);
+    // const start = instanceId * chunkSize;
+    // const end = start + chunkSize;
+    // const sponsorChunk = sponsors.slice(start, end);
 
-    autoClaimUnlocked(sponsorChunk);
+    // autoClaimUnlocked(sponsorChunk);
 }, 100)
 
 setInterval(() => autoFundWallet(instanceId), 10000);
