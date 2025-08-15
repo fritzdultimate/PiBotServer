@@ -17,7 +17,8 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
         const publicKey = channelKp.publicKey();
 
-        const accountData = await  getSpendableBalance(publicKey)
+        // const spendable = await  getSpendableBalance(publicKey)
+        const accountData = await getAccount(publicKey);
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
