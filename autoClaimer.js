@@ -41,6 +41,9 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
             }
             retries++;
             pendingXDRs[time].push(xdrs);
+
+            console.log(`The below is the pending xdr ${retries}`);
+            console.log(xdrs)
         }
         console.log(`The below is the pending xdr`);
         console.log(pendingXDRs)
