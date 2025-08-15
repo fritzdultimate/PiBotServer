@@ -237,7 +237,7 @@ for (const sponsor of rawSponsors) {
     }
 }
 
-setInterval(async() => {
+// setInterval(async() => {
 
     // console.log(`Total usable sponsors: ${sponsors.length}`)
 
@@ -248,7 +248,7 @@ setInterval(async() => {
     // const sponsorChunk = sponsors.slice(start, end);
 
     // autoClaimUnlocked(sponsorChunk);
-}, 100)
+// }, 100)
 
 setInterval(() => autoFundWallet(instanceId), 10000);
 setInterval(() => autoSweepWallet(instanceId), 1000);
