@@ -267,9 +267,7 @@ export async function getAccount(publicKey) {
         const response = await axios.get(
             `${server}/accounts/${publicKey}`,
             {
-                headers: { 'Content-Type': 'application/json' },
-                timeout: 10000,
-                httpAgent: new http.Agent({ keepAlive: false })
+                headers: { 'Content-Type': 'application/json' }
             }
         );
         return response.data;
