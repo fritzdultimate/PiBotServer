@@ -6,3 +6,4 @@ git pull origin main
 
 echo "Restarting bot..."
 pm2 restart all
+echo "✅ Deployment complete!"
