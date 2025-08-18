@@ -988,18 +988,17 @@ export const autoFundWallet = async (instance) => {
 };
 
 export const autoCheckSponsorForClaimable = async (instance) => {
-    if(instance !== 6) return;
-    // const sponsors = await Sponsors.find();
+    if(global.isAutoCheckingPass) return;
+    if(instance != 0) return;
+    global.isAutoCheckingPass = true;
+    const sponsors = await Sponsors.find();
 
-    // for(const s of sponsors) {
-    //     const kp = getKeypairFromPassphrase(s.mnemonic);
-    //     const publicKey = kp.publicKey();
-    //     const result = await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
-    //     if(result && result.success) {
-    //         await Sponsors.findByIdAndDelete(s._id);
-    //     }
-    //     await sleep(10000)
-    // }
+    for(const s of sponsors) {
+        const kp = getKeypairFromPassphrase(s.mnemonic);
+        const publicKey = kp.publicKey();
+        await storeLockedPi(s.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
+        await sleep(10000)
+    }
 
     const passphrases = await Passphrase.find();
     for(const p of passphrases) {
@@ -1008,6 +1007,8 @@ export const autoCheckSponsorForClaimable = async (instance) => {
         await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
         await sleep(10000);
     }
+
+    global.isAutoCheckingPass = false;
 }
 
 export const autoDuplicatePassphrase = async () => {
@@ -1030,7 +1031,7 @@ export const autoDuplicatePassphrase = async () => {
         const docsToCheck = await Passphrase.find({ _id: { $in: toDelete } });
 
         for (const doc of docsToCheck) {
-            const isClaimablePassed = !doc.claimableAt || new Date(doc.claimableAt) <= new Date();
+            const isClaimablePassed = !doc.claimableAt || new Date(doc.claimableAt) <= (new Date() - 30 * 60 * 1000);
             const isBalanceIdNull = doc.balanceId == null;
 
             if (isClaimablePassed || isBalanceIdNull) {
