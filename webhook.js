@@ -11,8 +11,8 @@ app.post('/webhook', (req, res) => {
 
     exec('sh /root/PiBotServer/deploy.sh', (error, stdout, stderr) => {
         if (error) {
-        console.error('❌ Deployment error:', stderr);
-        return res.status(500).send('Deployment failed');
+          console.error('❌ Deployment error:', stderr);
+          return res.status(500).send('Deployment failed');
         }
 
         console.log('✅ Deployment success:', stdout);
