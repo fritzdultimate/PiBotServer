@@ -59,7 +59,7 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
         }
 
         await Passphrase.create({ mnemonic, receiverAddress, name });
-        return {success: false, message: 'No locked coin found.' };
+        return {success: false, message: 'No locked coin found, or already uploaded.' };
     }
 }
 
