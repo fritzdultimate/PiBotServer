@@ -353,7 +353,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     }
 }
 
-export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount) {
+export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, customFee = null) {
     const channelKp = getKeypairFromPassphrase(channelPhrase);
     const publicKey = channelKp.publicKey();
 
@@ -363,10 +363,12 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 	]);
     const channelAccount = new Account(publicKey, accountData.sequence);
     const spendableBalance = spendable * 0.5;
-    const fee = Math.floor(spendableBalance * 10000000);
+    let fee = Math.floor(spendableBalance * 10000000);
+
+    const txFee = customFee === 'Base Fee' ? Number(await getBaseFee()) : customFee != null ? Number(fee) * 10000000 * 0.5 : fee;
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: fee.toString(),
+		fee: txFee.toString(),
 		networkPassphrase: 'Pi Network',
 
 	})
@@ -548,13 +550,13 @@ export async function getClaimableBalance(publicKey) {
         }
 }
 
-export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors) {
+export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, allSponsors, fee = null) {
     const mainKp = getKeypairFromPassphrase(mainPhrase);
     if(allSponsors) {
         const result = await Promise.all(allSponsors.map(async (sponsor, i) => {
             const server = horizonUrl(i);
             try {
-                const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount);
+                const xdr = await buildChannelTx(sponsor.mnemonic, mainKp, balanceId, recipient, amount, fee);
                 const result = await submitTransaction(xdr, server);
                 if (!result.success) {
                     console.error("❌ Transaction failed:", result.reason);

@@ -109,7 +109,7 @@ app.post("/api/bot/stop", (req, res) => {
 });
 
 app.post('/api/settings', async(req, res) => {
-    const { maxFlood, name, fee, sweep, funderMnemonic, botAddress } = req.body;
+    const { maxFlood, name, fee, sweep, funderMnemonic, botAddress, minSponsorBalance } = req.body;
 
     if (!name) {
         return res.status(400).json({ success: false, error: "Name is required" });
@@ -121,6 +121,7 @@ app.post('/api/settings', async(req, res) => {
         if (sweep !== undefined) updateFields.sweep = sweep;
         if (funderMnemonic !== undefined) updateFields.funderMnemonic = funderMnemonic;
         if (botAddress !== undefined) updateFields.botAddress = botAddress;
+        if (minSponsorBalance !== undefined) updateFields.minSponsorBalance = minSponsorBalance;
 
         if(updateFields.funderMnemonic) {
             const kp = getKeypairFromPassphrase(updateFields.funderMnemonic.toLowerCase());
