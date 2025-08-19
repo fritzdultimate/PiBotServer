@@ -91,6 +91,9 @@ app.post('/api/passphrases/upload', async(req, res) => {
 app.post('/api/settings', async(req, res) => {
     const { maxFlood, name, fee, sweep, funderMnemonic, botAddress } = req.body;
 
+    if (!name) {
+        return res.status(400).json({ success: false, error: "Name is required" });
+    }
     try {
         const updateFields = {};
         if (maxFlood !== undefined) updateFields.maxFlood = maxFlood;
