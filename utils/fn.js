@@ -855,7 +855,7 @@ export const autoSweepWallet = async (instance) => {
                     const extras = e.response.data.extras;
                     console.log('Transaction failed:', extras);
                 } else {
-                    console.error(`Unknown error: ${phrase.mnemonic}`, e);
+                    // console.error(`Unknown error: ${phrase.mnemonic}`, e);
                 }
             }
         }));
@@ -914,7 +914,7 @@ export const autoSweepSponsor = async (instance) => {
 
         
     } catch(err) {
-        console.log(`Something went wrong, sweeping sponsors`, err)
+        // console.log(`Something went wrong, sweeping sponsors`, err)
     } finally {
         global.isSweepingSponsor = false;
     }
