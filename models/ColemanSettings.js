@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const ColemanSettingsSchema = new mongoose.Schema({
     funderMnemonic: String,
-    mainAddress: String,
+    botAddress: String,
     maxFlood: String,
     name: String,
     fee: String,
