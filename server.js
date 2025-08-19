@@ -17,6 +17,7 @@ import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphras
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import { storeLockedPi } from './utils/modelfn.js';
+import ColemanSettings from './models/ColemanSettings.js';
 dotenv.config();
 
 const app = express();
@@ -84,6 +85,44 @@ app.post('/api/passphrases/upload', async(req, res) => {
         }
     } catch(err) {
         res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
+    }
+})
+
+app.post('/api/settings', async(req, res) => {
+    const { maxFlood, name, fee, sweep, funderMnemonic, botAddress } = req.body;
+
+    try {
+        const updateFields = {};
+        if (maxFlood !== undefined) updateFields.maxFlood = maxFlood;
+        if (fee !== undefined) updateFields.fee = fee;
+        if (sweep !== undefined) updateFields.sweep = sweep;
+        if (funderMnemonic !== undefined) updateFields.funderMnemonic = funderMnemonic;
+        if (botAddress !== undefined) updateFields.botAddress = botAddress;
+
+        if(updateFields.funderMnemonic) {
+            const kp = getKeypairFromPassphrase(updateFields.funderMnemonic);
+            const publicKey = kp.publicKey();
+            const accountData = await getAccount(publicKey);
+            if(!accountData) {
+                return res.status(409).json({success: false, error: "Invalid passphrase uploaded"})
+            }
+
+            const BotKp = getKeypairFromPassphrase(updateFields.botAddress);
+            const BotPublicKey = BotKp.publicKey();
+            const BotAccountData = await getAccount(BotPublicKey);
+            if(!BotAccountData) {
+                return res.status(409).json({success: false, error: "Invalid address, address must start with G"})
+            }
+        }
+
+        const settings = await ColemanSettings.findOneAndUpdate(
+            { name },
+            { $set: updateFields },
+            { new: true, upsert: true }
+        );
+        res.json(settings);
+    } catch(err) {
+        res.status(500).json({success: false, error: `Error updating settings` });
     }
 })
 
