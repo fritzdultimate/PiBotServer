@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
         const publicKey = kp.publicKey();
         const accountData = await getAccount(publicKey);
         if(!accountData) {
-            return res.status(409).json({success: false, error: "Invalid passphrase uploade as sponsor"})
+            return res.status(409).json({success: false, error: "Invalid passphrase uploaded as sponsor"})
         }
 
         await Sponsors.create({ mnemonic, name });

