@@ -64,13 +64,6 @@ app.post("/api/bot/restart", (req, res) => {
     });
 });
 
-app.get("/api/bot/status", (req, res) => {
-    exec("pm2 show colemanServer", (err, stdout) => {
-        if (err) return res.status(500).json({ success: false, error: stderr });
-        res.json({ success: true, status: stdout });
-    });
-});
-
 await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
@@ -103,6 +96,13 @@ app.post('/api/passphrases/upload', async(req, res) => {
         res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
     }
 })
+
+app.post("/api/bot/status", (req, res) => {
+    exec("pm2 show colemanServer", (err, stdout) => {
+        if (err) return res.status(500).json({ success: false, error: stderr });
+        res.json({ success: true, status: stdout });
+    });
+});
 
 app.post('/api/settings', async(req, res) => {
     const { maxFlood, name, fee, sweep, funderMnemonic, botAddress } = req.body;
