@@ -100,7 +100,7 @@ app.post('/api/settings', async(req, res) => {
         if (botAddress !== undefined) updateFields.botAddress = botAddress;
 
         if(updateFields.funderMnemonic) {
-            const kp = getKeypairFromPassphrase(updateFields.funderMnemonic);
+            const kp = getKeypairFromPassphrase(updateFields.funderMnemonic.toLowerCase());
             const publicKey = kp.publicKey();
             const accountData = await getAccount(publicKey);
             if(!accountData) {
