@@ -163,7 +163,7 @@ app.get('/api/settings/:name', async (req, res) => {
 
 app.get('/api/logs/:name', async (req, res) => {
     const name = req.params.name;
-    const logs = await Log.findOne({ name });
+    const logs = await Log.find({ name });
     if (!logs) {
         return res.status(404).json({ error: "Settings not found" });
     }
