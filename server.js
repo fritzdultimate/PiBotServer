@@ -102,6 +102,7 @@ app.post("/api/bot/stop", (req, res) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
         }
+        exec("pm2 delete colemanServer");
         res.json({ success: true, message: "Bot stopped", output: stdout });
     });
 });
