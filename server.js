@@ -19,6 +19,7 @@ import Sponsors from './models/Sponsors.js';
 import { storeLockedPi } from './utils/modelfn.js';
 import ColemanSettings from './models/ColemanSettings.js';
 import { exec } from "child_process";
+import Log from './models/Log.js';
 dotenv.config();
 
 const app = express();
@@ -158,6 +159,17 @@ app.get('/api/settings/:name', async (req, res) => {
 
 
     res.json(settings);
+});
+
+app.get('/api/logs/:name', async (req, res) => {
+    const name = req.params.name;
+    const logs = await Log.findOne({ name });
+    if (!logs) {
+        return res.status(404).json({ error: "Settings not found" });
+    }
+
+
+    res.json(logs);
 });
 
 // Ping route
