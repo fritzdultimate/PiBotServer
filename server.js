@@ -13,16 +13,16 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoCheckSponsorForClaimable, autoClaimUnlocked, autoDuplicatePassphrase, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
+import { autoCheckSponsorForClaimable, autoFundWallet, autoSweepSponsor, autoSweepWallet, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import { storeLockedPi } from './utils/modelfn.js';
 import ColemanSettings from './models/ColemanSettings.js';
+import { exec } from "child_process";
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.set('trust proxy', 1);
 
 const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app', 'https://cole-pi-admin.netlify.app', 'http://localhost:5173'];
 app.use(express.json());
@@ -38,21 +38,37 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.use((req, res, next) => {
-    const authHeader = req.headers.authorization;
-    const secretKey = 'hfhryeujhshbxhdsjjskaas';
-    // const allowedIPs = ['197.210.84.31'];
-    
 
-    // if (!allowedIPs.includes(clientIP)) {
-    //     return res.status(403).json({ error: 'Forbidden: IP not allowed', ip: JSON.stringify(req.socket.remoteAddress) });
-    // }
+app.post("/api/bot/start", (req, res) => {
+    exec("pm2 start pibot", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot started", output: stdout });
+    });
+});
+app.post("/api/bot/stop", (req, res) => {
+    exec("pm2 stop pibot", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot stopped", output: stdout });
+    });
+});
+app.post("/api/bot/restart", (req, res) => {
+    exec("pm2 restart pibot", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot restarted", output: stdout });
+    });
+});
 
-    // if (!authHeader || authHeader !== `Bearer ${secretKey}`) {
-    //     return res.status(403).json({ error: 'Forbidden' });
-    // }
-
-    next();
+app.get("/api/bot/status", (req, res) => {
+    exec("pm2 show pibot", (err, stdout) => {
+        if (err) return res.status(500).json({ success: false, error: stderr });
+        res.json({ success: true, status: stdout });
+    });
 });
 
 await connectToDB();
