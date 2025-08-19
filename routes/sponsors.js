@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
             return res.status(409).json({ success: false,  error: 'Sponsor already exists' });
         }
 
-        const kp = getKeypairFromPassphrase(passphrase);
+        const kp = getKeypairFromPassphrase(mnemonic);
         const publicKey = kp.publicKey();
         const accountData = await getAccount(publicKey);
         if(!accountData) {
