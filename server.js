@@ -65,7 +65,6 @@ app.post("/api/bot/restart", (req, res) => {
 });
 
 app.get("/api/bot/status", (req, res) => {
-    return res.status(500).json({ success: false, error: `stderr` });
     exec("pm2 show colemanServer", (err, stdout) => {
         if (err) return res.status(500).json({ success: false, error: stderr });
         res.json({ success: true, status: stdout });
