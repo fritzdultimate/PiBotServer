@@ -40,7 +40,7 @@ app.use(cors({
 }));
 
 app.post("/api/bot/start", (req, res) => {
-    exec("pm2 start pibot", (err, stdout, stderr) => {
+    exec("pm2 restart colemanServer || pm2 start colemanServer.js --name colemanServer", (err, stdout, stderr) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
         }
