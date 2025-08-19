@@ -117,7 +117,7 @@ setInterval(async() => {
             
 
         } catch (err) {
-            console.error('❌ Error something went wrong Pi:', err.message || err);
+            // console.error('❌ Error something went wrong Pi:', err.message || err);
         }
     }
 
@@ -186,7 +186,7 @@ setInterval(async() => {
                         console.log(`✅ Shepherd funded ${result.amount} Pi. Hash: ${success.hash}`);
                         
                     } else {
-                        console.log(`❌ Shepherd Failed to fund ${result.amount} PI}`);
+                        // console.log(`❌ Shepherd Failed to fund ${result.amount} PI}`);
                     }
                 } else {
                     if(botBalance < Math.abs(change)) {
