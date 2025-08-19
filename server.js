@@ -101,7 +101,8 @@ app.post('/api/passphrases/upload', async(req, res) => {
 app.post("/api/bot/status", (req, res) => {
     exec("pm2 show colemanServer", (err, stdout, stderr) => {
         if (err) return res.status(500).json({ success: false, error: stderr });
-        res.json({ success: true, status: stdout });
+        const isOnline = stdout.includes("status online");
+        res.json({ success: true, status: stdout, online: isOnline });
     });
 });
 
