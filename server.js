@@ -109,7 +109,9 @@ app.post('/api/settings', async(req, res) => {
             if(!accountData) {
                 return res.status(409).json({success: false, error: "Invalid passphrase uploaded"})
             }
+        }
 
+        if(updateFields.botAddress) {
             const BotKp = getKeypairFromPassphrase(updateFields.botAddress);
             const BotPublicKey = BotKp.publicKey();
             const BotAccountData = await getAccount(BotPublicKey);
