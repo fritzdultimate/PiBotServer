@@ -22,7 +22,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
-const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app', 'http://localhost:5173'];
+const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app', 'https://cole-pi-admin.netlify.app', 'http://localhost:5173'];
 app.use(express.json());
 app.use(cors({
     origin: function (origin, callback) {
