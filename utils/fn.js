@@ -364,7 +364,7 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
     const channelAccount = new Account(publicKey, accountData.sequence);
     const spendableBalance = spendable * 0.5;
     let fee = Math.floor(spendableBalance * 10000000);
-    
+
     const OPS = 2;
 
     const baseFeePerOp = Number(await getBaseFee());
@@ -374,18 +374,18 @@ export async function buildChannelTx(channelPhrase, mainKp, balanceId, recipient
 
 
     if (customFee === 'Base Fee') {
-            totalFeeStroops = minTotalFee;
-        } else if (!isNaN(parseFloat(customFee))) {
-            const customPi = parseFloat(customFee);
-            const customStroops = Math.round(customPi * 1e7);
-            totalFeeStroops = Math.max(customStroops, minTotalFee);
-        } else {
-            totalFeeStroops = minTotalFee;
+        totalFeeStroops = minTotalFee;
+    } else if (!isNaN(parseFloat(customFee))) {
+        const customPi = parseFloat(customFee);
+        const customStroops = Math.round(customPi * 1e7);
+        totalFeeStroops = Math.max(customStroops, minTotalFee);
+    } else {
+        totalFeeStroops = fee;
     }
 
 
 	const tx = new TransactionBuilder(channelAccount, {
-		fee: fee.toString(),
+		fee: totalFeeStroops.toString(),
 		networkPassphrase: 'Pi Network',
 
 	})
