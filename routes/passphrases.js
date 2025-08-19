@@ -79,7 +79,18 @@ router.get('/', async (req, res) => {
 
 // DELETE /api/passphrases/:id
 router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
     try {
+        const existing = await Passphrase.findOne({ _id: id });
+        if(existing.name) {
+            const updated = await Passphrase.findByIdAndUpdate(id, {name: null}, {
+                new: true,
+                runValidators: true,
+            });
+            if(updated) {
+                return res.json({ success: true, message: 'Passphrase deleted' });
+            }
+        }
         const deleted = await Passphrase.findByIdAndDelete(req.params.id);
         if (!deleted) {
             return res.status(404).json({ error: 'Not found' });
