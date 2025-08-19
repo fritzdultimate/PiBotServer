@@ -39,22 +39,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.post("/api/bot/start", (req, res) => {
-    exec("pm2 restart colemanServer || pm2 start colemanServer.js --name colemanServer", (err, stdout, stderr) => {
-        if (err) {
-            return res.status(500).json({ success: false, error: stderr });
-        }
-        res.json({ success: true, message: "Bot started", output: stdout });
-    });
-});
-app.post("/api/bot/stop", (req, res) => {
-    exec("pm2 stop colemanServer", (err, stdout, stderr) => {
-        if (err) {
-            return res.status(500).json({ success: false, error: stderr });
-        }
-        res.json({ success: true, message: "Bot stopped", output: stdout });
-    });
-});
 app.post("/api/bot/restart", (req, res) => {
     exec("pm2 restart colemanServer", (err, stdout, stderr) => {
         if (err) {
@@ -103,6 +87,22 @@ app.post("/api/bot/status", (req, res) => {
         if (err) return res.status(500).json({ success: false, error: stderr });
         const isOnline = stdout.includes("status online");
         res.json({ success: true, status: stdout, online: isOnline });
+    });
+});
+app.post("/api/bot/start", (req, res) => {
+    exec("pm2 restart colemanServer || pm2 start colemanServer.js --name colemanServer", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot started", output: stdout });
+    });
+});
+app.post("/api/bot/stop", (req, res) => {
+    exec("pm2 stop colemanServer", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot stopped", output: stdout });
     });
 });
 
