@@ -112,9 +112,7 @@ app.post('/api/settings', async(req, res) => {
         }
 
         if(updateFields.botAddress) {
-            const BotKp = getKeypairFromPassphrase(updateFields.botAddress);
-            const BotPublicKey = BotKp.publicKey();
-            const BotAccountData = await getAccount(BotPublicKey);
+            const BotAccountData = await getAccount(updateFields.botAddress);
             if(!BotAccountData) {
                 return res.status(409).json({success: false, error: "Invalid address, address must start with G"})
             }
