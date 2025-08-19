@@ -28,14 +28,14 @@ router.post('/', async (req, res) => {
         const publicKey = kp.publicKey();
         const accountData = await getAccount(publicKey);
         if(!accountData) {
-            return res.status(404).json({success: false, error: "Invalid passphrase uploade as sponsor"})
+            return res.status(409).json({success: false, error: "Invalid passphrase uploade as sponsor"})
         }
 
         await Sponsors.create({ mnemonic, name });
         res.status(201).json({success: true, feedback: 'Sponsor uploaded'});
     } catch (err) {
         console.error('Error saving passphrase:', err);
-        res.status(500).json({success: false, error: 'Failed to save passphrase' });
+        res.status(500).json({success: false, error: 'Failed to save passphrase', err });
     }
 });
 
