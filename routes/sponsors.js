@@ -1,33 +1,41 @@
-// routes/passphrases.js
+// routes/sponsors.js
 import express from 'express';
 import Sponsors from '../models/Sponsors.js';
+import { getAccount, getKeypairFromPassphrase } from '../utils/fn.js';
 
 const router = express.Router();
 
-// POST /api/passphrases - Add a new passphrase
+// POST /api/sponsors - Add a new passphrase
 router.post('/', async (req, res) => {
     const { mnemonic, name } = req.body;
 
     if (!mnemonic) {
-        return res.status(400).json({ error: 'mnemonic is required' });
+        return res.status(400).json({success: false, error: 'mnemonic is required' });
     }
 
     if (!name) {
-        return res.status(400).json({ error: 'Provide a name' });
+        return res.status(400).json({success: false, error: 'Provide a name' });
     }
 
     try {
-        const existing = await Sponsors.findOne({ mnemonic });
+        const existing = await Sponsors.findOne({ mnemonic, name });
 
         if (existing) {
-            return res.status(409).json({ error: 'Sponsor already exists' });
+            return res.status(409).json({ success: false,  error: 'Sponsor already exists' });
         }
 
-        const saved = await Sponsors.create({ mnemonic, name });
-        res.status(201).json(saved);
+        const kp = getKeypairFromPassphrase(passphrase);
+        const publicKey = kp.publicKey();
+        const accountData = await getAccount(publicKey);
+        if(!accountData) {
+            return res.status(404).json({success: false, error: "Invalid passphrase uploade as sponsor"})
+        }
+
+        await Sponsors.create({ mnemonic, name });
+        res.status(201).json({success: true, feedback: 'Sponsor uploaded'});
     } catch (err) {
         console.error('Error saving passphrase:', err);
-        res.status(500).json({ error: 'Failed to save passphrase' });
+        res.status(500).json({success: false, error: 'Failed to save passphrase' });
     }
 });
 

@@ -22,20 +22,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
-const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app'];
+const allowedOrigins = ['http://localhost:8888', 'https://piclaimer.netlify.app', 'http://localhost:5173'];
 app.use(express.json());
-// app.use(cors({
-//     origin: function (origin, callback) {
-//         if (!origin) return callback(null, true);
-//         if (allowedOrigins.includes(origin)) {
-//             return callback(null, true);
-//         } else {
-//             return callback(new Error('Not allowed by CORS'));
-//         }
-//     },
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-// }));
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = 'hfhryeujhshbxhdsjjskaas';
@@ -118,6 +118,7 @@ app.post('/store', async (req, res) => {
     
 })
 
+
 app.post('/get-account', async (req, res) => {
     const { publicKey } = req.body;
 
@@ -141,19 +142,6 @@ app.post('/get-fee', async (req, res) => {
     
 })
 
-app.post('/multisig', async (req, res) => {
-    const { passphrase } = req.body;
-    if(!passphrase) {
-        res.status(400).json({ error: "Passphrase is required" });
-    }
-    try {
-       const result = await buildAndSubmitMultiSigTx(passphrase);
-       res.json(result)
-    } catch(err) {
-        res.status(500).json({ error: err.response?.data || err.message });
-    }
-    
-})
 
 app.post('/sweep', async (req, res) => {
     const { phrase, recipient } = req.body;
