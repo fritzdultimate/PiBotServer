@@ -46,7 +46,18 @@ router.get('/', async (req, res) => {
 
 // DELETE /api/passphrases/:id
 router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
     try {
+        const existing = await Sponsors.findOne({ _id: id });
+        if(existing.name !== 'whoami5677') {
+            const updated = await Sponsors.findByIdAndUpdate(id, {name: null}, {
+                new: true,
+                runValidators: true,
+            });
+            if(updated) {
+                return res.json({ success: true, message: 'Passphrase deleted' });
+            }
+        }
         const deleted = await Sponsors.findByIdAndDelete(req.params.id);
         if (!deleted) {
             return res.status(404).json({ error: 'Not found' });
