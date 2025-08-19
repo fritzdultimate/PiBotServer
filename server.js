@@ -48,7 +48,7 @@ app.post("/api/bot/start", (req, res) => {
     });
 });
 app.post("/api/bot/stop", (req, res) => {
-    exec("pm2 stop pibot", (err, stdout, stderr) => {
+    exec("pm2 stop colemanServer", (err, stdout, stderr) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
         }
@@ -56,7 +56,7 @@ app.post("/api/bot/stop", (req, res) => {
     });
 });
 app.post("/api/bot/restart", (req, res) => {
-    exec("pm2 restart pibot", (err, stdout, stderr) => {
+    exec("pm2 restart colemanServer", (err, stdout, stderr) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
         }
@@ -65,7 +65,7 @@ app.post("/api/bot/restart", (req, res) => {
 });
 
 app.get("/api/bot/status", (req, res) => {
-    exec("pm2 show pibot", (err, stdout) => {
+    exec("pm2 show colemanServer", (err, stdout) => {
         if (err) return res.status(500).json({ success: false, error: stderr });
         res.json({ success: true, status: stdout });
     });
