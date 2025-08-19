@@ -126,6 +126,17 @@ app.post('/api/settings', async(req, res) => {
     }
 })
 
+app.get('/api/settings/:name', async (req, res) => {
+    const name = req.params.name;
+    const settings = await ColemanSettings.findOne({ name });
+    if (!settings) {
+        return res.status(404).json({ error: "Settings not found" });
+    }
+
+
+    res.json(settings);
+});
+
 // Ping route
 app.get('/', (req, res) => {
   res.send('🔁 Pi Bot Server is running - Time: ' + new Date().toLocaleString());
