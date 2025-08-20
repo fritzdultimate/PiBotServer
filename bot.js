@@ -459,7 +459,7 @@ bot.on('message', async (msg) => {
 
         const existing = passphrases.find(phrase => {
             const kp = getKeypairFromPassphrase(phrase.mnemonic);
-            return kp.publicKey() === text;
+            return kp.publicKey() === text && phrase.name == null;
         });
 
         if(existing) {
