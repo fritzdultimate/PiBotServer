@@ -952,12 +952,14 @@ export const autoFundWallet = async (instance) => {
 
         for (const p of sponsors) {
             try {
+                const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+                if(!firstFilteredSponsors.includes(sponsorKp.publicKey())) continue;
+
                 const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
                 const botAccountData = await getAccount(BotKP.publicKey());
                 const botBalanceString = getBalance(botAccountData);
                 const botBalance = parseFloat(botBalanceString) - 1.98;
 
-                const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
                 const accountData = await getAccount(sponsorKp.publicKey());
 
                 const balanceString = getBalance(accountData);
