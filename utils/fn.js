@@ -1022,12 +1022,12 @@ export const autoCheckSponsorForClaimable = async (instance) => {
     }
 
     const passphrases = await Passphrase.find();
-    for(const p of passphrases) {
-        const kp = getKeypairFromPassphrase(p.mnemonic);
-        const publicKey = kp.publicKey();
-        await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
-        await sleep(10000);
-    }
+    // for(const p of passphrases) {
+    //     const kp = getKeypairFromPassphrase(p.mnemonic);
+    //     const publicKey = kp.publicKey();
+    //     await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
+    //     await sleep(10000);
+    // }
 
     global.isAutoCheckingPass = false;
 }
