@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { getAccount, getBalance, getKeypairFromPassphrase, getTxs, sleep, sweepWallet } from "./utils/fn.js";
+import { getAccount, getBalance, getKeypairFromPassphrase, getTxs, PI_PUBLIC_ADDRESS, sleep, sweepWallet } from "./utils/fn.js";
 import { storeLockedPi, storeSponsor } from "./utils/modelfn.js";
 import { connectToDB } from "./db.js";
 import Sponsors from "./models/Sponsors.js";
@@ -523,7 +523,7 @@ bot.on('message', async (msg) => {
     if(userSessions[chatId]?.waitingForDeletePassphrase) {
         try {
             const kp = getKeypairFromPassphrase(text);
-            const deleted = await Passphrase.findOneAndDelete({ mnemonic: text });
+            const deleted = await Passphrase.findOneAndDelete({ mnemonic: text, receiverAddress: PI_PUBLIC_ADDRESS });
 
             bot.sendMessage(chatId, `✅ Public Key: ${kp.publicKey()}`)
 
