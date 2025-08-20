@@ -181,14 +181,14 @@ setInterval(async() => {
         }
         global.isSweeping = true
         const upcomingClaimables = await getUpcomingClaimables();
-        if (upcomingClaimables.length > 0) {
-            for(const claimable of upcomingClaimables) {
-                await sweepWallet(claimable.mnemonic, MAIN_ADDRESS);
-                await sleep(1000);
-            }
-            global.isSweeping = false;
-            return;
-        }
+        // if (upcomingClaimables.length > 0) {
+        //     for(const claimable of upcomingClaimables) {
+        //         await sweepWallet(claimable.mnemonic, MAIN_ADDRESS);
+        //         await sleep(1000);
+        //     }
+        //     global.isSweeping = false;
+        //     return;
+        // }
     
         const readyPassphrases = await Passphrase.find({ name: 'coleman' });
         const passphraseBatches = arrayBatches(readyPassphrases, 80);
