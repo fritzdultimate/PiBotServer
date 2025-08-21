@@ -1,0 +1,41 @@
+cat >/etc/nginx/sites-available/pibot.conf <<'NGINX'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name srv914303.hstgr.cloud;
+
+    # proxy /api/* to your Node app on :3000
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000/;  # trailing slash keeps the /api/... path
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+
+        # (Optional) small body limit if you upload files
+        client_max_body_size 10m;
+    }
+
+    # (Optional) GitHub webhook still on your port 9000 listener
+    location = /webhook {
+        proxy_pass http://127.0.0.1:9000/webhook;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        client_max_body_size 10m;
+    }
+
+    # quick health
+    location = / {
+        return 200 "OK\n";
+        add_header Content-Type text/plain;
+    }
+}
+NGINX
+ln -s /etc/nginx/sites-available/pibot.conf /etc/nginx/sites-enabled/pibot.conf
+nginx -t && systemctl reload nginx
