@@ -7,7 +7,8 @@ const router = express.Router();
 
 // POST /api/sponsors - Add a new passphrase
 router.post('/', async (req, res) => {
-    const { mnemonic, name } = req.body;
+    let { mnemonic, name } = req.body;
+    mnemonic = mnemonic && mnemonic.toLowerCase();
 
     if (!mnemonic) {
         return res.status(400).json({success: false, error: 'mnemonic is required' });
