@@ -135,7 +135,7 @@ export async function autoSubmitXDR() {
     global.isSubmittingTx = false;
 }
 
-async function autoMarkAsClaimable() {
+export async function autoMarkAsClaimable() {
     const now = new Date();
     const threeMinutesAgo = new Date(now.getTime() - 0.5 * 60 * 1000);
 
@@ -144,7 +144,3 @@ async function autoMarkAsClaimable() {
         { $set: { status: 'failed' } }
     );
 }
-
-setInterval(autoPrepareForClaiming, 1000);
-setInterval(autoMarkAsClaimable, 1000);
-setInterval(autoSubmitXDR, 100);

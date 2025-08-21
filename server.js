@@ -20,6 +20,7 @@ import { storeLockedPi } from './utils/modelfn.js';
 import ColemanSettings from './models/ColemanSettings.js';
 import { exec } from "child_process";
 import Log from './models/Log.js';
+import { autoMarkAsClaimable, autoPrepareForClaiming, autoSubmitXDR } from './autoClaimer.js';
 dotenv.config();
 
 const app = express();
@@ -88,6 +89,14 @@ app.post('/api/passphrases/upload', async(req, res) => {
     }
 })
 
+app.post("/api/main/bot/status", (req, res) => {
+    exec("pm2 show api3000", (err, stdout, stderr) => {
+        if (err) return res.status(500).json({ success: false, error: stderr });
+        const isOnline = stdout.includes("status online");
+        res.json({ success: true, status: stdout, online: isOnline });
+    });
+});
+
 app.post("/api/bot/status", (req, res) => {
     exec("pm2 show colemanServer", (err, stdout, stderr) => {
         if (err) return res.status(500).json({ success: false, error: stderr });
@@ -95,12 +104,32 @@ app.post("/api/bot/status", (req, res) => {
         res.json({ success: true, status: stdout, online: isOnline });
     });
 });
+
+app.post("/api/main/bot/start", (req, res) => {
+    exec("pm2 restart api3000 || pm2 start server.js --name api3000", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot started", output: stdout });
+    });
+});
+
 app.post("/api/bot/start", (req, res) => {
     exec("pm2 restart colemanServer || pm2 start colemanServer.js --name colemanServer", (err, stdout, stderr) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
         }
         res.json({ success: true, message: "Bot started", output: stdout });
+    });
+});
+
+app.post("/api/main/bot/stop", (req, res) => {
+    exec("pm2 stop api3000", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        exec("pm2 delete api3000");
+        res.json({ success: true, message: "Bot stopped", output: stdout });
     });
 });
 app.post("/api/bot/stop", (req, res) => {
@@ -169,9 +198,16 @@ app.get('/api/settings/:name', async (req, res) => {
 
 app.get('/api/logs/:name', async (req, res) => {
     const name = req.params.name;
+    if(name === 'all') {
+        const logs = await Log.find();
+        if (!logs) {
+            return res.status(404).json({ error: "Logs not found" });
+        }
+        res.json(logs);
+    }
     const logs = await Log.find({ name });
     if (!logs) {
-        return res.status(404).json({ error: "Settings not found" });
+        return res.status(404).json({ error: "Logs not found" });
     }
 
 
@@ -360,9 +396,10 @@ for (const sponsor of rawSponsors) {
 
 setInterval(() => autoFundWallet(instanceId), 10000);
 setInterval(() => autoSweepWallet(instanceId), 1000);
-// setInterval(() => autoSweepSponsor(instanceId), 1000);
 
-// setInterval(() => autoCheckSponsorForClaimable(instanceId), 300000);
+setInterval(autoPrepareForClaiming, 1000);
+setInterval(autoMarkAsClaimable, 1000);
+setInterval(autoSubmitXDR, 100);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
