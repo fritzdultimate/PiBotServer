@@ -853,7 +853,7 @@ export function arrayBatches(arr, batchSize = 100) {
 }
 
 export const autoSweepWallet = async (instance) => {
-    if(instance !=1) return;
+    // if(instance !=1) return;
     if(global.isSweeping) return;
     global.isSweeping = true
     
@@ -939,7 +939,7 @@ export const autoSweepSponsor = async (instance) => {
 }
 
 export const autoFundWallet = async (instance) => {
-    if (instance != 0) return;
+    // if (instance != 0) return;
     if (global.isFunding || global.isUnlocking) return;
 
     global.isFunding = true;
