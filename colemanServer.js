@@ -95,7 +95,7 @@ const sponsors = await Sponsors.find({ name: 'coleman' });
 // }, 100);
 
 setInterval(() => autoPrepareForClaiming('coleman', MAIN_ADDRESS), 1000);
-setInterval(autoSubmitXDR, 100);
+setInterval(() => autoSubmitXDR('coleman'), 100);
 
 
 async function getUpcomingClaimables(start = 0) {
