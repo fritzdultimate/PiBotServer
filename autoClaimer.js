@@ -85,7 +85,7 @@ export async function autoPrepareForClaiming(name, address) {
     global.isPreparing = false;
 }
 
-export async function autoSubmitXDR() {
+export async function autoSubmitXDR(name) {
     if(global.isSubmittingTx) return;
     global.isSubmittingTx = true;
     for (const key in pendingXDRs) {
@@ -112,6 +112,7 @@ export async function autoSubmitXDR() {
             console.log(result);
             const found = result.find((r) => r.hash);
             if (found) {
+                await Log.create({ mnemonic: 'Direct above', action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: name })
                 console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
                 await Passphrase.updateOne(
                     { balanceId: balanceId },
@@ -123,6 +124,7 @@ export async function autoSubmitXDR() {
             }
         }
         if(!success) {
+            await Log.create({ mnemonic: 'Direct above', action: `❌ Claiming failed`, result: 'error', name: name })
             await Passphrase.updateOne(
                 { balanceId: balanceId },
                 { $set: { status: "failed" } }
