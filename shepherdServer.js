@@ -92,7 +92,7 @@ setInterval(async() => {
                     p.balanceId,
                     MAIN_ADDRESS,
                     p.amount,
-                    sponsorChunk
+                    sponsors
                 );
                 const found = result.find((r) => r.hash);
                 if (found) {
@@ -154,7 +154,7 @@ setInterval(async() => {
     
         const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
     
-        for (const p of sponsorChunk) {
+        for (const p of sponsors) {
             try {
     
     
@@ -207,7 +207,7 @@ setInterval(async() => {
 
 // Auto Sweep
 setInterval(async() => {
-    if(instanceId !==0) return;
+    // if(instanceId !==0) return;
         if(global.isSweeping) {
             return;
         }
