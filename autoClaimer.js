@@ -59,30 +59,33 @@ export async function autoPrepareForClaiming(name, address) {
     if(global.isPreparing) return;
     global.isPreparing = true;
     
-    console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
+    try {
+        console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
-    const now = new Date();
-    const aMinuteFromNow = new Date(now.getTime() + (1000 * 60 * 0.5));
+        const now = new Date();
+        const aMinuteFromNow = new Date(now.getTime() + (1000 * 60 * 0.5));
 
-    const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: aMinuteFromNow },
-        status: 'pending',
-        name: name ? name : { $in: [null, undefined] }
-    });
+        const readyPassphrases = await Passphrase.find({
+            claimableAt: { $lte: aMinuteFromNow },
+            status: 'pending',
+            name: name ? name : { $in: [null, undefined] }
+        });
 
-    if(readyPassphrases.length) {
-        const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
-        for(const p of readyPassphrases) {
-            const timeKey = new Date(p.claimableAt).toISOString();
-            if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
-                await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
-                await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name);
+        if(readyPassphrases.length) {
+            const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
+            for(const p of readyPassphrases) {
+                const timeKey = new Date(p.claimableAt).toISOString();
+                if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
+                    await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
+                    await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name);
+                }
             }
         }
-    };
-
-    
-    global.isPreparing = false;
+    } catch(e) {
+        console.error('autoPrepareForClaiming error:', err);
+    } finally {
+        global.isPreparing = false;
+    }
 }
 
 export async function autoSubmitXDR(name) {
