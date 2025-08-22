@@ -1,4 +1,5 @@
 import { connectToDB } from "./db.js";
+import Log from "./models/Log.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
 import { firstFilteredSponsors, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, submitTransaction } from "./utils/fn.js";
@@ -54,7 +55,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
     }
 }
 
-export async function autoPrepareForClaiming() {
+export async function autoPrepareForClaiming(name, address) {
     if(global.isPreparing) return;
     global.isPreparing = true;
     
@@ -66,14 +67,16 @@ export async function autoPrepareForClaiming() {
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: aMinuteFromNow },
         status: 'pending',
-        name: { $in: [null, undefined] }
+        name: name ? name : { $in: [null, undefined] }
     });
 
     if(readyPassphrases.length) {
+        const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
         for(const p of readyPassphrases) {
             const timeKey = new Date(p.claimableAt).toISOString();
             if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
-                await getXDRsReady(p.mnemonic, p.balanceId, PI_PUBLIC_ADDRESS, p.amount, timeKey);
+                await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
+                await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey);
             }
         }
     };

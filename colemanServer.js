@@ -6,6 +6,7 @@ import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import ColemanSettings from './models/ColemanSettings.js';
 import Log from './models/Log.js';
+import { autoPrepareForClaiming, autoSubmitXDR } from './autoClaimer.js';
 dotenv.config();
 
 
@@ -29,69 +30,72 @@ const sponsors = await Sponsors.find({ name: 'coleman' });
 // const chunkSize = Math.floor(sponsors.length/2);
 
 // Auto Claim
-setInterval(async() => {
-    if(global.isClaiming) return;
-    global.isClaiming = true;
+// setInterval(async() => {
+//     if(global.isClaiming) return;
+//     global.isClaiming = true;
 
-    const now = new Date();
-    const fiveSecondsFromNow = new Date(now.getTime() + 3000);
+//     const now = new Date();
+//     const fiveSecondsFromNow = new Date(now.getTime() + 3000);
     
-    const readyPassphrases = await Passphrase.find({
-        claimableAt: { $lte: fiveSecondsFromNow },
-        name: 'coleman',
-        status: 'pending'
-    });
+//     const readyPassphrases = await Passphrase.find({
+//         claimableAt: { $lte: fiveSecondsFromNow },
+//         name: 'coleman',
+//         status: 'pending'
+//     });
 
-    for (const p of readyPassphrases) {
-        console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
-        await Log.create({ mnemonic: p.mnemonic, action: `Claiming for ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: 'coleman' })
-        try {
+//     for (const p of readyPassphrases) {
+//         console.log(`Claiming for ${p.name} on Mnemonic: ${p.mnemonic}`)
+//         await Log.create({ mnemonic: p.mnemonic, action: `Claiming for ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: 'coleman' })
+//         try {
 
-            let tries = 0;
-            let success = false;
+//             let tries = 0;
+//             let success = false;
 
-            while(!success && tries < MAX_FLOOD_COUNT) {
+//             while(!success && tries < MAX_FLOOD_COUNT) {
 
-                const result = await FloodchannelTransaction(
-                    p.mnemonic,
-                    p.balanceId,
-                    MAIN_ADDRESS,
-                    p.amount,
-                    sponsors,
-                    fee
-                );
-                const found = result.find((r) => r.hash);
-                if (found) {
-                    console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
-                    await Log.create({ mnemonic: p.mnemonic, action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: 'coleman' })
-                    await Passphrase.updateOne(
-                        { _id: p._id },
-                        { $set: { status: "claimed" } }
-                    );
-                    success = true;
-                    break;
-                }
-                tries++;
-                // await sleep(99);
-            }
-            if (!success) {
-                await Log.create({ mnemonic: p.mnemonic, action: `Claiming failed`, result: 'error', name: 'coleman' })
-                await Passphrase.updateOne(
-                    { _id: p._id },
-                    { $set: { status: "failed" } }
-                );
-            }
+//                 const result = await FloodchannelTransaction(
+//                     p.mnemonic,
+//                     p.balanceId,
+//                     MAIN_ADDRESS,
+//                     p.amount,
+//                     sponsors,
+//                     fee
+//                 );
+//                 const found = result.find((r) => r.hash);
+//                 if (found) {
+//                     console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
+//                     await Log.create({ mnemonic: p.mnemonic, action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: 'coleman' })
+//                     await Passphrase.updateOne(
+//                         { _id: p._id },
+//                         { $set: { status: "claimed" } }
+//                     );
+//                     success = true;
+//                     break;
+//                 }
+//                 tries++;
+//                 // await sleep(99);
+//             }
+//             if (!success) {
+//                 await Log.create({ mnemonic: p.mnemonic, action: `Claiming failed`, result: 'error', name: 'coleman' })
+//                 await Passphrase.updateOne(
+//                     { _id: p._id },
+//                     { $set: { status: "failed" } }
+//                 );
+//             }
 
             
 
-        } catch (err) {
-            // console.error('❌ Error something went wrong Pi:', err.message || err);
-        }
-    }
+//         } catch (err) {
+//             // console.error('❌ Error something went wrong Pi:', err.message || err);
+//         }
+//     }
 
-    global.isClaiming = false;
+//     global.isClaiming = false;
     
-}, 100);
+// }, 100);
+
+setInterval(() => autoPrepareForClaiming('coleman', MAIN_ADDRESS), 1000);
+setInterval(autoSubmitXDR, 100);
 
 
 async function getUpcomingClaimables(start = 0) {
