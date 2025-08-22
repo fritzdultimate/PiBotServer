@@ -398,8 +398,10 @@ setInterval(() => autoFundWallet(instanceId), 10000);
 // setInterval(() => autoSweepWallet(instanceId), 1000);
 
 setInterval(autoPrepareForClaiming, 1000);
-setInterval(autoMarkAsClaimable, 1000);
 setInterval(autoSubmitXDR, 100);
+
+
+setInterval(autoMarkAsClaimable, 1000);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
