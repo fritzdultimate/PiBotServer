@@ -175,9 +175,7 @@ setInterval(async() => {
 
 // Auto Sweep
 setInterval(async() => {
-    console.log(sweepActivated)
     if(!sweepActivated) return;
-    console.log(`Code reached here`)
         if(global.isSweeping) {
             return;
         }
@@ -197,7 +195,6 @@ setInterval(async() => {
     
         for(const passphrases of passphraseBatches) {
             await Promise.all(passphrases.map(async (phrase, i) => {
-                console.log(`Sweeping for ${phrase.mnemonic}`)
                 try {
                     const r = await sweepWallet(phrase.mnemonic, MAIN_ADDRESS);
                 } catch (e) {
