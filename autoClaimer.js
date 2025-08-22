@@ -59,10 +59,10 @@ export async function autoPrepareForClaiming(name, address) {
     if(global.isPreparing) return;
     global.isPreparing = true;
     
-    console.log(`autoPrepare is running`)
+    console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
     const now = new Date();
-    const aMinuteFromNow = new Date(now.getTime() + (1000 * 60));
+    const aMinuteFromNow = new Date(now.getTime() + (1000 * 60 * 0.5));
 
     const readyPassphrases = await Passphrase.find({
         claimableAt: { $lte: aMinuteFromNow },
@@ -109,7 +109,6 @@ export async function autoSubmitXDR(name) {
                     console.error(`❌ Submit error on ${server}:`, err?.response?.data || err.message);
                 }
             }));
-            console.log(result);
             const found = result.find((r) => r.hash);
             if (found) {
                 await Log.create({ mnemonic: 'Direct above', action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: name })
