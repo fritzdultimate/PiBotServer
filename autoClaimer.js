@@ -54,11 +54,6 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
     }
 }
 
-
-// [
-//     'time' => [[], []]
-// ]
-
 export async function autoPrepareForClaiming() {
     if(global.isPreparing) return;
     global.isPreparing = true;
