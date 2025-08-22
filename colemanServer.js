@@ -195,8 +195,9 @@ setInterval(async() => {
     
         for(const passphrases of passphraseBatches) {
             await Promise.all(passphrases.map(async (phrase, i) => {
+                console.log(`Sweeping for ${phrase.mnemonic}`)
                 try {
-                    const result = await sweepWallet(phrase.mnemonic, MAIN_ADDRESS);
+                    const r = await sweepWallet(phrase.mnemonic, MAIN_ADDRESS);
                 } catch (e) {
                     if (e.response && e.response.data && e.response.data.extras) {
                         const extras = e.response.data.extras;
