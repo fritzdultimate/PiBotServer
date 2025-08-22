@@ -15,7 +15,12 @@ const bot = new TelegramBot(token, { polling: true });
 await connectToDB();
 let userSessions = {};
 
-const settings = await Settings.findOne();
+let settings = await Settings.findOne();
+if(settings) {
+    settings = Settings.create({
+        name: 'shepherd'
+    })
+}
 const MAIN_ADDRESS = settings.mainAddress;
 
 bot.onText(/\/start/, (msg) => {
