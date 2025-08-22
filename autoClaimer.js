@@ -32,7 +32,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
     try {
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
-            const usingSponsors = name ? await Sponsors.find({ name }) : sponsors;
+            const usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
             for (const s of usingSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
