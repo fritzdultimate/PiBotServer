@@ -16,7 +16,7 @@ await connectToDB();
 let userSessions = {};
 
 let settings = await Settings.findOne();
-if(settings) {
+if(!settings) {
     settings = Settings.create({
         name: 'shepherd'
     })
