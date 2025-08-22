@@ -23,7 +23,7 @@ for (const sponsor of rawSponsors) {
     }
 }
 
-async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
+async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name) {
     CURRENT_KEY = time;
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
     pendingXDRs[time] = [];
@@ -32,8 +32,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time) {
     try {
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
-
-            for (const s of sponsors) {
+            const usingSponsors = name ? await Sponsors.find({ name }) : sponsors;
+            for (const s of usingSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries);
                     xdrs.push({xdr, balanceId});
@@ -76,7 +76,7 @@ export async function autoPrepareForClaiming(name, address) {
             const timeKey = new Date(p.claimableAt).toISOString();
             if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
                 await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
-                await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey);
+                await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name);
             }
         }
     };
