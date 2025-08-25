@@ -88,7 +88,7 @@ export async function autoPrepareForClaiming(name, address) {
 export async function autoSubmitXDR(name) {
     if(global.isSubmittingTx) return;
     global.isSubmittingTx = true;
-    console.log(pendingXDRs)
+    // console.log(pendingXDRs)
     for (const key in pendingXDRs) {
         console.log(key)
         const now = new Date();
