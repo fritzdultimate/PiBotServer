@@ -124,6 +124,7 @@ export async function autoSubmitXDR(name) {
                 break;
             }
         }
+
         if(!success) {
             await Log.create({ mnemonic: 'Direct above', action: `❌ Claiming failed`, result: 'error', name: name })
             await Passphrase.updateOne(
@@ -131,8 +132,7 @@ export async function autoSubmitXDR(name) {
                 { $set: { status: "failed" } }
             );
         }
-        pendingXDRs[key].retries = (pendingXDRs[key].retries || 0) + 1;
-        if (pendingXDRs[key].retries > 3) delete pendingXDRs[key];
+        delete pendingXDRs[key];
     }
     global.isSubmittingTx = false;
 }
