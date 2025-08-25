@@ -43,9 +43,6 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             }
             retries++;
             pendingXDRs[time].push(xdrs);
-
-            console.log(`The below is the pending xdr ${retries}`);
-            console.log(xdrs)
         }
         console.log(`The below is the pending xdr`);
         console.log(pendingXDRs)
@@ -91,7 +88,7 @@ export async function autoPrepareForClaiming(name, address) {
 export async function autoSubmitXDR(name) {
     if(global.isSubmittingTx) return;
     global.isSubmittingTx = true;
-    // console.log(pendingXDRs)
+    console.log(pendingXDRs)
     for (const key in pendingXDRs) {
         console.log(key)
         const now = new Date();
@@ -124,7 +121,7 @@ export async function autoSubmitXDR(name) {
                 );
                 // global.lastClaimedOrFailedAt = new Date();
                 success = true;
-                return;
+                break;
             }
         }
         if(!success) {
@@ -134,7 +131,8 @@ export async function autoSubmitXDR(name) {
                 { $set: { status: "failed" } }
             );
         }
-        delete pendingXDRs[key];
+        pendingXDRs[key].retries = (pendingXDRs[key].retries || 0) + 1;
+        if (pendingXDRs[key].retries > 3) delete pendingXDRs[key];
     }
     global.isSubmittingTx = false;
 }
