@@ -179,6 +179,7 @@ setInterval(async() => {
 
 // Auto Sweep
 setInterval(async() => {
+    console.log(sweepActivated);
     if(!sweepActivated) return;
         if(global.isSweeping) {
             return;
