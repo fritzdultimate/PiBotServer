@@ -90,7 +90,7 @@ export async function autoSubmitXDR(name) {
     global.isSubmittingTx = true;
     // console.log(pendingXDRs)
     for (const key in pendingXDRs) {
-        console.log(key)
+        // console.log(key)
         const now = new Date();
         const claimableAt = new Date(key);
         if((now - claimableAt) <= -2500) continue;
@@ -105,6 +105,7 @@ export async function autoSubmitXDR(name) {
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
                     balanceId = xdr.balanceId;
+                    console.log(result)
                     return result;
 
                 } catch (err) {
