@@ -92,6 +92,7 @@ export async function autoSubmitXDR(name) {
     if(global.isSubmittingTx) return;
     global.isSubmittingTx = true;
     for (const key in pendingXDRs) {
+        console.log(key)
         const now = new Date();
         const claimableAt = new Date(key);
         if((now - claimableAt) <= -2500) continue;
