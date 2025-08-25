@@ -28,7 +28,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const channelAccount = new Account(publicKey, seq);
 
         const isInFirstFilteredArray = firstFilteredSponsors.includes(channelKp.publicKey());
-        const fee = Math.ceil(customFee * ie7).toString();
+        const fee = Math.ceil(customFee * 1e7).toString();
         console.log(`Stroops: ${fee}`)
 
         const txBuilder = new TransactionBuilder(channelAccount, {
