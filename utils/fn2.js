@@ -1,6 +1,7 @@
 
 import { Account, Asset, Memo, Operation, TransactionBuilder } from "stellar-sdk";
 import { firstFilteredSponsors, getAccount, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, getSpendableBalance, HORIZONS, submitTransaction } from "./fn.js";
+import ColemanSettings from "../models/ColemanSettings.js";
 
 function generateUniqueMemo(prefix = 'PiA') {
   const time = Date.now().toString(36);
@@ -18,6 +19,9 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
 
         // const spendable = await  getSpendableBalance(publicKey)
         const accountData = await getAccount(publicKey);
+        const settings = await ColemanSettings.findOne({ name: 'coleman' });
+        const customFee = settings.fee == 'Base Fee' ? 0.02 : settings.fee;
+        console.log(`Using Custom fee: ${customFee}`)
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
