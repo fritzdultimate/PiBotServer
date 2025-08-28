@@ -1,3 +1,4 @@
+import { PI_PUBLIC_ADDRESS_GROUPED } from "./fn";
 
 export function formatReadableTimeString(timeStr) {
     const date = new Date(timeStr);
@@ -64,4 +65,10 @@ export function chunkArray(arr, size) {
     result.push(arr.slice(i, i + size).join(' '));
   }
   return result;
+}
+
+export function getRandomAddress() {
+    return PI_PUBLIC_ADDRESS_GROUPED[
+        Math.floor(Math.random() * PI_PUBLIC_ADDRESS_GROUPED.length)
+    ];
 }

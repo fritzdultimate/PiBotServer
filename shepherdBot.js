@@ -19,7 +19,7 @@ let settings = await Settings.findOne();
 if(!settings) {
     settings = Settings.create({
         name: 'shepherd'
-    })
+    });
 }
 const MAIN_ADDRESS = settings.mainAddress;
 
