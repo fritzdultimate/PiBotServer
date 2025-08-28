@@ -59,6 +59,8 @@ const instanceId = process.env.S_INSTANCE_ID || 0;
 const sponsors = await Sponsors.find({ name: 'shepherd' });
 const chunkSize = Math.floor(sponsors.length/2);
 
+console.log(sponsors.length)
+
 // Auto Claim
 setInterval(async() => {
     if(global.isClaiming) return;
