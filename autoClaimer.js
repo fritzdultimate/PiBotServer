@@ -4,6 +4,7 @@ import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
 import { firstFilteredSponsors, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, submitTransaction } from "./utils/fn.js";
 import { prebuildAndSignChannelTx } from "./utils/fn2.js";
+import { getRandomAddress } from "./utils/helper.js";
 
 
 await connectToDB();
@@ -69,7 +70,7 @@ export async function autoPrepareForClaiming(name, address) {
         });
 
         if(readyPassphrases.length) {
-            const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
+            const receiverAddress = address ? address : getRandomAddress();
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
