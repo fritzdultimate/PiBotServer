@@ -93,7 +93,7 @@ export async function autoSubmitXDR(name) {
         // console.log(key)
         const now = new Date();
         const claimableAt = new Date(key);
-        const offset = name ? -200 : -1000;
+        const offset = name ? -1000 : -200;
         if((now - claimableAt) <= offset) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
