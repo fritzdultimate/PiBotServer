@@ -118,10 +118,10 @@ export async function autoSubmitXDR(name) {
             if (found) {
                 // await Log.create({ mnemonic: 'Direct above', action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: name })
                 console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
-                await Passphrase.updateOne(
-                    { balanceId: balanceId },
-                    { $set: { status: "claimed" } }
-                );
+                // await Passphrase.updateOne(
+                //     { balanceId: balanceId },
+                //     { $set: { status: "claimed" } }
+                // );
                 // global.lastClaimedOrFailedAt = new Date();
                 success = true;
                 break;
