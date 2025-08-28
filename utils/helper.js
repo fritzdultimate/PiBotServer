@@ -1,4 +1,4 @@
-import { PI_PUBLIC_ADDRESS_GROUPED } from "./fn";
+import { PI_PUBLIC_ADDRESS_GROUPED } from "./fn.js";
 
 export function formatReadableTimeString(timeStr) {
     const date = new Date(timeStr);
