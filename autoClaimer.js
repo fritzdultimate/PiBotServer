@@ -97,7 +97,7 @@ export async function autoSubmitXDR(name) {
         const now = new Date();
         const claimableAt = new Date(key);
         if(name) {
-            // await sleep(5000)
+            await sleep(5000)
         }
         if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
