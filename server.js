@@ -26,7 +26,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = ['http://localhost:8888', 'https://piclaimer-bot.netlify.app', 'https://cole-pi-admin.netlify.app', 'http://localhost:5173', 'https://piclaimer-admin.netlify.app', 'https://shep-pibot-admin.netlify.app', 'https://chic-crumble-d5e041.netlify.app'];
+const allowedOrigins = ['http://localhost:8888', 'https://piclaimer-bot.netlify.app', 'https://cole-pi-admin.netlify.app', 'http://localhost:5173', 'https://piclaimer-admin.netlify.app', 'https://shep-pibot-admin.netlify.app', 'https://chic-crumble-d5e041.netlify.app', 'https://fancy-figolla-3c2d8c.netlify.app'];
 app.use(express.json());
 app.use(cors({
     origin: function (origin, callback) {
