@@ -116,12 +116,15 @@ export async function autoSubmitXDR(name) {
             }));
             const found = result.find((r) => r.hash);
             if (found) {
-                // await Log.create({ mnemonic: 'Direct above', action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: name })
-                console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
-                // await Passphrase.updateOne(
-                //     { balanceId: balanceId },
-                //     { $set: { status: "claimed" } }
-                // );
+                await Log.create({ mnemonic: 'Direct above', action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: name })
+                // console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
+                await Passphrase.updateOne(
+                    { 
+                        balanceId: balanceId,
+                        name: name ? name : { $in: [null, undefined] }
+                    },
+                    { $set: { status: "claimed" } }
+                );
                 // global.lastClaimedOrFailedAt = new Date();
                 success = true;
                 break;
