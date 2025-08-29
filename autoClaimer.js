@@ -35,6 +35,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             const xdrs = [];
             let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
+
+            console.log(`Using sponsors: ${usingSponsors}`)
             await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name })
             for (const s of usingSponsors) {
                 try {
@@ -58,7 +60,6 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
 export async function autoPrepareForClaiming(name, address, sponsorsCount) {
     if(global.isPreparing) return;
     global.isPreparing = true;
-    console.log(sponsorsCount)
     
     try {
         console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
