@@ -59,9 +59,9 @@ setInterval(async() => {
         if(global.isFunding) return;
         global.isFunding = true;
     
-        // const sponsorChunk = sponsors.slice(instanceId * chunkSize, chunkSize);
+        const usingSponsors = sponsors.slice(0, activeSponsors)
     
-        for (const p of sponsors) {
+        for (const p of usingSponsors) {
             try {
     
     
