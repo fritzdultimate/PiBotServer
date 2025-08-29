@@ -58,6 +58,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
 export async function autoPrepareForClaiming(name, address, sponsorsCount) {
     if(global.isPreparing) return;
     global.isPreparing = true;
+    console.log(sponsorsCount)
     
     try {
         console.log(`autoPrepare is running for ${name ? name : 'Main'}`)

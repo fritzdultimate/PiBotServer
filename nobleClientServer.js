@@ -28,7 +28,7 @@ const sweepActivated = settings.sweep;
 const sponsors = await Sponsors.find({ name: 'noble' });
 // const chunkSize = Math.floor(sponsors.length/2);
 
-console.log(activeSponsors)
+
 setInterval(() => autoPrepareForClaiming('noble', MAIN_ADDRESS, activeSponsors), 1000);
 setInterval(() => autoSubmitXDR('noble'), 100);
 
