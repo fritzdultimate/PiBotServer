@@ -34,6 +34,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
             const usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
+            await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name })
             for (const s of usingSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
