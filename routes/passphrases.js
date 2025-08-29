@@ -109,7 +109,7 @@ router.post('/list', async (req, res) => {
             const passphrases = await Passphrase.find({ name: { $in: [null, undefined] } }).sort({ claimableAt: 1 });
             res.json(passphrases);
         } else {
-            const passphrases = await Passphrase.find({ receiverAddress }).sort({ claimableAt: 1 });
+            const passphrases = await Passphrase.find({ name: receiverAddress }).sort({ claimableAt: 1 });
             res.json(passphrases);
         }
     } catch (err) {
