@@ -3,7 +3,7 @@ import Settings from "../models/Settings.js";
 import Sponsors from "../models/Sponsors.js";
 import { getClaimableBalance } from "./fn.js";
 
-export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress, local = false, name = null) {
+export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress, local = false, name = null, owner = null) {
     // const existing = await Passphrase.findOne({ mnemonic });
     // if (existing) {
     //     return {success: false, message: 'Passphrase already exists' };
@@ -42,7 +42,8 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
                     claimableAt,
                     balanceId: record.id,
                     amount: record.amount,
-                    name
+                    name,
+                    owner
                 });
             }
         }

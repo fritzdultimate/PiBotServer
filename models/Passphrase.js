@@ -9,7 +9,8 @@ const PassphraseSchema = new mongoose.Schema({
     claimableAt: Date,
     balanceId: String,
     amount: String,
-    name: String
+    name: String,
+    owner: String
 });
 
 export default mongoose.model('Passphrase', PassphraseSchema);

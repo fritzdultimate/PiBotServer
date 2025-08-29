@@ -57,7 +57,7 @@ app.use('/api/passphrases', passphraseRoutes);
 app.use('/api/sponsors', sponsorRoutes);
 
 app.post('/api/passphrases/upload', async(req, res) => {
-    const { mnemonic, name } = req.body;
+    const { mnemonic, name, owner } = req.body;
     if (!mnemonic) {
         return res.status(409).json({ success: false,  error: 'mnemonic is required' });
     }
@@ -70,7 +70,7 @@ app.post('/api/passphrases/upload', async(req, res) => {
         }
 
         if (!name) {
-            const saved = await storeLockedPi(mnemonic, publicKey, PI_PUBLIC_ADDRESS);
+            const saved = await storeLockedPi(mnemonic, publicKey, PI_PUBLIC_ADDRESS, owner);
             if(saved.success) {
                 return res.status(201).json({ success: true,  feedback: saved.message });
             } else {
