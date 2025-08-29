@@ -853,7 +853,7 @@ export function arrayBatches(arr, batchSize = 100) {
     return batches;
 }
 
-export const autoSweepWallet = async (instance) => {
+export const autoSweepWallet = async () => {
     if(global.isSweeping) return;
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
@@ -941,8 +941,7 @@ export const autoSweepSponsor = async () => {
     }
 }
 
-export const autoFundWallet = async (instance) => {
-    // if (instance != 0) return;
+export const autoFundWallet = async () => {
     if (global.isFunding || global.isUnlocking) return;
 
     global.isFunding = true;
@@ -1010,9 +1009,8 @@ export const autoFundWallet = async (instance) => {
     }
 };
 
-export const autoCheckSponsorForClaimable = async (instance) => {
+export const autoCheckSponsorForClaimable = async () => {
     if(global.isAutoCheckingPass) return;
-    if(instance != 0) return;
     global.isAutoCheckingPass = true;
     const sponsors = await Sponsors.find();
 
