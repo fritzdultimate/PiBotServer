@@ -114,22 +114,16 @@ setInterval(async() => {
 
 // Auto Sweep
 setInterval(async() => {
-    console.log(sweepActivated);
     if(!sweepActivated) return;
-        if(global.isSweeping) {
-            return;
+    if(global.isSweeping) return;
+    global.isSweeping = true
+    const upcomingClaimables = await getUpcomingClaimables();
+    if (upcomingClaimables.length > 0) {
+        for(const claimable of upcomingClaimables) {
+            await sweepWallet(claimable.mnemonic, MAIN_ADDRESS);
+            await sleep(1000);
         }
-        global.isSweeping = true
-        const upcomingClaimables = await getUpcomingClaimables();
-        // if (upcomingClaimables.length > 0) {
-        //     for(const claimable of upcomingClaimables) {
-        //         await sweepWallet(claimable.mnemonic, MAIN_ADDRESS);
-        //         await sleep(1000);
-        //     }
-        //     global.isSweeping = false;
-        //     return;
-        // }
-    
+    } else {
         const readyPassphrases = await Passphrase.find({ name: 'coleman' });
         const passphraseBatches = arrayBatches(readyPassphrases, 80);
     
@@ -149,7 +143,8 @@ setInterval(async() => {
     
             await sleep(1000);
         }
-        global.isSweeping = false;
+    }
+    global.isSweeping = false;
 }, 1000);
 
 
