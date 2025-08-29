@@ -414,18 +414,6 @@ for (const sponsor of rawSponsors) {
     }
 }
 
-// setInterval(async() => {
-
-    // console.log(`Total usable sponsors: ${sponsors.length}`)
-
-    // const chunkSize = Math.ceil(sponsors.length/3);
-
-    // const start = instanceId * chunkSize;
-    // const end = start + chunkSize;
-    // const sponsorChunk = sponsors.slice(start, end);
-
-    // autoClaimUnlocked(sponsorChunk);
-// }, 100)
 
 setInterval(autoFundWallet, 10000);
 // setInterval(autoSweepWallet, 1000);
