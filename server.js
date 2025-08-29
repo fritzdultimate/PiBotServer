@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoFundWallet, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
+import { autoFundWallet, autoSweepWallet, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import { storeLockedPi } from './utils/modelfn.js';
@@ -395,7 +395,7 @@ for (const sponsor of rawSponsors) {
 // }, 100)
 
 setInterval(() => autoFundWallet(instanceId), 10000);
-// setInterval(() => autoSweepWallet(instanceId), 1000);
+setInterval(() => autoSweepWallet(instanceId), 1000);
 
 setInterval(autoPrepareForClaiming, 1000);
 setInterval(autoSubmitXDR, 100);
