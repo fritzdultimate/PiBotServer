@@ -74,7 +74,7 @@ export async function autoPrepareForClaiming(name, address) {
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
-                    // await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
+                    await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
                     await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name);
                 }
             }

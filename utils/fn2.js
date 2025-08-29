@@ -20,16 +20,13 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         // const spendable = await  getSpendableBalance(publicKey)
         const accountData = await getAccount(publicKey);
         const settings = await ColemanSettings.findOne({ name: 'coleman' });
-        const customFee = name ? (settings.fee === 'Base Fee' ? 0.01 : settings.fee) : 0.1
-        // console.log(`Using Custom fee: ${customFee}`)
+        const customFee = name ? (settings.fee === 'Base Fee' ? 0.01 : settings.fee) : 0.1;
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
         const channelAccount = new Account(publicKey, seq);
 
-        const isInFirstFilteredArray = firstFilteredSponsors.includes(channelKp.publicKey());
         const fee = Math.ceil(customFee * 1e7).toString();
-        // console.log(`Stroops: ${fee}`)
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
@@ -48,7 +45,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        // .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(180)
         .build();
 
