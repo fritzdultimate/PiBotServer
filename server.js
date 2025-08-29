@@ -113,6 +113,14 @@ app.post("/api/bot/shep/status", (req, res) => {
     });
 });
 
+app.post("/api/bot/noble/status", (req, res) => {
+    exec("pm2 show nobleClientServer", (err, stdout, stderr) => {
+        if (err) return res.status(500).json({ success: false, error: stderr });
+        const isOnline = stdout.includes("status online");
+        res.json({ success: true, status: stdout, online: isOnline });
+    });
+});
+
 // Start Bot
 app.post("/api/main/bot/start", (req, res) => {
     exec("pm2 restart api3000 || pm2 start server.js --name api3000", (err, stdout, stderr) => {
@@ -134,6 +142,15 @@ app.post("/api/bot/start", (req, res) => {
 
 app.post("/api/bot/shep/start", (req, res) => {
     exec("pm2 restart shepherdServer || pm2 start shepherdServer.js --name shepherdServer", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        res.json({ success: true, message: "Bot started", output: stdout });
+    });
+});
+
+app.post("/api/bot/noble/start", (req, res) => {
+    exec("pm2 restart nobleClientServer || pm2 start nobleClientServer.js --name nobleClientServer", (err, stdout, stderr) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
         }
@@ -168,6 +185,16 @@ app.post("/api/bot/shep/stop", (req, res) => {
             return res.status(500).json({ success: false, error: stderr });
         }
         exec("pm2 delete shepherdServer");
+        res.json({ success: true, message: "Bot stopped", output: stdout });
+    });
+});
+
+app.post("/api/bot/noble/stop", (req, res) => {
+    exec("pm2 stop nobleClientServer", (err, stdout, stderr) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: stderr });
+        }
+        exec("pm2 delete nobleClientServer");
         res.json({ success: true, message: "Bot stopped", output: stdout });
     });
 });
