@@ -150,7 +150,7 @@ app.post("/api/bot/shep/start", (req, res) => {
 });
 
 app.post("/api/bot/noble/start", async (req, res) => {
-    await ColemanSettings.deleteOne({ name: 'noble' });
+    await Log.deleteMany({ name: 'noble' });
     exec("pm2 restart nobleClientServer || pm2 start nobleClientServer.js --name nobleClientServer", (err, stdout, stderr) => {
         if (err) {
             return res.status(500).json({ success: false, error: stderr });
