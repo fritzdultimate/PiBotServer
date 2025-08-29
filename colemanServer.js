@@ -20,7 +20,7 @@ const MAX_FLOOD_COUNT = Number(settings.maxFlood) || 3;
 const MIN_SPONSOR_BALANCE = Number(settings.minSponsorBalance) || 0.1;
 const BOT_PHRASE = settings.funderMnemonic;
 const MAIN_ADDRESS = settings.botAddress;
-const fee = settings.fee;
+const activeSponsors = Number(settings.activeSponsors) || 50;
 const sweepActivated = settings.sweep;
 
 
@@ -29,7 +29,7 @@ const sponsors = await Sponsors.find({ name: 'coleman' });
 // const chunkSize = Math.floor(sponsors.length/2);
 
 
-setInterval(() => autoPrepareForClaiming('coleman', MAIN_ADDRESS), 1000);
+setInterval(() => autoPrepareForClaiming('coleman', MAIN_ADDRESS, activeSponsors), 1000);
 setInterval(() => autoSubmitXDR('coleman'), 100);
 
 

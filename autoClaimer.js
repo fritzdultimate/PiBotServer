@@ -24,7 +24,7 @@ for (const sponsor of rawSponsors) {
     }
 }
 
-async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name) {
+async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name, sponsorsCount) {
     CURRENT_KEY = time;
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
     pendingXDRs[time] = [];
@@ -33,7 +33,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
     try {
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
-            const usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
+            let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
+            usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name })
             for (const s of usingSponsors) {
                 try {
@@ -54,7 +55,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
     }
 }
 
-export async function autoPrepareForClaiming(name, address) {
+export async function autoPrepareForClaiming(name, address, sponsorsCount) {
     if(global.isPreparing) return;
     global.isPreparing = true;
     
@@ -76,7 +77,7 @@ export async function autoPrepareForClaiming(name, address) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
                     await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
-                    await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name);
+                    await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name, sponsorsCount);
                 }
             }
         }

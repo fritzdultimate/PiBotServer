@@ -143,7 +143,7 @@ app.post("/api/bot/stop", (req, res) => {
 });
 
 app.post('/api/settings', async(req, res) => {
-    const { maxFlood, name, fee, sweep, funderMnemonic, botAddress, minSponsorBalance } = req.body;
+    const { maxFlood, activeSponsors, name, fee, sweep, funderMnemonic, botAddress, minSponsorBalance } = req.body;
 
     if (!name) {
         return res.status(400).json({ success: false, error: "Name is required" });
@@ -151,6 +151,7 @@ app.post('/api/settings', async(req, res) => {
     try {
         const updateFields = {};
         if (maxFlood !== undefined) updateFields.maxFlood = maxFlood;
+        if (activeSponsors !== undefined) updateFields.activeSponsors = activeSponsors;
         if (fee !== undefined) updateFields.fee = fee;
         if (sweep !== undefined) updateFields.sweep = sweep;
         if (funderMnemonic !== undefined) updateFields.funderMnemonic = funderMnemonic;
