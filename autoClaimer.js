@@ -94,8 +94,10 @@ export async function autoSubmitXDR(name) {
         // console.log(key)
         const now = new Date();
         const claimableAt = new Date(key);
-        const offset = name ? -200 : -1500;
-        if((now - claimableAt) <= offset) continue;
+        if(name) {
+            // await sleep(5000)
+        }
+        if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
         let success = false;
@@ -132,9 +134,12 @@ export async function autoSubmitXDR(name) {
         }
 
         if(!success) {
-            // await Log.create({ mnemonic: 'Direct above', action: `❌ Claiming failed`, result: 'error', name: name })
+            await Log.create({ mnemonic: 'Direct above', action: `❌ Claiming failed`, result: 'error', name: name })
             await Passphrase.updateOne(
-                { balanceId: balanceId },
+                { 
+                    balanceId: balanceId,
+                    name: name ? name : { $in: [null, undefined] }
+                },
                 { $set: { status: "failed" } }
             );
         }
