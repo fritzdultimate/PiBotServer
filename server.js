@@ -199,11 +199,11 @@ app.get('/api/settings/:name', async (req, res) => {
 app.get('/api/logs/:name', async (req, res) => {
     const name = req.params.name;
     if(name === 'all') {
-        const logs = await Log.find();
+        const logs = await Log.find({ name : { $in: [null, undefined] } });
         if (!logs) {
             return res.status(404).json({ error: "Logs not found" });
         }
-        res.json(logs);
+        return res.json(logs);
     }
     const logs = await Log.find({ name });
     if (!logs) {
