@@ -41,7 +41,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             for (const s of usingSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
-                    await sleep(500)
+                    await sleep(300)
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
