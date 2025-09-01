@@ -70,7 +70,7 @@ app.post('/api/passphrases/upload', async(req, res) => {
         }
 
         if (!name) {
-            const saved = await storeLockedPi(mnemonic, publicKey, PI_PUBLIC_ADDRESS, owner);
+            const saved = await storeLockedPi(mnemonic, publicKey, PI_PUBLIC_ADDRESS, false, null, owner);
             if(saved.success) {
                 return res.status(201).json({ success: true,  feedback: saved.message });
             } else {
