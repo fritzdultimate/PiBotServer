@@ -326,7 +326,7 @@ app.post('/store', async (req, res) => {
     try {
         const now = new Date();
         const inThirtySeconds = new Date(now.getTime() + 6 * 60 * 1000);
-        const result = await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds, name: 'coleman' });
+        const result = await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds,  });
         res.json({ success: true, result });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
