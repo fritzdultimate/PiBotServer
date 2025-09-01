@@ -268,8 +268,6 @@ export async function getAccount(publicKey) {
             `${server}/accounts/${publicKey}`,
             {
                 headers: { 'Content-Type': 'application/json' },
-                timeout: 10000,
-                httpAgent: new http.Agent({ keepAlive: false })
             }
         );
         return response.data;
