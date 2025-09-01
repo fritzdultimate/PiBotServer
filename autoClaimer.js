@@ -96,7 +96,7 @@ export async function autoSubmitXDR(name) {
     global.isSubmittingTx = true;
     // console.log(pendingXDRs)
     for (const key in pendingXDRs) {
-        // console.log(key)
+        console.log(pendingXDRs)
         const now = new Date();
         const claimableAt = new Date(key);
         // if(name) {
