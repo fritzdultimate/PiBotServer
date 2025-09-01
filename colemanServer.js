@@ -16,7 +16,6 @@ app.use(express.json());
 await connectToDB();
 
 const settings = await ColemanSettings.findOne({ name: 'coleman' });
-const MAX_FLOOD_COUNT = Number(settings.maxFlood) || 3;
 const MIN_SPONSOR_BALANCE = Number(settings.minSponsorBalance) || 0.1;
 const BOT_PHRASE = settings.funderMnemonic;
 const MAIN_ADDRESS = settings.botAddress;
