@@ -10,7 +10,7 @@ dotenv.config();
 
 
 const app = express();
-const PORT = 4009;
+const PORT = 3002;
 app.set('trust proxy', 1);
 app.use(express.json());
 await connectToDB();
