@@ -75,7 +75,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         });
 
         if(readyPassphrases.length) {
-            const receiverAddress = address ? address : getRandomAddress();
+            const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
@@ -99,9 +99,9 @@ export async function autoSubmitXDR(name) {
         // console.log(key)
         const now = new Date();
         const claimableAt = new Date(key);
-        if(name) {
-            await sleep(1000)
-        }
+        // if(name) {
+        //     await sleep(1000)
+        // }
         if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
 
