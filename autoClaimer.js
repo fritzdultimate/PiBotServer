@@ -31,17 +31,15 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
     let retries = 0;
 
     try {
+        await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name });
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
             let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
-
-            console.log(`Using sponsors: ${usingSponsors}`)
-            await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name })
             for (const s of usingSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
-                    await sleep(500)
+                    await sleep(100)
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
