@@ -95,7 +95,6 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
 export async function autoSubmitXDR(name) {
     if(global.isSubmittingTx) return;
     global.isSubmittingTx = true;
-    // console.log(pendingXDRs)
     for (const key in pendingXDRs) {
         const now = new Date();
         const claimableAt = new Date(key);
