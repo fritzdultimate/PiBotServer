@@ -895,6 +895,7 @@ export const autoSweepSponsor = async () => {
     if (minutesSinceLast < 3) return;
 
     global.isSweepingSponsor = true;
+    console.log(`Is sweeping`);
 
     try {
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
