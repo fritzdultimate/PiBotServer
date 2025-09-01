@@ -65,7 +65,8 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
         const now = new Date();
-        const aMinuteFromNow = new Date(now.getTime() + (1000 * 60 * 0.5));
+        const min = name ? (1000 * 60) : (1000 * 60 * 0.5)
+        const aMinuteFromNow = new Date(now.getTime() + min);
 
         const readyPassphrases = await Passphrase.find({
             claimableAt: { $lte: aMinuteFromNow },
@@ -99,7 +100,7 @@ export async function autoSubmitXDR(name) {
         const now = new Date();
         const claimableAt = new Date(key);
         if(name) {
-            // await sleep(5000)
+            await sleep(1000)
         }
         if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
