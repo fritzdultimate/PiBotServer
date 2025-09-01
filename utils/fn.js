@@ -897,6 +897,20 @@ export const autoSweepSponsor = async () => {
     global.isSweepingSponsor = true;
 
     try {
+        const sponsors = await Sponsors.find({ name: 'whoami5677' });
+
+        for(const s of sponsors) {
+            if(s.publicKey) continue;
+            const kp = getKeypairFromPassphrase(s.mnemonic);
+
+            await Sponsors.updateOne(
+                { 
+                    _id: s._id,
+                },
+                { $set: { publicKey: kp.publicKey() } }
+            );
+            
+        }
         
         const in30mins = new Date(now.getTime() + 30 * 60 * 1000);
         let upcomingClaimables = await Passphrase.find({
@@ -907,7 +921,6 @@ export const autoSweepSponsor = async () => {
 
         if (upcomingClaimables.length > 0) return;
 
-        const sponsors = await Sponsors.find({ name: 'whoami5677' });
         let maxRetries = 10;
         let retries = 0;
         const chunkSize = Math.ceil(sponsors.length / maxRetries);
