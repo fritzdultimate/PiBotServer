@@ -233,7 +233,7 @@ const FIRST_BUMP_FEE = 1.2;
 
 
 export const HORIZONS = [
-    // 'http://93.127.203.237:8000',
+    'http://31.97.37.92:8000',
     'http://31.97.122.182:8000' //latest
 ];
 const horizonUrl = (i) => {
