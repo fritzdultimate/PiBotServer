@@ -41,7 +41,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             for (const s of usingSponsors) {
                 try {
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
-                    await sleep(50)
+                    await sleep(500)
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
@@ -66,7 +66,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
         const now = new Date();
-        const min = name ? (1000 * 60) : (1000 * 60 * 0.5)
+        const min = name ? (10 * 1000 * 60) : (1000 * 60 * 0.5)
         const aMinuteFromNow = new Date(now.getTime() + min);
 
         const readyPassphrases = await Passphrase.find({

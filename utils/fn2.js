@@ -46,7 +46,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             withMuxing: true
         }))
         .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
-        .setTimeout(180)
+        .setTimeout(1800)
         .build();
 
         txBuilder.sign(mainKp);
