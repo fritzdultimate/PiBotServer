@@ -96,7 +96,6 @@ export async function autoSubmitXDR(name) {
     global.isSubmittingTx = true;
     // console.log(pendingXDRs)
     for (const key in pendingXDRs) {
-        console.log(pendingXDRs)
         const now = new Date();
         const claimableAt = new Date(key);
         // if(name) {
@@ -111,6 +110,7 @@ export async function autoSubmitXDR(name) {
         for(const xdrs of xdrGroup) {
             const result = await Promise.all(xdrs.map(async (xdr, i) => {
                 const server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
+                console.log(server);
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
                     balanceId = xdr.balanceId;
