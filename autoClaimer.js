@@ -42,7 +42,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const accountData  = await getAccount(kp.publicKey());
                     const balanceString = getBalance(accountData);
                     const balance = parseFloat(balanceString) - 0.98;
-                    if(balance < 0.02) continue;
+                    if(balance < 0.04) continue;
 
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
                     await sleep(100)
