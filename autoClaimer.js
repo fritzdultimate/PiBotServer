@@ -2,7 +2,7 @@ import { connectToDB } from "./db.js";
 import Log from "./models/Log.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
-import { firstFilteredSponsors, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, sleep, submitTransaction } from "./utils/fn.js";
+import { firstFilteredSponsors, getAccount, getBalance, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, sleep, submitTransaction } from "./utils/fn.js";
 import { prebuildAndSignChannelTx } from "./utils/fn2.js";
 import { getRandomAddress } from "./utils/helper.js";
 
@@ -34,10 +34,16 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
         await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name });
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
-            let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
+            let usingSponsors = name ? await Sponsors.find({ name: name }) : rawSponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             for (const s of usingSponsors) {
                 try {
+                    const kp = getSDKKeypairFromPassphrase(s.mnemonic);
+                    const accountData  = await getAccount(kp.publicKey());
+                    const balanceString = getBalance(accountData);
+                    const balance = parseFloat(balanceString) - 0.98;
+                    if(balance < 0.02) continue;
+
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
                     await sleep(100)
                     xdrs.push({xdr, balanceId});
