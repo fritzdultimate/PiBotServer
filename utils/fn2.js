@@ -19,7 +19,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
 
         const accountData = await getAccount(publicKey);
         const settings = await ColemanSettings.findOne({ name });
-        const customFee = name ? (settings.fee === 'Base Fee' ? 0.01 : settings.fee) : 0.3;
+        const customFee = name ? (settings.fee === 'Base Fee' ? 0.01 : settings.fee) : 0.25;
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
