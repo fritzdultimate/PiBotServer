@@ -901,7 +901,7 @@ export const autoSweepSponsor = async () => {
     if (minutesSinceLast < 3) return;
 
     global.isSweepingSponsor = true;
-    console.log(`Is sweeping`);
+    console.log(`Is sweeping Sponsors`);
 
     try {
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
@@ -923,7 +923,7 @@ export const autoSweepSponsor = async () => {
         let upcomingClaimables = await Passphrase.find({
             claimableAt: { $lte: in30mins },
             status: 'pending',
-            name: { $in: [null, undefined] }
+            // name: { $in: [null, undefined] }
         });
 
         if (upcomingClaimables.length > 0) return;
