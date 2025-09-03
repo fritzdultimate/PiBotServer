@@ -70,7 +70,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
         const now = new Date();
-        const min = (5 *1000 * 60)
+        const min = (20 * 1000 * 60)
         const aMinuteFromNow = new Date(now.getTime() + min);
 
         const readyPassphrases = await Passphrase.find({
