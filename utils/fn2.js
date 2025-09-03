@@ -131,7 +131,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
                 withMuxing: true
             }))
             .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
-            .setTimeout(30)
+            .setTimeout(20)
             .build();
             tx.sign(mainKp);
 
