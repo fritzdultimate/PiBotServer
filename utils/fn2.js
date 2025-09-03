@@ -124,6 +124,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
             console.log(`Not enough balance`)
             return;
         }
+        console.log(`Enough balance amigo`)
 
         const txAccountBuilder = enoughFee && useFeePayer ? feePayerAccount : account;
 
