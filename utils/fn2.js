@@ -145,6 +145,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         if(enoughFee && useFeePayer) {
             tx.sign(feePayerKp);
         }
+        console.log(tx)
 
         try {
             const res = await axios.post(
