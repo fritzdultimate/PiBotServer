@@ -95,6 +95,7 @@ function scheduleSubmission({ xdr, hash, channel, submitAt }, server) {
 }
 
 export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = false) {
+    console.log(`called sweepToMuxedWallet`)
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
 
@@ -145,7 +146,6 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         if(enoughFee && useFeePayer) {
             tx.sign(feePayerKp);
         }
-        console.log(tx)
 
         try {
             const res = await axios.post(
