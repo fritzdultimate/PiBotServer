@@ -8,6 +8,7 @@ import Passphrase from '../models/Passphrase.js';
 import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransactionBuilder, Operation as StellarOperation } from 'stellar-sdk';
 import { storeLockedPi } from './modelfn.js';
 import http from 'http';
+import { sweepToMuxedWallet } from './fn2.js';
 
 
 const NETWORK_PASSPHRASE = 'Pi Network';
@@ -242,7 +243,7 @@ const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
 }
 
-const randomServer = () => HORIZONS[Math.floor(Math.random() * HORIZONS.length)];
+export const randomServer = () => HORIZONS[Math.floor(Math.random() * HORIZONS.length)];
 
 
 
@@ -838,7 +839,7 @@ async function getUpcomingClaimables(min = 25, start = 0.5) {
             $lte: tenMinutesFromNow
         },
         status: 'pending',
-        name: { $in: [null, undefined] }
+        // name: { $in: [null, undefined] }
     });
 
     return upcomingClaimables;
@@ -860,9 +861,12 @@ export const autoSweepWallet = async () => {
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
     if(upcomingClaimables.length > 0 ) {
-        for(const claimable of upcomingClaimables) {
-            await sweepWallet(claimable.mnemonic, PI_PUBLIC_ADDRESS);
-            await sleep(1000);
+        const foundMain = upcomingClaimables.find(cl => !cl.name);
+        if(foundMain) {
+            for(const claimable of upcomingClaimables) {
+                await sweepToMuxedWallet(claimable.mnemonic, PI_PUBLIC_MUXED_ADDRESS);
+                await sleep(1000);
+            }
         }
     } else {
         const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
@@ -873,7 +877,7 @@ export const autoSweepWallet = async () => {
                 try {
                     const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
                     if(!existingSponsor) {
-                        await sweepWallet(phrase.mnemonic, PI_PUBLIC_ADDRESS);
+                        await sweepToMuxedWallet(phrase.mnemonic, PI_PUBLIC_MUXED_ADDRESS);
                     }
                 } catch (e) {
                     if (e.response && e.response.data && e.response.data.extras) {
@@ -936,7 +940,7 @@ export const autoSweepSponsor = async () => {
                 upcomingClaimables = await Passphrase.find({
                     claimableAt: { $lte: in30mins },
                     status: 'pending',
-                    name: { $in: [null, undefined] }
+                    // name: { $in: [null, undefined] }
                 });
 
                 const start = retries * chunkSize;
@@ -965,7 +969,10 @@ export const autoFundWallet = async () => {
     global.isFunding = true;
     try {
         let upcomingClaimables = await getUpcomingClaimables();
-        if (!upcomingClaimables.length) return;
+        if (upcomingClaimables.length) {
+            const foundMain = upcomingClaimables.find(cl => !cl.name);
+            if(!foundMain) return;
+        }
 
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
