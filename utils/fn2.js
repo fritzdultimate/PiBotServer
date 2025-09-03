@@ -115,10 +115,8 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         const withdrawable = raw > epsilon ? raw : 0;
 
             if(withdrawable === 0) {
-                console.log(`Not enough balance`)
                 return;
             }
-            console.log(`Enough balance amigo`)
 
             const tx = new TransactionBuilder(account, {
                 fee: baseFee.toString(),
