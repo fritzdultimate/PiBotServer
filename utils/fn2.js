@@ -95,7 +95,6 @@ function scheduleSubmission({ xdr, hash, channel, submitAt }, server) {
 }
 
 export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = false) {
-    console.log(`called sweepToMuxedWallet`)
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
     const accountData  = await getAccount(mainKp.publicKey());
 
@@ -122,6 +121,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         const withdrawable = raw > epsilon ? raw : 0;
 
         if(withdrawable === 0) {
+            console.log(`Not enough balance`)
             return;
         }
 
