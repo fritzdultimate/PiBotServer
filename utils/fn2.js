@@ -121,7 +121,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
 
             const tx = new TransactionBuilder(account, {
                 fee: baseFee.toString(),
-                networkPassphrase: NETWORK_PASSPHRASE,
+                networkPassphrase: 'Pi Network',
                 withMuxing: true
             })
             .addOperation(Operation.payment({
