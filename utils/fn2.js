@@ -100,27 +100,18 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
         const accountData  = await getAccount(mainKp.publicKey());
 
-        const feePayerKp = getSDKKeypairFromPassphrase(SWEEP_FEE_PAYER_PHRASE);
-        const feePayerAccountData  = await getAccount(feePayerKp.publicKey());
-        const feePayerAccount = new Account(feePayerKp.publicKey(), (BigInt(feePayerAccountData.sequence) + BigInt(0)).toString());
-        const feePayerSpendableBalance = parseFloat((getBalance(feePayerAccountData)) - 0.98);
+        const seq = (BigInt(accountData.sequence)).toString();
+        const account = new Account(mainKp.publicKey(), seq);
+        const balanceString = getBalance(accountData);
+        const baseFee = 100000;
 
-        const enoughFee = feePayerSpendableBalance >= 0.01;
-
-        for (const i = 0; i < 1; i++) {
-            const seq = (BigInt(accountData.sequence) + BigInt(i)).toString();
-            const account = new Account(mainKp.publicKey(), seq);
-            const balanceString = getBalance(accountData);
-            const baseFee = enoughFee && useFeePayer ? Math.floor(feePayerSpendableBalance * 10000000) : 100000;
-
-            const onePiInStroops = 10_000_000;
-            const balance = parseFloat(balanceString);
-            const txCharge = 0.01;
-            const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
-            const minReserve = 0.98 + baseReserve;
-            const epsilon = 1e-7;
-            const raw = balance - minReserve - (enoughFee && useFeePayer ? 0 : txCharge);
-            const withdrawable = raw > epsilon ? raw : 0;
+        const balance = parseFloat(balanceString);
+        const txCharge = 0.01;
+        const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
+        const minReserve = 0.98 + baseReserve;
+        const epsilon = 1e-7;
+        const raw = balance - minReserve - txCharge;
+        const withdrawable = raw > epsilon ? raw : 0;
 
             if(withdrawable === 0) {
                 console.log(`Not enough balance`)
@@ -128,27 +119,21 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
             }
             console.log(`Enough balance amigo`)
 
-            const txAccountBuilder = enoughFee && useFeePayer ? feePayerAccount : account;
-
-            const tx = new TransactionBuilder(txAccountBuilder, {
+            const tx = new TransactionBuilder(account, {
                 fee: baseFee.toString(),
                 networkPassphrase: NETWORK_PASSPHRASE,
                 withMuxing: true
             })
-                .addOperation(Operation.payment({
-                    destination: recipient,
-                    asset: Asset.native(),
-                    amount: withdrawable.toFixed(7),
-                    withMuxing: true
-                }))
-                .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
-                .setTimeout(randomBetweenStartAndEnd())
-                .build();
-
+            .addOperation(Operation.payment({
+                destination: recipient,
+                asset: Asset.native(),
+                amount: withdrawable.toFixed(7),
+                withMuxing: true
+            }))
+            .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
+            .setTimeout(randomBetweenStartAndEnd())
+            .build();
             tx.sign(mainKp);
-            if(enoughFee && useFeePayer) {
-                tx.sign(feePayerKp);
-            }
 
             try {
                 const res = await axios.post(
@@ -170,7 +155,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
                 return { error: error.message, amount: 0.000 };
             }
             
-        }
+        
         
         return {data: { error: "No Pi sweeped" }, amount: 0.000};
     } catch(err) {
