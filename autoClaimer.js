@@ -37,6 +37,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             for (const s of usingSponsors) {
+                const r = name ? recipient : getRandomAddress()
                 try {
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
@@ -44,7 +45,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const balance = parseFloat(balanceString) - 0.98;
                     if(balance < 0.08) continue;
 
-                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, amount, retries, name);
+                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, amount, retries, name);
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
