@@ -37,7 +37,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             for (const s of usingSponsors) {
-                const r = name ? recipient : getRandomAddress()
+                // const r = name ? recipient : getRandomAddress()
+                const r = recipient;
                 try {
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
@@ -81,7 +82,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         });
 
         if(readyPassphrases.length) {
-            const receiverAddress = address ? address : getRandomAddress();
+            const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
