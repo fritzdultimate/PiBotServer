@@ -955,6 +955,8 @@ export const autoSweepSponsor = async () => {
                     await Promise.all(sps.map(async (sponsor, i) => {
                         await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
                     }));
+
+                    await sleep(2000)
                 }
                 // for(const s of sponsors) {
                 //     // await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
