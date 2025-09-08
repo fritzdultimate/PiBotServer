@@ -948,10 +948,11 @@ export const autoSweepSponsor = async () => {
                 const end = Math.min(start + chunkSize, sponsors.length);
                 const sponsorChunk = sponsors.slice(start, end);
 
-                await Promise.all(sponsorChunk.map(async (sponsor, i) => {
-                    await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-                }));
+                // await Promise.all(sponsorChunk.map(async (sponsor, i) => {
+                //     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+                // }));
                 for(const s of sponsorChunk) {
+                    console.log(`Sweeping ${s.mnemonic}`)
                     await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
                     await sleep(1000);
                 }
