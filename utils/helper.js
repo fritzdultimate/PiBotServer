@@ -13,7 +13,7 @@ export function formatReadableTimeString(timeStr) {
         second: '2-digit',
         hour12: true,
     });
-}
+} 
 
 export function timeAgoOrInString(timeStr) {
     const date = new Date(timeStr);
