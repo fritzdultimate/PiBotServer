@@ -935,6 +935,11 @@ export const autoSweepSponsor = async () => {
         if (upcomingClaimables.length > 0) return;
 
         if (!upcomingClaimables.length) {
+            const chunkSize = 15;
+            const chunks = [];
+            for (let i = 0; i < sponsors.length; i += chunkSize) {
+                chunks.push(sponsors.slice(i, i + chunkSize));
+            }
             while(!upcomingClaimables.length && !global.isFunding) {
                 upcomingClaimables = await Passphrase.find({
                     claimableAt: { $lte: in30mins },
@@ -945,10 +950,16 @@ export const autoSweepSponsor = async () => {
                 // await Promise.all(sponsorChunk.map(async (sponsor, i) => {
                 //     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
                 // }));
-                for(const s of sponsors) {
-                    // await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
-                    await sleep(1000);
+                for(const sps of chunks) {
+                    console.log(`Cheecking ${sps.length} sponsors. ${chunks.length} chunks`)
+                    await Promise.all(sps.map(async (sponsor, i) => {
+                        await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+                    }));
                 }
+                // for(const s of sponsors) {
+                //     // await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
+                //     await sleep(1000);
+                // }
             }
         };
 
