@@ -899,7 +899,7 @@ export const autoSweepWallet = async () => {
 
 export const autoSweepSponsor = async () => {
 
-    if(global.isSweepingSponsor || global.isFunding || global.isUnlocking) return;
+    if(global.isSweepingSponsor || global.isUnlocking) return;
     
     const now = new Date();
     const lastActivity = global.lastClaimedOrFailedAt || new Date(0);
