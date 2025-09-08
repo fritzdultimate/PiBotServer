@@ -934,30 +934,22 @@ export const autoSweepSponsor = async () => {
 
         if (upcomingClaimables.length > 0) return;
 
-        let maxRetries = 10;
-        let retries = 0;
-        const chunkSize = Math.ceil(sponsors.length / maxRetries);
         if (!upcomingClaimables.length) {
-            while(!upcomingClaimables.length && retries < maxRetries && !global.isFunding) {
+            while(!upcomingClaimables.length && !global.isFunding) {
                 upcomingClaimables = await Passphrase.find({
                     claimableAt: { $lte: in30mins },
                     status: 'pending',
                     // name: { $in: [null, undefined] }
                 });
 
-                const start = retries * chunkSize;
-                const end = Math.min(start + chunkSize, sponsors.length);
-                const sponsorChunk = sponsors.slice(start, end);
-
                 // await Promise.all(sponsorChunk.map(async (sponsor, i) => {
                 //     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
                 // }));
-                for(const s of sponsorChunk) {
+                for(const s of sponsors) {
                     console.log(`Sweeping ${s.mnemonic}`)
                     await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
                     await sleep(1000);
                 }
-                retries++;
             }
         };
 
