@@ -940,31 +940,16 @@ export const autoSweepSponsor = async () => {
             for (let i = 0; i < sponsors.length; i += chunkSize) {
                 chunks.push(sponsors.slice(i, i + chunkSize));
             }
-            while(!upcomingClaimables.length && !global.isFunding) {
-                upcomingClaimables = await Passphrase.find({
-                    claimableAt: { $lte: in30mins },
-                    status: 'pending',
-                    // name: { $in: [null, undefined] }
-                });
+            for(const sps of chunks) {
+                console.log(`Cheecking ${sps.length} sponsors. ${chunks.length} chunks`)
+                await Promise.all(sps.map(async (sponsor, i) => {
+                    await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+                }));
 
-                // await Promise.all(sponsorChunk.map(async (sponsor, i) => {
-                //     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-                // }));
-                for(const sps of chunks) {
-                    console.log(`Cheecking ${sps.length} sponsors. ${chunks.length} chunks`)
-                    await Promise.all(sps.map(async (sponsor, i) => {
-                        await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
-                    }));
-
-                    await sleep(2000)
-                }
-                // for(const s of sponsors) {
-                //     // await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
-                //     await sleep(1000);
-                // }
+                await sleep(2000)
             }
-        };
-
+        }
+        global.isSweepingSponsor = false;
         
     } catch(err) {
         console.log(`Something went wrong, sweeping sponsors`, err)
