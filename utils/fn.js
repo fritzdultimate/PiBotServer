@@ -941,7 +941,6 @@ export const autoSweepSponsor = async () => {
                 chunks.push(sponsors.slice(i, i + chunkSize));
             }
             for(const sps of chunks) {
-                console.log(`Cheecking ${sps.length} sponsors. ${chunks.length} chunks`)
                 await Promise.all(sps.map(async (sponsor, i) => {
                     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
                 }));
