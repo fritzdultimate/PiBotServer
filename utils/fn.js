@@ -946,7 +946,6 @@ export const autoSweepSponsor = async () => {
                 //     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
                 // }));
                 for(const s of sponsors) {
-                    console.log(`Sweeping ${s.mnemonic}`)
                     await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
                     await sleep(1000);
                 }
