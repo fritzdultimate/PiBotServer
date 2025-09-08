@@ -951,14 +951,17 @@ export const autoSweepSponsor = async () => {
                 await Promise.all(sponsorChunk.map(async (sponsor, i) => {
                     await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
                 }));
-                await sleep(500);
+                for(const s of sponsorChunk) {
+                    await sweepWallet(s.mnemonic, PI_PUBLIC_ADDRESS);
+                    await sleep(1000);
+                }
                 retries++;
             }
         };
 
         
     } catch(err) {
-        // console.log(`Something went wrong, sweeping sponsors`, err)
+        console.log(`Something went wrong, sweeping sponsors`, err)
     } finally {
         global.isSweepingSponsor = false;
     }
