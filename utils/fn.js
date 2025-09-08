@@ -689,6 +689,7 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
                 return {data: res.data, amount: withdrawable.toFixed(7)};
             }
         } catch (error) {
+            console.log(error)
             return { error: error.message, amount: 0.000 };
         }
         
