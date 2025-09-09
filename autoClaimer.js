@@ -82,7 +82,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         });
 
         if(readyPassphrases.length) {
-            const receiverAddress = address ? address : getRandomAddress();
+            const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
