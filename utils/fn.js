@@ -899,6 +899,7 @@ export const autoSweepWallet = async () => {
 };
 
 export const autoSweepSponsor = async () => {
+    console.log('H sponsors')
 
     if(global.isSweepingSponsor || global.isUnlocking) return;
     
