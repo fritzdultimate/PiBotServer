@@ -47,7 +47,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        // .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(180)
         .build();
 
@@ -129,7 +129,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
                 amount: withdrawable.toFixed(7),
                 withMuxing: true
             }))
-            .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
+            // .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
             .setTimeout(20)
             .build();
             tx.sign(mainKp);
