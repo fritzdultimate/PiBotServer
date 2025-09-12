@@ -841,7 +841,7 @@ async function getUpcomingClaimables(min = 25, start = 0.5) {
             $lte: tenMinutesFromNow
         },
         status: 'pending',
-        // name: { $in: [null, undefined] }
+        name: { $in: [null, undefined] }
     });
 
     return upcomingClaimables;
@@ -966,7 +966,7 @@ export const autoFundWallet = async () => {
     try {
         let upcomingClaimables = await getUpcomingClaimables();
         if (upcomingClaimables.length) {
-            const foundMain = upcomingClaimables.find(cl => !cl.name);
+            const foundMain = upcomingClaimables.find(cl => cl.name == null);
             if(!foundMain) return;
         }
 
