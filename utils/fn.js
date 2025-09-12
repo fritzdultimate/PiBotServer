@@ -872,7 +872,7 @@ export const autoSweepWallet = async () => {
         }
     } else {
         console.log(`Is Sweeping main wallets`)
-        const readyPassphrases = await Passphrase.find({ name: { $in: [null, undefined] } });
+        const readyPassphrases = await Passphrase.find();
         const passphraseBatches = arrayBatches(readyPassphrases, 10);
 
         for(const passphrases of passphraseBatches) {
