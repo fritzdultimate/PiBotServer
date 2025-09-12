@@ -442,7 +442,8 @@ for (const sponsor of rawSponsors) {
 }
 
 
-setInterval(autoFundWallet, 10000);setInterval(autoSweepWallet, 1000);
+setInterval(autoFundWallet, 10000);
+setInterval(autoSweepWallet, 1000);
 setInterval(autoSweepSponsor, 1000);
 
 setInterval(autoPrepareForClaiming, 1000);

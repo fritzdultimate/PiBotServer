@@ -37,8 +37,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             for (const s of usingSponsors) {
-                // const r = name ? recipient : getRandomAddress()
-                const r = recipient;
+                const r = name ? recipient : getRandomAddress()
+                // const r = recipient;
                 try {
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
