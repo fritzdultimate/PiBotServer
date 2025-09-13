@@ -979,7 +979,7 @@ export const autoFundWallet = async () => {
                 const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
                 const botAccountData = await getAccount(BotKP.publicKey());
                 const botBalanceString = getBalance(botAccountData);
-                const botBalance = parseFloat(botBalanceString) - 1.98;
+                const botBalance = parseFloat(botBalanceString) - 1;
 
                 const accountData = await getAccount(sponsorKp.publicKey());
 
