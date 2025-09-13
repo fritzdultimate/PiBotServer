@@ -238,7 +238,10 @@ app.post('/api/settings', async(req, res) => {
             { $set: updateFields },
             { new: true, upsert: true }
         );
-        res.json(settings);
+        exec("pm2 restart all", (err, stdout, stderr) => {
+            if (err) return res.status(500).json({ success: false, error: stderr });
+            res.json(settings);
+        });
     } catch(err) {
         console.log(err)
         res.status(500).json({success: false, error: `Error updating settings` });
