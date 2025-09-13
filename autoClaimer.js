@@ -44,7 +44,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const accountData  = await getAccount(kp.publicKey());
                     const balanceString = getBalance(accountData);
                     const balance = parseFloat(balanceString) - 0.98;
-                    if(balance < (FIRST_BUMP_FEE - 0.01)) continue;
+                    if(balance < 2) continue;
                     // Change amount
                     // const mutatedAmount = name ? (Number(amount) + 0.01).toString() : amount;
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, amount, retries, name);
