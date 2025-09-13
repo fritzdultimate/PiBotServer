@@ -989,7 +989,7 @@ export const autoFundWallet = async () => {
                 const actualBalance = parseFloat(balanceString);
 
                 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-                const targetBalance = parseInt(settings.minSponsorBalance);
+                const targetBalance = Number(settings.minSponsorBalance);
                 const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
                 const reserve = 0.98 + baseReserve;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
