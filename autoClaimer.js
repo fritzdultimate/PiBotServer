@@ -1,4 +1,5 @@
 import { connectToDB } from "./db.js";
+import ColemanSettings from "./models/ColemanSettings.js";
 import Log from "./models/Log.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
@@ -83,7 +84,8 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         });
 
         if(readyPassphrases.length) {
-            const receiverAddress = address ? address : PI_PUBLIC_ADDRESS;
+            const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+            const receiverAddress = address ? address : settings.botAddress;
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
