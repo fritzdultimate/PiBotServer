@@ -9,6 +9,7 @@ import { Server, Keypair as StellarKeypair, TransactionBuilder as StellarTransac
 import { storeLockedPi } from './modelfn.js';
 import http from 'http';
 import { sweepToMuxedWallet } from './fn2.js';
+import ColemanSettings from '../models/ColemanSettings.js';
 
 
 const NETWORK_PASSPHRASE = 'Pi Network';
@@ -986,7 +987,9 @@ export const autoFundWallet = async () => {
 
                 const balanceString = getBalance(accountData);
                 const actualBalance = parseFloat(balanceString);
-                const targetBalance = FIRST_BUMP_FEE;
+
+                const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+                const targetBalance = parseInt(settings.minSponsorBalance);
                 const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
                 const reserve = 0.98 + baseReserve;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
@@ -996,10 +999,10 @@ export const autoFundWallet = async () => {
                     const isInFirstFiltered = firstFilteredSponsors.includes(sponsorKp.publicKey());
 
                     if (isInFirstFiltered) {
-                        return botBalance > FIRST_BUMP_FEE ? FIRST_BUMP_FEE : changeNeeded;
+                        return changeNeeded;
                     }
 
-                    return changeNeeded;
+                    return 0.08;
                 };
 
                 upcomingClaimables = await getUpcomingClaimables();
