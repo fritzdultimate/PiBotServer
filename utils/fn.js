@@ -986,10 +986,10 @@ export const autoFundWallet = async () => {
 
                 const balanceString = getBalance(accountData);
                 const actualBalance = parseFloat(balanceString);
-                const targetBalance = 0.06;
+                const targetBalance = FIRST_BUMP_FEE;
                 const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
                 const reserve = 0.98 + baseReserve;
-                const changeNeeded = FIRST_BUMP_FEE - (actualBalance - reserve);
+                const changeNeeded = targetBalance - (actualBalance - reserve);
                 // console.log(`Funding`);
 
                 const calculateFundingAmount = () => {
