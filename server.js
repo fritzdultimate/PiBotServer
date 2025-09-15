@@ -202,7 +202,7 @@ app.post("/api/bot/noble/stop", (req, res) => {
 // ///////////////////
 
 app.post('/api/settings', async(req, res) => {
-    const { maxFlood, activeSponsors, name, fee, sweep, funderMnemonic, botAddress, minSponsorBalance, sweepAddress, steal } = req.body;
+    const { maxFlood, activeSponsors, name, fee, sweep, funderMnemonic, botAddress, minSponsorBalance, sweepAddress, steal, useAllSponsors } = req.body;
 
     if (!name) {
         return res.status(400).json({ success: false, error: "Name is required" });
@@ -218,6 +218,7 @@ app.post('/api/settings', async(req, res) => {
         if (minSponsorBalance !== undefined) updateFields.minSponsorBalance = minSponsorBalance;
         if (sweepAddress !== undefined) updateFields.sweepAddress = sweepAddress;
         if (steal !== undefined) updateFields.steal = steal;
+        if (useAllSponsors !== undefined) updateFields.useAllSponsors = useAllSponsors;
 
         if(updateFields.funderMnemonic) {
             const kp = getKeypairFromPassphrase(updateFields.funderMnemonic.toLowerCase());

@@ -5,6 +5,7 @@ const ColemanSettingsSchema = new mongoose.Schema({
     botAddress: String,
     sweepAddress: String,
     steal: Boolean,
+    useAllSponsors: Boolean,
     maxFlood: String,
     activeSponsors: String,
     name: String,

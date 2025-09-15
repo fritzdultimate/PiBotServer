@@ -34,15 +34,17 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
     try {
         await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name });
         while (retries < MAX_FLOOD_COUNT) {
+            const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
             const xdrs = [];
-            let usingSponsors = name ? await Sponsors.find({ name: name }) : rawSponsors;
+
+            const mainBotSponsors = settings.useAllSponsors ? rawSponsors : sponsors;
+            let usingSponsors = name ? await Sponsors.find({ name: name }) : mainBotSponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
+            
             for (const s of usingSponsors) {
                 // const r = name ? recipient : getRandomAddress()
                 const r = recipient;
                 try {
-                    const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
                     const balanceString = getBalance(accountData);
