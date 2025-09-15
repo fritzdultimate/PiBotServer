@@ -109,11 +109,12 @@ export async function autoSubmitXDR(name) {
     for (const key in pendingXDRs) {
         const now = new Date();
         const claimableAt = new Date(key);
-        // if(name) {
-        //     await sleep(100)
-        // }
         if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
+
+        if(name) {
+            await sleep(300)
+        }
 
         let success = false;
         let balanceId = null;
