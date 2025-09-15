@@ -102,9 +102,16 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.post('/list', async (req, res) => {
-    let { receiverAddress, owner } = req.body;
+    let { receiverAddress, owner, which } = req.body;
 
     try {
+        if(which === 'all') {
+            const passphrases = Passphrase.find({
+                status: 'pending',
+                claimableAt: { $ne: null, $exists: true }
+            }).sort({ claimableAt: 1 });
+            return res.json(passphrases);
+        }
         if(owner) {
             const passphrases = await Passphrase.find({ owner }).sort({ claimableAt: 1 });
             return res.json(passphrases);
