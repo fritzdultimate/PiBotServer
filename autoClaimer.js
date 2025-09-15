@@ -121,7 +121,7 @@ export async function autoSubmitXDR(name) {
         for(const xdrs of xdrGroup) {
             const result = await Promise.all(xdrs.map(async (xdr, i) => {
                 let server = HORIZONS[i % HORIZONS.length] || "https://api.mainnet.minepi.com";
-                server = name ? HORIZONS[0] : server;
+                server = !!name ? HORIZONS[0] : server;
                 console.log(server);
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
