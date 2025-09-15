@@ -35,7 +35,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
         await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name });
         while (retries < MAX_FLOOD_COUNT) {
             const xdrs = [];
-            let usingSponsors = name ? await Sponsors.find({ name: name }) : sponsors;
+            let usingSponsors = name ? await Sponsors.find({ name: name }) : rawSponsors;
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             for (const s of usingSponsors) {
                 // const r = name ? recipient : getRandomAddress()
