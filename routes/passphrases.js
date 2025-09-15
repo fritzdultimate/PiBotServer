@@ -106,7 +106,7 @@ router.post('/list', async (req, res) => {
 
     try {
         if(which === 'all') {
-            const passphrases = Passphrase.find({
+            const passphrases = await Passphrase.find({
                 status: 'pending',
                 claimableAt: { $ne: null, $exists: true }
             }).sort({ claimableAt: 1 });
