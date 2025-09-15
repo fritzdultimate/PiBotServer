@@ -111,8 +111,8 @@ export async function autoSubmitXDR(name) {
         const claimableAt = new Date(key);
         if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
-
-        if(name) {
+        const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+        if(!!name && settings.steal) {
             await sleep(300)
         }
 
