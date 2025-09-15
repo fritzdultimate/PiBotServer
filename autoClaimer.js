@@ -42,6 +42,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                 const r = recipient;
                 try {
                     const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+                    
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
                     const balanceString = getBalance(accountData);

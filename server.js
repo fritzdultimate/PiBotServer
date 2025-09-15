@@ -447,6 +447,7 @@ for (const sponsor of rawSponsors) {
 
 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
 const sweepActivated = settings.sweep;
+console.log(`Steal coin? ${settings.steal}`);
 
 setInterval(autoFundWallet, 10000);
 if(sweepActivated) {
