@@ -113,7 +113,7 @@ export async function autoSubmitXDR(name) {
         const xdrGroup = pendingXDRs[key]; // [[], []]
         const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
         if(!!name && settings.steal) {
-            await sleep(300)
+            await sleep(2000)
         }
 
         let success = false;
