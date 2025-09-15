@@ -122,7 +122,6 @@ export async function autoSubmitXDR(name) {
             const result = await Promise.all(xdrs.map(async (xdr, i) => {
                 let server = HORIZONS[i % HORIZONS.length];
                 server = !!name ? HORIZONS[0] : server;
-                console.log(server);
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
                     balanceId = xdr.balanceId;
