@@ -530,7 +530,6 @@ export async function submitTransaction(txXdr, horizon) {
             `tx=${encodeURIComponent(txXdr)}`,
             { 
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                timeout: 10000,
                 httpAgent: new http.Agent({ keepAlive: false })
             }
         );
