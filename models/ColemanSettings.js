@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 const ColemanSettingsSchema = new mongoose.Schema({
     funderMnemonic: String,
     botAddress: String,
+    sweepAddress: String,
+    steal: Boolean,
     maxFlood: String,
     activeSponsors: String,
     name: String,

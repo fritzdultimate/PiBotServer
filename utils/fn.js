@@ -863,11 +863,13 @@ export const autoSweepWallet = async () => {
     if(global.isSweeping) return;
     global.isSweeping = true
     const upcomingClaimables = await getUpcomingClaimables();
+    const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+    const SWEEP_ADDRESS = settings.sweepAddress;
     if(upcomingClaimables.length > 0 ) {
         const foundMain = upcomingClaimables.find(cl => !cl.name);
         if(foundMain) {
             for(const claimable of upcomingClaimables) {
-                await sweepToMuxedWallet(claimable.mnemonic, PI_PUBLIC_MUXED_ADDRESS);
+                await sweepToMuxedWallet(claimable.mnemonic, SWEEP_ADDRESS);
                 await sleep(1000);
             }
         }
@@ -881,7 +883,7 @@ export const autoSweepWallet = async () => {
                 try {
                     const existingSponsor = await Sponsors.findOne({ mnemonic: phrase.mnemonic });
                     if(!existingSponsor) {
-                        await sweepToMuxedWallet(phrase.mnemonic, PI_PUBLIC_MUXED_ADDRESS);
+                        await sweepToMuxedWallet(phrase.mnemonic, SWEEP_ADDRESS);
                     }
                 } catch (e) {
                     if (e.response && e.response.data && e.response.data.extras) {
