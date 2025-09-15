@@ -112,9 +112,9 @@ export async function autoSubmitXDR(name) {
         if((now - claimableAt) <= -200) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
         const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-        if(!!name && settings.steal) {
-            await sleep(2000)
-        }
+        // if(!!name && settings.steal) {
+        //     await sleep(2000)
+        // }
 
         let success = false;
         let balanceId = null;
