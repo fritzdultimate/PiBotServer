@@ -3,6 +3,7 @@ import { Account, Asset, Memo, Operation, TransactionBuilder } from "stellar-sdk
 import { firstFilteredSponsors, getAccount, getBalance, getSDKKeypairFromPassphrase, HORIZONS, randomServer, submitTransaction } from "./fn.js";
 import ColemanSettings from "../models/ColemanSettings.js";
 import axios from "axios";
+import Passphrase from "../models/Passphrase.js";
 
 function generateUniqueMemo(prefix = 'PiA') {
     const time = Date.now().toString(36);
