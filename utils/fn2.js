@@ -7,8 +7,7 @@ import Passphrase from "../models/Passphrase.js";
 
 function generateUniqueMemo(prefix = 'PiA') {
     const time = Date.now().toString(36);
-    const rand = Math.random().toString(36).slice(2, 6);
-    const memoStr = `telegram:@fritzdecode:${prefix}/${time.toUpperCase()}/${rand.toUpperCase()}`.slice(0, 28);
+    const memoStr = `${time.toUpperCase()}`.slice(0, 10);
     return Memo.text(memoStr);
 }
 
@@ -48,7 +47,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        // .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(140 + (inx * 5))
         .build();
 
