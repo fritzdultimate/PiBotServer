@@ -165,14 +165,14 @@ export async function sweepXMinToClaimable() {
     if(global.sweepXMinToClaimable) return;
     global.sweepXMinToClaimable = true;
     const now = new Date();
-    const tenMin = 10 * 60 * 1000;
-    const x = 0.5 * 60 * 1000;
-    const xMinutesFrom = new Date(now.getTime() - x);
-    const tenMinutesFromNow = new Date(now.getTime() + tenMin);
+    const futureMin = 5 * 60 * 1000;
+    const gracePeriod = 3 * 60 * 1000;
+    const xMinutesFrom = new Date(now.getTime() - gracePeriod);
+    const minutesFromNow = new Date(now.getTime() + futureMin);
     const upcomingClaimables = await Passphrase.find({
         claimableAt: {
             $gte: xMinutesFrom,
-            $lte: tenMinutesFromNow
+            $lte: minutesFromNow
         },
         status: 'pending',
         name: { $in: [null, undefined] }
