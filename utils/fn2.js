@@ -119,7 +119,7 @@ export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, am
 
         const channelAccount = new Account(publicKey, seq);
 
-        const fee = Math.ceil(customFee * 1e7).toString();
+        const fee = Math.ceil((customFee * 1e7) * 2).toString();
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
