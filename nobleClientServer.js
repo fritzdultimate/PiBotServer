@@ -45,7 +45,7 @@ async function getUpcomingClaimables(start = 0) {
             $lte: tenMinutesFromNow
         },
         status: 'pending',
-        name: 'noble'
+        // name: 'noble'
     });
 
     return upcomingClaimables;
@@ -120,6 +120,7 @@ setInterval(async() => {
     const upcomingClaimables = await getUpcomingClaimables();
     if (upcomingClaimables.length > 0) {
         for(const claimable of upcomingClaimables) {
+            if(claimable.name !== 'noble') continue;
             await sweepWallet(claimable.mnemonic, MAIN_ADDRESS);
             await sleep(1000);
         }
