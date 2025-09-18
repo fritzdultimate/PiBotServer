@@ -72,7 +72,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                         const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name);
                         xdrs.push({xdr, balanceId});
                     } else {
-                        continue;
+                        // continue;
                         const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
                         xdrs.push({xdr, balanceId});
                     }
