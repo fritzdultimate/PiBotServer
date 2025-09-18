@@ -180,10 +180,6 @@ export async function sweepXMinToClaimable() {
     const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
     const SWEEP_ADDRESS = settings.sweepAddress;
 
-    if(!upcomingClaimables.length) {
-        console.log('Nothing')
-    } 
-
     for(const claimable of upcomingClaimables) {
         await sweepToMuxedWallet(claimable.mnemonic, SWEEP_ADDRESS);
         await sleep(500);
