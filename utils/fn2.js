@@ -61,6 +61,92 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
     }
 }
 
+export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId, inx, name = null) {
+    try{
+        const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
+        const publicKey = channelKp.publicKey();
+
+        const accountData = await getAccount(publicKey);
+        const settings = name ? await ColemanSettings.findOne({ name }) : await ColemanSettings.findOne({ name: 'whoami5677' });
+        let customFee = settings.fee === 'Base Fee' ? 0.01 : settings.fee;
+        customFee = name ? customFee : firstFilteredSponsors.includes(publicKey) ? customFee : 0.025;
+
+
+        const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
+
+        const channelAccount = new Account(publicKey, seq);
+
+        const fee = Math.ceil((customFee * 1e7) * 2).toString();
+
+        const txBuilder = new TransactionBuilder(channelAccount, {
+            fee,
+            networkPassphrase: 'Pi Network',
+            withMuxing: true
+        })
+        .addOperation(Operation.claimClaimableBalance({
+            balanceId,
+            source: mainKp.publicKey(),
+            withMuxing: true
+        }))
+        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        .setTimeout(140 + (inx * 5))
+        .build();
+
+        txBuilder.sign(mainKp);
+        txBuilder.sign(channelKp);
+
+        return txBuilder.toXDR();
+    } catch (err) {
+        console.error(`Error in prebuildAndSignClaimable for channel ${channelPhrase.slice(0, 5)}...:`, err);
+        return null;
+    }
+}
+
+export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, amount, inx, name = null) {
+    try {
+        
+
+        const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
+        const publicKey = channelKp.publicKey();
+
+        const accountData = await getAccount(publicKey);
+        const settings = name ? await ColemanSettings.findOne({ name }) : await ColemanSettings.findOne({ name: 'whoami5677' });
+        let customFee = settings.fee === 'Base Fee' ? 0.01 : settings.fee;
+        customFee = name ? customFee : firstFilteredSponsors.includes(publicKey) ? customFee : 0.025;
+
+
+        const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
+
+        const channelAccount = new Account(publicKey, seq);
+
+        const fee = Math.ceil(customFee * 1e7).toString();
+
+        const txBuilder = new TransactionBuilder(channelAccount, {
+            fee,
+            networkPassphrase: 'Pi Network',
+            withMuxing: true
+        })
+        .addOperation(Operation.payment({
+            destination: recipient,
+            asset: Asset.native(),
+            amount,
+            source: mainKp.publicKey(),
+            withMuxing: true
+        }))
+        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        .setTimeout(140 + (inx * 5))
+        .build();
+
+        txBuilder.sign(mainKp);
+        txBuilder.sign(channelKp);
+
+        return txBuilder.toXDR();
+    } catch (err) {
+        console.error(`Error in prebuildAndSignChannelTx for channel ${channelPhrase.slice(0, 5)}...:`, err);
+        return null;
+    }
+}
+
 
 export async function FloodchannelTransaction(mainPhrase, balanceId, recipient, amount, sponsors) {
     const mainKp = getSDKKeypairFromPassphrase(mainPhrase);

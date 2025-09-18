@@ -4,13 +4,25 @@ import Log from "./models/Log.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
 import { firstFilteredSponsors, getAccount, getBalance, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, sleep, submitTransaction } from "./utils/fn.js";
-import { prebuildAndSignChannelTx } from "./utils/fn2.js";
+import { prebuildAndSignChannelTx, prebuildAndSignClaimable, prebuildAnSignPayment } from "./utils/fn2.js";
 import { getRandomAddress } from "./utils/helper.js";
 
 
 await connectToDB();
 const pendingXDRs = {};
 const rawSponsors = await Sponsors.find();
+
+const claimable_sponsors = [
+    'GBXSHWTBHLYGVE35QBZTTOLR2XUHWT3AFRIEFVIMRABS6XQLG2PV4ZSZ',
+    'GCRITFGUZFVKZI44S2B4K5FRA4R3G3TBS55MROAZJJGASPW2CR6GRXTW',
+    'GADRM6UKC7GHYLAKO5QXDSSXQTP3URIRYM44TZEQ26CJRAHWW43VCGKE',
+];
+
+const payment_sponsors = [
+    'GDMR5AJUDD3HNWHTXXWNWTE66FIASMQHIGBE47BJLV2NBUHQV63I25GB',
+    'GC5OXTBA2RR2FH4P6X2ERB7JULS4JH4EBIPCBDCECHTWJRM5MTZJTPJ5',
+    'GBUUNZIJZOJKDQ2IZAAY3WZXJJ3UYPS2NWL5WEOGI3UYM36EKLMY4VMK',
+]
 
 const sponsors = [];
 const MAX_FLOOD_COUNT = 2;
@@ -52,8 +64,18 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     if(balance < 0.1) continue;
                     // Change amount
                     const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
-                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
-                    xdrs.push({xdr, balanceId});
+
+                    if(claimable_sponsors.includes(kp.publicKey())) {
+                        const xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name);
+                        xdrs.push({xdr, balanceId});
+                    } else if(payment_sponsors.includes(kp.publicKey())) {
+                        const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name);
+                        xdrs.push({xdr, balanceId});
+                    } else {
+                        continue;
+                        const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
+                        xdrs.push({xdr, balanceId});
+                    }
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
                 }
