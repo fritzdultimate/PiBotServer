@@ -8,7 +8,7 @@ import Passphrase from "../models/Passphrase.js";
 function generateUniqueMemo(prefix = 'PiA') {
     const time = Date.now().toString(36);
     const memoStr = `${time.toUpperCase()}`.slice(0, 10);
-    return Memo.text(memoStr);
+    return Memo.text("server321");
 }
 
 export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, inx, name = null) {
@@ -47,7 +47,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        //.addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(140 + (inx * 5))
         .build();
 
