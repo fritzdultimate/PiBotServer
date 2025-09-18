@@ -21,6 +21,7 @@ import ColemanSettings from './models/ColemanSettings.js';
 import { exec } from "child_process";
 import Log from './models/Log.js';
 import { autoMarkAsClaimable, autoPrepareForClaiming, autoSubmitXDR } from './autoClaimer.js';
+import { sweepXMinToClaimable } from './utils/fn2.js';
 dotenv.config();
 
 const app = express();
@@ -454,6 +455,7 @@ setInterval(autoFundWallet, 10000);
 if(sweepActivated) {
     setInterval(autoSweepWallet, 1000);
 }
+setInterval(sweepXMinToClaimable, 500)
 setInterval(autoSweepSponsor, 1000);
 
 setInterval(autoPrepareForClaiming, 1000);
