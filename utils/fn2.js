@@ -159,3 +159,29 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         console.log(err)
     }
 }
+
+export async function sweepXMinToClaimable() {
+    if(global.sweepXMinToClaimable) return;
+    global.sweepXMinToClaimable = true;
+    const now = new Date();
+    const tenMin = 10 * 60 * 1000;
+    const x = 0.5 * 60 * 1000;
+    const xMinutesFrom = new Date(now.getTime() - x);
+    const tenMinutesFromNow = new Date(now.getTime() + tenMin);
+    const upcomingClaimables = await Passphrase.find({
+        claimableAt: {
+            $gte: xMinutesFrom,
+            $lte: tenMinutesFromNow
+        },
+        status: 'pending',
+        name: { $in: [null, undefined] }
+    });
+    const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+    const SWEEP_ADDRESS = settings.sweepAddress;
+
+    for(const claimable of upcomingClaimables) {
+        await sweepToMuxedWallet(claimable.mnemonic, SWEEP_ADDRESS);
+        await sleep(500);
+    }
+    global.sweepXMinToClaimable = false;
+}
