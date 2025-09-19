@@ -151,7 +151,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
     global.isPreparing = true;
     
     try {
-        console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
+        // console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
         const now = new Date();
         const min = (2 * 1000 * 60)
@@ -163,6 +163,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
             name: name ? name : { $in: [null, undefined] }
         });
 
+        console.log(`Ready Phrases`)
         console.log(readyPassphrases)
 
         if(readyPassphrases.length) {
