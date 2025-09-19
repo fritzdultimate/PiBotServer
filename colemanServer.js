@@ -53,12 +53,14 @@ async function getUpcomingClaimables(start = 0) {
 
 // Auto Fund
 setInterval(async() => {
+
         const upcomingClaimables = await getUpcomingClaimables(0.5);
         if (!upcomingClaimables.length) return;
         if(global.isFunding) return;
         global.isFunding = true;
     
         const usingSponsors = sponsors.slice(0, activeSponsors)
+        console.log(`Coleman is funding`);
     
         for (const p of usingSponsors) {
             try {
