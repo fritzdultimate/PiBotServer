@@ -72,3 +72,4 @@ export function getRandomAddress() {
         Math.floor(Math.random() * PI_PUBLIC_ADDRESS_GROUPED.length)
     ];
 }
+
