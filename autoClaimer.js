@@ -163,7 +163,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
             name: name ? name : { $in: [null, undefined] }
         });
 
-        console.log(`Ready Phrases`)
+        console.log(`Ready Phrases for ${name ? name : 'Main'}`)
         console.log(readyPassphrases)
 
         if(readyPassphrases.length) {
