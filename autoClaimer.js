@@ -163,6 +163,8 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
             name: name ? name : { $in: [null, undefined] }
         });
 
+        console.log(readyPassphrases)
+
         if(readyPassphrases.length) {
             const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
             const receiverAddress = address ? address : settings.botAddress;
