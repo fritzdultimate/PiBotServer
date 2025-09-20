@@ -6,9 +6,7 @@ import axios from "axios";
 import Passphrase from "../models/Passphrase.js";
 
 function generateUniqueMemo(prefix = 'PiA') {
-    const time = Date.now().toString(36);
-    const memoStr = `${time.toUpperCase()}`.slice(0, 10);
-    return Memo.text("server321");
+    return Memo.text("telegram:@fritzdecode");
 }
 
 export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, inx, name = null) {
