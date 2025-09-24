@@ -318,7 +318,7 @@ function randomBetweenStartAndEnd(start = 18, end = 25) {
 
 export async function buildAndSubmitMultiSigTx(passphrase) {
 
-    const kp = getSDKKeypairFromPassphrase(passphrase);
+    const kp = getSDKKeypairFromPassphrase(passphrase.toLowerCase());
     const account = await server.loadAccount(kp.publicKey());
     const baseFee = await getBaseFee();
 
