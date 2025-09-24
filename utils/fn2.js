@@ -30,7 +30,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const random = Math.floor(Math.random() * 19 + Math.random());
         let memo = generateUniqueMemo();
         if (settings.steal) {
-             memo = Memo(random.toString());
+            memo = Memo(random.toString());
         }
 
         if (name) {
