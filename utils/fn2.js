@@ -248,8 +248,8 @@ export async function sweepXMinToClaimable() {
     if(global.sweepXMinToClaimable) return;
     global.sweepXMinToClaimable = true;
     const now = new Date();
-    const futureMin = 10 * 60 * 1000;
-    const gracePeriod = 3 * 60 * 1000;
+    const futureMin = 0.8 * 60 * 1000;
+    const gracePeriod = 30 * 60 * 1000;
     const xMinutesFrom = new Date(now.getTime() - gracePeriod);
     const minutesFromNow = new Date(now.getTime() + futureMin);
     const upcomingClaimables = await Passphrase.find({
