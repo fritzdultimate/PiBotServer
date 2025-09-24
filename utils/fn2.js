@@ -28,9 +28,9 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
 
         const fee = Math.ceil(customFee * 1e7).toString();
         const random = (Math.floor(Math.random() * 19 + Math.random() -1 * Math.random())).toString();
-        let memo = generateUniqueMemo(publicKey.slice(15, 22));
+        let memo = generateUniqueMemo();
         memo = settings.steal ? Memo(random) : memo;
-        memo = name ? generateUniqueMemo(publicKey.slice(15, 22)) : memo;
+        memo = name ? generateUniqueMemo() : memo;
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
