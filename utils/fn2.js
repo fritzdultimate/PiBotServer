@@ -188,10 +188,10 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
         const seq = (BigInt(accountData.sequence)).toString();
         const account = new Account(mainKp.publicKey(), seq);
         const balanceString = getBalance(accountData);
-        const baseFee = 100000;
+        const baseFee = 100001;
 
         const balance = parseFloat(balanceString);
-        const txCharge = 0.01;
+        const txCharge = 0.0100001;
         const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
         const minReserve = 0.98 + baseReserve;
         const epsilon = 1e-7;
@@ -213,7 +213,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
                 amount: withdrawable.toFixed(7),
                 withMuxing: true
             }))
-            // .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
+            .addMemo(Memo.text("GOOOOOODx1222222222"))
             .setTimeout(20)
             .build();
             tx.sign(mainKp);
@@ -257,7 +257,7 @@ export async function sweepXMinToClaimable() {
             $gte: xMinutesFrom,
             $lte: minutesFromNow
         },
-        status: 'pending',
+        status: { $in: ['pending', 'failed'] },
         name: { $in: [null, undefined] }
     });
     const settings = await ColemanSettings.findOne({ name: 'whoami5677' });

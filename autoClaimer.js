@@ -249,10 +249,10 @@ export async function autoSubmitXDR(name) {
 
 export async function autoMarkAsClaimable() {
     const now = new Date();
-    const threeMinutesAgo = new Date(now.getTime() - 0.5 * 60 * 1000);
+    const minutesAgo = new Date(now.getTime() - 0.5 * 60 * 1000);
 
     await Passphrase.updateMany(
-        { claimableAt: { $lt: threeMinutesAgo }, status: 'pending' },
+        { claimableAt: { $lt: minutesAgo }, status: 'pending' },
         { $set: { status: 'failed' } }
     );
 }
