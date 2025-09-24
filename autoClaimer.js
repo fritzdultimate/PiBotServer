@@ -208,17 +208,18 @@ export async function autoSubmitXDR(name) {
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
                     balanceId = xdr.balanceId;
-                    console.log(result)
                     return result;
 
                 } catch (err) {
                     console.error(`❌ Submit error on ${server}:`, err?.response?.data || err.message);
                 }
             }));
+
             const found = result.find((r) => r.hash);
+
             if (found) {
                 await Log.create({ mnemonic: 'Direct above', action: `✅ Claimed Pi. Hash: ${found.hash}`, result: 'success', name: name })
-                // console.log(`✅ Claimed Pi. Hash: ${found.hash}`);
+
                 await Passphrase.updateOne(
                     { 
                         balanceId: balanceId,
@@ -233,7 +234,6 @@ export async function autoSubmitXDR(name) {
         }
 
         if(!success) {
-            await Log.create({ mnemonic: 'Direct above', action: `❌ Claiming failed`, result: 'error', name: name })
             await Passphrase.updateOne(
                 { 
                     balanceId: balanceId,
