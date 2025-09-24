@@ -203,7 +203,7 @@ export async function autoSubmitXDR(name) {
         for(const xdrs of xdrGroup) {
             const result = await Promise.all(xdrs.map(async (xdr, i) => {
                 let server = HORIZONS[i % HORIZONS.length];
-                // server = !!name ? HORIZONS[0] : server;
+                server = settings.steal && name ? HORIZONS[0] : server;
                 // console.log(`${name ?? 'Main server:'} ${server}`)
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
