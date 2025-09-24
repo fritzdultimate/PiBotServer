@@ -95,7 +95,6 @@ export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(generateUniqueMemo(publicKey.slice(15, 22)))
         .setTimeout(140 + (inx * 5))
         .build();
 
@@ -140,7 +139,7 @@ export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, am
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(settings.steal ? 'supreeaaaaaaaaaaaaaa' : generateUniqueMemo())
+        .addMemo(settings.steal ? Memo.text("supreeaaaaaaaaaaaaaa") : generateUniqueMemo())
         .setTimeout(140 + (inx * 5))
         .build();
 
