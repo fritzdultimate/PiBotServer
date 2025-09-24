@@ -6,7 +6,7 @@ import axios from "axios";
 import Passphrase from "../models/Passphrase.js";
 
 function generateUniqueMemo() {
-    return Memo.text("telegram:@fritzdecode");
+    return Memo.text("tm:@fritzdecode");
 }
 
 export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, inx, name = null) {
