@@ -65,8 +65,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                         } else if(payment_sponsors.includes(s.publicKey)) {
                             const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name, true);
                             xdrs.push({xdr, balanceId});
-                        }
-                        if(pos%2 === 0) {
+                        } else if(pos%2 === 0) {
                             const xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name);
                             xdrs.push({xdr, balanceId});
                         } else {
