@@ -3,7 +3,7 @@ import ColemanSettings from "./models/ColemanSettings.js";
 import Log from "./models/Log.js";
 import Passphrase from "./models/Passphrase.js";
 import Sponsors from "./models/Sponsors.js";
-import { firstFilteredSponsors, getAccount, getBalance, getKeypairFromPassphrase, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, sleep, submitTransaction } from "./utils/fn.js";
+import { getAccount, getBalance, getSDKKeypairFromPassphrase, HORIZONS, PI_PUBLIC_ADDRESS, PI_PUBLIC_MUXED_ADDRESS, sleep, submitTransaction } from "./utils/fn.js";
 import { prebuildAndSignChannelTx, prebuildAndSignClaimable, prebuildAnSignPayment } from "./utils/fn2.js";
 import { getRandomAddress } from "./utils/helper.js";
 
