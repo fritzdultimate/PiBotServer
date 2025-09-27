@@ -1,12 +1,20 @@
 
 import { Account, Asset, Memo, Operation, TransactionBuilder } from "stellar-sdk";
-import { firstFilteredSponsors, getAccount, getBalance, getSDKKeypairFromPassphrase, HORIZONS, randomServer, sleep, submitTransaction } from "./fn.js";
+import { BUMP_FEE, firstFilteredSponsors, getAccount, getBalance, getSDKKeypairFromPassphrase, HORIZONS, randomServer, sleep, submitTransaction } from "./fn.js";
 import ColemanSettings from "../models/ColemanSettings.js";
 import axios from "axios";
 import Passphrase from "../models/Passphrase.js";
 
 function generateUniqueMemo() {
     return Memo.text("tm:@fritzdecode");
+}
+function generatePiMemo(length = 10) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let memo = '';
+    for (let i = 0; i < length; i++) {
+        memo += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return memo;
 }
 
 export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId, recipient, amount, inx, name = null) {
@@ -68,7 +76,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
     }
 }
 
-export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId, inx, name = null) {
+export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId, inx, name = null, bumpfee = false) {
     try{
         const channelKp = getSDKKeypairFromPassphrase(channelPhrase);
         const publicKey = channelKp.publicKey();
@@ -76,14 +84,16 @@ export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId,
         const accountData = await getAccount(publicKey);
         const settings = name ? await ColemanSettings.findOne({ name }) : await ColemanSettings.findOne({ name: 'whoami5677' });
         let customFee = settings.fee === 'Base Fee' ? 0.01 : settings.fee;
-        customFee = name ? customFee : firstFilteredSponsors.includes(publicKey) ? customFee : 0.025;
+        customFee = customFee * 2;
+        customFee = bumpfee ? BUMP_FEE : customFee;
+
 
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
         const channelAccount = new Account(publicKey, seq);
 
-        const fee = Math.ceil((customFee * 1e7) * 2).toString();
+        const fee = Math.ceil(customFee * 1e7).toString();
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
@@ -95,6 +105,7 @@ export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
+        .addMemo(Memo.text(generatePiMemo()))
         .setTimeout(140 + (inx * 5))
         .build();
 
@@ -108,7 +119,7 @@ export async function prebuildAndSignClaimable(channelPhrase, mainKp, balanceId,
     }
 }
 
-export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, amount, inx, name = null) {
+export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, amount, inx, name = null, bumpfee = false) {
     try {
         
 
@@ -118,14 +129,15 @@ export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, am
         const accountData = await getAccount(publicKey);
         const settings = name ? await ColemanSettings.findOne({ name }) : await ColemanSettings.findOne({ name: 'whoami5677' });
         let customFee = settings.fee === 'Base Fee' ? 0.01 : settings.fee;
-        customFee = name ? customFee : firstFilteredSponsors.includes(publicKey) ? customFee : 0.025;
+        customFee = customFee * 2;
+        customFee = bumpfee ? BUMP_FEE : customFee;
 
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
 
         const channelAccount = new Account(publicKey, seq);
 
-        const fee = Math.ceil((customFee * 1e7) * 2).toString();
+        const fee = Math.ceil(customFee * 1e7).toString();
 
         const txBuilder = new TransactionBuilder(channelAccount, {
             fee,
@@ -139,7 +151,7 @@ export async function prebuildAnSignPayment(channelPhrase, mainKp, recipient, am
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(settings.steal ? Memo.text("supreeaaaaaaaaaaaaaa") : generateUniqueMemo())
+        .addMemo(Memo.text(generatePiMemo()))
         .setTimeout(140 + (inx * 5))
         .build();
 
