@@ -61,7 +61,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                         const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
                         if (xdr) {
                             xdrs.push({ xdr, balanceId });
-                            pos++;
+                            // pos++;
                         }
                     } else {
 
