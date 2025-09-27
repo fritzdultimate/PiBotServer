@@ -793,7 +793,7 @@ export const autoFundWallet = async () => {
                     const result = await fundWallet(
                         BOT_PHRASE,
                         sponsorKp.publicKey(),
-                        changeNeeded().toFixed(7)
+                        changeNeeded.toFixed(7)
                     );
 
                     const success = result.data;
