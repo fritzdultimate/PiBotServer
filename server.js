@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
-import { autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, firstFilteredSponsors, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
+import { autoFundWallet, autoSweepSponsor, autoSweepWallet, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import { storeLockedPi } from './utils/modelfn.js';
@@ -435,18 +435,6 @@ app.post('/sweep', async (req, res) => {
     
 })
 
-const rawSponsors = await Sponsors.find();
-
-const sponsors = [];
-    
-for (const sponsor of rawSponsors) {
-    const kp = getKeypairFromPassphrase(sponsor.mnemonic);
-    const pubKey = kp.publicKey();
-
-    if (!firstFilteredSponsors.includes(pubKey)) {
-        sponsors.push(sponsor);
-    }
-}
 
 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
 const sweepActivated = settings.sweep;

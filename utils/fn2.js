@@ -1,6 +1,6 @@
 
 import { Account, Asset, Memo, Operation, TransactionBuilder } from "stellar-sdk";
-import { BUMP_FEE, firstFilteredSponsors, getAccount, getBalance, getSDKKeypairFromPassphrase, HORIZONS, randomServer, sleep, submitTransaction } from "./fn.js";
+import { BUMP_FEE, getAccount, getBalance, getSDKKeypairFromPassphrase, HORIZONS, randomServer, sleep, submitTransaction } from "./fn.js";
 import ColemanSettings from "../models/ColemanSettings.js";
 import axios from "axios";
 import Passphrase from "../models/Passphrase.js";
@@ -27,7 +27,6 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
         const accountData = await getAccount(publicKey);
         const settings = name ? await ColemanSettings.findOne({ name }) : await ColemanSettings.findOne({ name: 'whoami5677' });
         let customFee = settings.fee === 'Base Fee' ? 0.01 : settings.fee;
-        customFee = name ? customFee : firstFilteredSponsors.includes(publicKey) ? customFee : 0.025;
 
 
         const seq = (BigInt(accountData.sequence) + BigInt(inx)).toString();
