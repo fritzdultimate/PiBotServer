@@ -6,7 +6,8 @@ const SponsorsSchema = new mongoose.Schema({
     lastChecked: Date,
     status: String, // idle, checking, claimed, sent, failed, etc.
     createdAt: { type: Date, default: Date.now },
-    publicKey: String
+    publicKey: String,
+    inUse: false
 });
 
 export default mongoose.model('Sponsors', SponsorsSchema);

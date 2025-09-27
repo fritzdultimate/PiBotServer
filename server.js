@@ -320,21 +320,6 @@ app.post('/claim', async (req, res) => {
     
 })
 
-app.post('/multi-sign', async (req, res) => {
-    const { mnemonic } = req.body;
-    if(!mnemonic) {
-        return res.status(400).json({error: "Passphrase required"});
-    }
-
-    try {
-        const result = await buildAndSubmitMultiSigTx(mnemonic);
-        res.json({ result });
-    } catch(err) {
-        res.status(500).json({ error: err.response?.data || err.message });
-    }
-    
-})
-
 app.post('/store', async (req, res) => {
     const { mnemonic, balanceId, recipient, amount } = req.body;
     if(!mnemonic) {
