@@ -62,12 +62,15 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                         if(claimable_sponsors.includes(s.publicKey)) {
                             const xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name, true);
                             xdrs.push({xdr, balanceId});
+                            continue;
                         } else if(payment_sponsors.includes(s.publicKey)) {
                             const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name, true);
                             xdrs.push({xdr, balanceId});
+                            continue;
                         } else if(pos%2 === 0) {
                             const xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name);
                             xdrs.push({xdr, balanceId});
+                            continue;
                         } else {
                             const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name);
                             xdrs.push({xdr, balanceId});
@@ -148,7 +151,6 @@ export async function autoSubmitXDR(name) {
                 // console.log(`${name ?? 'Main server:'} ${server}`)
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
-                    console.log(result)
                     balanceId = xdr.balanceId;
                     return result;
 
