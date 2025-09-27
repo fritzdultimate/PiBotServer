@@ -55,13 +55,13 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     if(balance < 0.02) continue;
                     // Change amount
                     const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
-                    pos++;
+                    // pos++;
 
                     if(name) {
                         const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
                         if (xdr) {
                             xdrs.push({ xdr, balanceId });
-                            // pos++;
+                            pos++;
                         }
                     } else {
 
@@ -83,9 +83,11 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                         if (op === 'claimable') {
                             const force = claimableSet.has(pk) || paymentSet.has(pk);
                             xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name, force ? true : undefined);
+                            // pos++;
                         } else {
                             const force = claimableSet.has(pk) || paymentSet.has(pk);
                             xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name, force ? true : undefined);
+                            // pos++;
                         }
 
                         if (xdr) {
