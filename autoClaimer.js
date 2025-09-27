@@ -148,6 +148,7 @@ export async function autoSubmitXDR(name) {
                 // console.log(`${name ?? 'Main server:'} ${server}`)
                 try {
                     const result = await submitTransaction(xdr.xdr, server);
+                    console.log(result)
                     balanceId = xdr.balanceId;
                     return result;
 
