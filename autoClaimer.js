@@ -78,6 +78,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                         else op = (pos % 2 === 0) ? 'claimable' : 'payment';
 
                         op = (pos % 2 === 0) ? 'claimable' : 'payment';
+                        console.log(op, pos)
                         let xdr;
                         if (op === 'claimable') {
                             const force = claimableSet.has(pk) || paymentSet.has(pk);
