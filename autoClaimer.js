@@ -21,6 +21,8 @@ export const payment_sponsors = [
     'GBTKG3Z7UD2PJ3D573HQWX5T45DI6TYQE4A264MMDIZFHIDSNH5MAVDW',
     'GASHKS3CV2KNLKAHDGDEKQIE3Q2F42TKDR72XZFZYKD2S73VSJYEW3O6',
 ]
+const claimableSet = new Set(claimable_sponsors || []);
+const paymentSet   = new Set(payment_sponsors || []);
 
 const sponsors = await Sponsors.find({ name: 'whoami5677' });
 const MAX_FLOOD_COUNT = 2;
@@ -57,23 +59,35 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
 
                     if(name) {
                         const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
-                        xdrs.push({xdr, balanceId});
+                        if (xdr) {
+                            xdrs.push({ xdr, balanceId });
+                            pos++;
+                        }
                     } else {
-                        if(claimable_sponsors.includes(s.publicKey)) {
-                            const xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name, true);
-                            xdrs.push({xdr, balanceId});
-                            continue;
-                        } else if(payment_sponsors.includes(s.publicKey)) {
-                            const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name, true);
-                            xdrs.push({xdr, balanceId});
-                            continue;
-                        } else if(pos%2 === 0) {
-                            const xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name);
-                            xdrs.push({xdr, balanceId});
-                            continue;
+
+                        const kp = s.publicKey
+                            ? { publicKey: () => s.publicKey }
+                            : getSDKKeypairFromPassphrase(s.mnemonic);
+                        const pk = kp.publicKey();
+
+                        let op;
+                        if (claimableSet.has(pk) && !paymentSet.has(pk)) op = 'claimable';
+                        else if (paymentSet.has(pk) && !claimableSet.has(pk)) op = 'payment';
+                        else if (claimableSet.has(pk) && paymentSet.has(pk)) op = 'claimable'; // tie-breaker
+                        else op = (pos % 2 === 0) ? 'claimable' : 'payment';
+
+                        let xdr;
+                        if (op === 'claimable') {
+                            const force = claimableSet.has(pk) || paymentSet.has(pk);
+                            xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name, force ? true : undefined);
                         } else {
-                            const xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name);
-                            xdrs.push({xdr, balanceId});
+                            const force = claimableSet.has(pk) || paymentSet.has(pk);
+                            xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name, force ? true : undefined);
+                        }
+
+                        if (xdr) {
+                            xdrs.push({ xdr, balanceId });
+                            pos++;
                         }
                     }
                 } catch (innerErr) {
