@@ -10,6 +10,7 @@ import { storeLockedPi } from './modelfn.js';
 import http from 'http';
 import { sweepToMuxedWallet } from './fn2.js';
 import ColemanSettings from '../models/ColemanSettings.js';
+import { claimable_sponsors, payment_sponsors } from '../autoClaimer.js';
 
 
 const NETWORK_PASSPHRASE = 'Pi Network';
@@ -779,7 +780,9 @@ export const autoFundWallet = async () => {
                 const actualBalance = parseFloat(balanceString);
 
                 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-                const targetBalance = Number(settings.minSponsorBalance);
+                let targetBalance = Number(settings.minSponsorBalance);
+                let bmf = claimable_sponsors.includes(p.publicKey) || payment_sponsors.includes(p.publicKey);
+                targetBalance = bmf ? BUMP_FEE + 1 : targetBalance;
                 const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
                 const reserve = 0.98 + baseReserve;
                 const changeNeeded = targetBalance - (actualBalance - reserve);

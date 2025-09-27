@@ -12,12 +12,12 @@ await connectToDB();
 const pendingXDRs = {};
 // const rawSponsors = await Sponsors.find();
 
-const claimable_sponsors = [
+export const claimable_sponsors = [
     'GBXSHWTBHLYGVE35QBZTTOLR2XUHWT3AFRIEFVIMRABS6XQLG2PV4ZSZ', //chris
     'GCRITFGUZFVKZI44S2B4K5FRA4R3G3TBS55MROAZJJGASPW2CR6GRXTW',
 ];
 
-const payment_sponsors = [
+export const payment_sponsors = [
     'GBTKG3Z7UD2PJ3D573HQWX5T45DI6TYQE4A264MMDIZFHIDSNH5MAVDW',
     'GASHKS3CV2KNLKAHDGDEKQIE3Q2F42TKDR72XZFZYKD2S73VSJYEW3O6',
 ]
