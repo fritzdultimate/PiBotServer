@@ -23,7 +23,7 @@ const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor 
 const SWEEP_FEE_PAYER_PHRASE = 'pudding inflict cash hawk climb remember orphan gather material stem expire loyal cousin benefit tube buzz love business tooth chimney ring screen rural thought';
 
 const MAX_FLOOD_COUNT = 2;
-export const BUMP_FEE = 3.3333333;
+export const BUMP_FEE = 0.0033333;
 
 
 

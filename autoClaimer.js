@@ -57,7 +57,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
                     // pos++;
 
-                    if(name) {
+                    if(true) {
                         const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
                         if (xdr) {
                             xdrs.push({ xdr, balanceId });
