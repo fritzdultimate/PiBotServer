@@ -23,7 +23,7 @@ const BOT_PHRASE = 'logic resemble wise decline unhappy all arrive engage motor 
 const SWEEP_FEE_PAYER_PHRASE = 'pudding inflict cash hawk climb remember orphan gather material stem expire loyal cousin benefit tube buzz love business tooth chimney ring screen rural thought';
 
 const MAX_FLOOD_COUNT = 2;
-export const BUMP_FEE = 0.0033333;
+export const BUMP_FEE = 0.2;
 
 
 
@@ -782,7 +782,7 @@ export const autoFundWallet = async () => {
                 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
                 let targetBalance = Number(settings.minSponsorBalance);
                 let bmf = claimable_sponsors.includes(p.publicKey) || payment_sponsors.includes(p.publicKey);
-                targetBalance = bmf ? BUMP_FEE + 1 : targetBalance;
+                targetBalance = bmf ? BUMP_FEE : targetBalance;
                 const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
                 const reserve = 0.98 + baseReserve;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
