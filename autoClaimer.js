@@ -76,7 +76,6 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
 
                         else if (claimableSet.has(pk) && paymentSet.has(pk)) op = 'claimable';
                         else op = (pos % 2 === 0) ? 'claimable' : 'payment';
-                        console.log(op, pos)
                         let xdr;
                         if (op === 'claimable') {
                             const force = claimableSet.has(pk) || paymentSet.has(pk);
@@ -123,9 +122,6 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
             status: 'pending',
             name: name ? name : { $in: [null, undefined] }
         });
-
-        console.log(`Ready Phrases for ${name ? name : 'Main'}`)
-        console.log(readyPassphrases)
 
         if(readyPassphrases.length) {
             const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
