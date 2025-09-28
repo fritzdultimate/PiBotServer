@@ -52,7 +52,7 @@ export async function prebuildAndSignChannelTx(channelPhrase, mainKp, balanceId,
             source: mainKp.publicKey(),
             withMuxing: true
         }))
-        .addMemo(generatePiMemo())
+        .addMemo(Memo.text(generatePiMemo()))
         .setTimeout(140 + (inx * 5))
         .build();
 
