@@ -27,6 +27,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const PASS = 'GDYEUEODV5360DSGH';
+
 const allowedOrigins = ['https://ember-harbor.netlify.app', 'https://tidal-elm.netlify.app', 'https://mint-lynx.netlify.app'];
 app.use(express.json());
 app.use(cors({
@@ -41,6 +43,16 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.post('/login', async (req, res) => {
+    const { pass } = req.body;
+
+    if(pass === PASS) {
+        return res.status(201).json({ success: true });
+    } else {
+        return res.status(409).json({success: false});
+    }
+})
 
 app.post("/api/bot/restart", (req, res) => {
     exec("pm2 restart colemanServer", (err, stdout, stderr) => {
