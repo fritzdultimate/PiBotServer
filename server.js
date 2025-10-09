@@ -27,7 +27,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = ['https://ember-harbor.netlify.app'];
+const allowedOrigins = ['https://ember-harbor.netlify.app', 'https://tidal-elm.netlify.app', 'https://mint-lynx.netlify.app'];
 app.use(express.json());
 app.use(cors({
     origin: function (origin, callback) {
