@@ -44,7 +44,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { pass } = req.body;
 
     if(pass === PASS) {
