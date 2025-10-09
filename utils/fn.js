@@ -693,7 +693,7 @@ export const autoSweepWallet = async () => {
     global.isSweeping = false;
 };
 
-export const autoSweepSponsor = async () => {
+export const autoSweepSponsor = async (name = null, address = null) => {
     if(global.isSweepingSponsor || global.isUnlocking) return;
     
     const now = new Date();
@@ -705,7 +705,7 @@ export const autoSweepSponsor = async () => {
     console.log(`Is sweeping Sponsors`);
 
     try {
-        const sponsors = await Sponsors.find({ name: 'whoami5677' });
+        const sponsors = await Sponsors.find({ name: name ? name : 'whoami5677' });
 
         for(const s of sponsors) {
             if(s.publicKey) continue;
@@ -737,7 +737,7 @@ export const autoSweepSponsor = async () => {
             }
             for(const sps of chunks) {
                 await Promise.all(sps.map(async (sponsor, i) => {
-                    await sweepWallet(sponsor.mnemonic, PI_PUBLIC_ADDRESS);
+                    await sweepWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
                 }));
 
                 await sleep(6000)
