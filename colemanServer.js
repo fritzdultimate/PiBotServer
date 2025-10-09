@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
-import { arrayBatches, fundWallet, getAccount, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from './utils/fn.js';
+import { arrayBatches, autoSweepSponsor, fundWallet, getAccount, getBalance, getKeypairFromPassphrase, sleep, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import ColemanSettings from './models/ColemanSettings.js';
@@ -48,6 +48,8 @@ async function getUpcomingClaimables(start = 0) {
 
     return upcomingClaimables;
 }
+
+setInterval(() => autoSweepSponsor('coleman', MAIN_ADDRESS), 1000);
 
 
 // Auto Fund
