@@ -781,15 +781,13 @@ export const autoFundWallet = async () => {
 
                 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
                 let targetBalance = Number(settings.minSponsorBalance);
-                let bmf = claimable_sponsors.includes(p.publicKey) || payment_sponsors.includes(p.publicKey);
-                targetBalance = bmf ? BUMP_FEE : targetBalance;
                 const baseReserve = 0.5 * (accountData?.num_sponsoring ?? 0);
                 const reserve = 0.98 + baseReserve;
                 const changeNeeded = targetBalance - (actualBalance - reserve);
                 
 
                 upcomingClaimables = await getUpcomingClaimables();
-                if (changeNeeded > 0 && botBalance > changeNeeded && !global.isUnlocking && !!upcomingClaimables.length) {
+                if (changeNeeded > 0 && botBalance > changeNeeded && !!upcomingClaimables.length) {
                     const result = await fundWallet(
                         BOT_PHRASE,
                         sponsorKp.publicKey(),
@@ -807,7 +805,7 @@ export const autoFundWallet = async () => {
                 console.error('❌ Error funding Pi:', err.message || err);
             }
 
-            await sleep(1000);
+            await sleep(500);
         }
     } catch (err) {
         console.error('❌ Unexpected error in autoFundWallet:', err.message || err);
