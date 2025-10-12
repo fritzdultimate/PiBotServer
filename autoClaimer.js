@@ -57,40 +57,10 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
                     // pos++;
 
-                    if(true) {
-                        const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
-                        if (xdr) {
-                            xdrs.push({ xdr, balanceId });
-                            pos++;
-                        }
-                    } else {
-
-                        const kp = s.publicKey
-                            ? { publicKey: () => s.publicKey }
-                            : getSDKKeypairFromPassphrase(s.mnemonic);
-                        const pk = kp.publicKey();
-
-                        let op;
-                        if (claimableSet.has(pk) && !paymentSet.has(pk)) op = 'claimable';
-                        else if (paymentSet.has(pk) && !claimableSet.has(pk)) op = 'payment';
-
-                        else if (claimableSet.has(pk) && paymentSet.has(pk)) op = 'claimable';
-                        else op = (pos % 2 === 0) ? 'payment' : 'claimable';
-                        let xdr;
-                        if (op === 'claimable') {
-                            const force = claimableSet.has(pk) || paymentSet.has(pk);
-                            xdr = await prebuildAndSignClaimable(s.mnemonic, mainKp, balanceId, retries, name, force ? true : undefined);
-                            // pos++;
-                        } else {
-                            const force = claimableSet.has(pk) || paymentSet.has(pk);
-                            xdr = await prebuildAnSignPayment(s.mnemonic, mainKp, r, mutatedAmount, retries, name, force ? true : undefined);
-                            // pos++;
-                        }
-
-                        if (xdr) {
-                            xdrs.push({ xdr, balanceId });
-                            pos++;
-                        }
+                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
+                    if (xdr) {
+                        xdrs.push({ xdr, balanceId });
+                        pos++;
                     }
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
@@ -98,7 +68,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             }
             retries++;
             if (xdrs.length) pendingXDRs[time].push(xdrs);
-            await sleep(5000)
+            await sleep(2000)
         }
 
     } catch (err) {
@@ -114,7 +84,7 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
         // console.log(`autoPrepare is running for ${name ? name : 'Main'}`)
 
         const now = new Date();
-        const min = (2 * 1000 * 60)
+        const min = (0.8 * 1000 * 60)
         const aMinuteFromNow = new Date(now.getTime() + min);
 
         const readyPassphrases = await Passphrase.find({
