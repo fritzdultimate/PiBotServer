@@ -483,7 +483,6 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
                 return {data: res.data, amount: withdrawable.toFixed(7)};
             }
         } catch (error) {
-            console.log(error)
             return { error: error.message, amount: 0.000 };
         }
         
@@ -737,7 +736,7 @@ export const autoSweepSponsor = async (name = null, address = null) => {
             }
             for(const sps of chunks) {
                 await Promise.all(sps.map(async (sponsor, i) => {
-                    await sweepWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
+                    // await sweepWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
                 }));
 
                 await sleep(6000)
