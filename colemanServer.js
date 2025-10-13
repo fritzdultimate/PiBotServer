@@ -99,16 +99,16 @@ setInterval(async() => {
                     }
                 } else {
                     if(botBalance < Math.abs(change)) {
-                        // console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
+                        console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
                     }
                     if(change >= 0) {
-                        // console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
+                        console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
                     }
                 }
                 await sleep(5000);
     
             } catch (err) {
-                // console.error('❌ Error funding Pi:', err.message || err);
+                console.error('❌ Error funding Pi:', err.message || err);
             }
         }
         global.isFunding = false;
