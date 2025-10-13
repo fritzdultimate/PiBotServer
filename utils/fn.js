@@ -736,8 +736,7 @@ export const autoSweepSponsor = async (name = null, address = null) => {
             }
             for(const sps of chunks) {
                 await Promise.all(sps.map(async (sponsor, i) => {
-                    console.log(sponsor, i)
-                    await sweepToMuxedWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
+                    // await sweepToMuxedWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
                 }));
 
                 await sleep(6000)
