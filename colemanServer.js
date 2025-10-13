@@ -49,7 +49,9 @@ async function getUpcomingClaimables(start = 0) {
     return upcomingClaimables;
 }
 
-setInterval(() => autoSweepSponsor('coleman', MAIN_ADDRESS), 1000);
+const kp = getKeypairFromPassphrase(settings.funderMnemonic);
+
+setInterval(() => autoSweepSponsor('coleman', kp.publicKey()), 1000);
 
 
 // Auto Fund
