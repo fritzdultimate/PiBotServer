@@ -108,7 +108,7 @@ setInterval(async() => {
                 await sleep(5000);
     
             } catch (err) {
-                console.error('❌ Error funding Pi:', err.message || err);
+                // console.error('❌ Error funding Pi:', err.message || err);
             }
         }
         global.isFunding = false;
