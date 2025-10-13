@@ -242,7 +242,6 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
                     return {data: res.data, amount: withdrawable.toFixed(7)};
                 }
             } catch (error) {
-                console.log(error)
                 return { error: error.message, amount: 0.000 };
             }
             
