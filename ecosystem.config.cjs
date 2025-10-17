@@ -6,7 +6,7 @@ module.exports = {
     env: {
       NODE_ENV: "production",
       PORT: 3000,
-      MONGODB_URI: "mongodb://pibotuser:PibotAppPass@2025@127.0.0.1:27017/pibot?authSource=pibot"
+      MONGODB_URI: "mongodb://pibotuser:PibotAppPass%402025@127.0.0.1:27017/pibot?authSource=pibot"
     }
   }]
 }
