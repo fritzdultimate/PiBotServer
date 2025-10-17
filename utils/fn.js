@@ -29,10 +29,7 @@ export const BUMP_FEE = 0.2;
 
 
 export const HORIZONS = [
-    'http://31.97.37.92:8000',
-    'http://31.97.122.182:8000',
-    'http://72.60.185.41:8000',
-    'http://72.60.185.42:8000'
+    'http://72.61.179.36:8000',
 ];
 const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
