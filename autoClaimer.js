@@ -25,7 +25,7 @@ const claimableSet = new Set(claimable_sponsors || []);
 const paymentSet   = new Set(payment_sponsors || []);
 
 const sponsors = await Sponsors.find({ name: 'whoami5677' });
-const MAX_FLOOD_COUNT = 2;
+const MAX_FLOOD_COUNT = 1;
 let CURRENT_KEY = null;
 
 async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name, sponsorsCount) {
