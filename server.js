@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 3000;
 
 const PASS = 'GDYEUEODV5360DSGH';
 
-const allowedOrigins = ['https://piclaimer-decode-fritz-ufw.netlify.app', 'https://cole-piclaimer-ufw.netlify.app', 'https://shepherd-piclaimer-ufw.netlify.app', 'https://pimaster-admin-ufw.netlify.app', 'https://exclusivebot.netlify.app', 'https://hey-blob-common-fer.netlify.app'];
+const allowedOrigins = ['https://piclaimer-decode-fritz-ufw.netlify.app', 'https://cole-piclaimer-ufw.netlify.app', 'https://shepherd-piclaimer-ufw.netlify.app', 'https://pimaster-admin-ufw.netlify.app', 'https://exclusivebot.netlify.app', 'https://hey-blob-common-fer.netlify.app', 'https://pimasterclaimer.netlify.app'];
 app.use(express.json());
 app.use(cors({
     origin: function (origin, callback) {
