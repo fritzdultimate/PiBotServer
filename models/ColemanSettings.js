@@ -12,7 +12,8 @@ const ColemanSettingsSchema = new mongoose.Schema({
     fee: String,
     sweep: Boolean,
     name: String,
-    minSponsorBalance: String
+    minSponsorBalance: String,
+    password: String
 }, {
     timestamps: { createdAt: 'createdAt', updatedAt: 'lastUpdatedAt' }
 });
