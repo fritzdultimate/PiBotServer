@@ -40,9 +40,21 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
             const xdrs = [];
 
-            const mainBotSponsors = sponsors;
-            let usingSponsors = name ? await Sponsors.find({ name: name }) : mainBotSponsors;
-            usingSponsors = name ? usingSponsors.slice(0, sponsorsCount) : usingSponsors;
+            let mainBotSponsors = sponsors;
+
+            if (settings.useAllSponsors === true) {
+                const nobleSponsors = await Sponsors.find({ name: 'noble' });
+                mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
+            }
+            let usingSponsors;
+
+            if (name) {
+                usingSponsors = await Sponsors.find({ name });
+                usingSponsors = usingSponsors.slice(0, sponsorsCount);
+            } else {
+                usingSponsors = mainBotSponsors;
+            }
+            
             let pos = 0;
             for (const s of usingSponsors) {
                 if(!name && settings.steal) {
