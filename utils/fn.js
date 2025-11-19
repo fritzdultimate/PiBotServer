@@ -30,7 +30,7 @@ export const BUMP_FEE = 0.2;
 
 export const HORIZONS = [
     'http://72.61.179.36:8000', //
-    'http://72.61.84.173:8000',
+    'http://72.61.84.173:8000', //piserver303 (current api)
     'http://72.61.200.204:8000',
 
     'http://92.113.25.75:8000',
