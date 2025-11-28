@@ -142,7 +142,7 @@ setInterval(async() => {
                 }
             }));
     
-            await sleep(1000);
+            await sleep(20000);
         }
     }
     global.isSweeping = false;
