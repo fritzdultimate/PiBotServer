@@ -778,7 +778,7 @@ export const autoFundWallet = async () => {
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
         let mainBotSponsors = sponsors;
-        if (settings.useAllSponsors === true && !nobleSettings.sweep) {
+        if (settings.useAllSponsors) {
             const nobleSponsors = await Sponsors.find({ name: 'noble' });
             mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
         }
