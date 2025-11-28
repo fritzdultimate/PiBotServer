@@ -767,7 +767,7 @@ export const autoFundWallet = async () => {
 
     global.isFunding = true;
     try {
-        let upcomingClaimables = await getUpcomingClaimables();
+        let upcomingClaimables = await getUpcomingClaimables(60);
         if (upcomingClaimables.length) {
             const foundMain = upcomingClaimables.find(cl => cl.name == null);
             if(!foundMain) return;
