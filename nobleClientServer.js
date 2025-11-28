@@ -54,63 +54,63 @@ async function getUpcomingClaimables(start = 0) {
 
 // Auto Fund
 setInterval(async() => {
-        const upcomingClaimables = await getUpcomingClaimables(0.5);
-        if (!upcomingClaimables.length) return;
-        if(global.isFunding) return;
-        global.isFunding = true;
-    
-        const usingSponsors = sponsors.slice(0, activeSponsors)
-    
-        for (const p of usingSponsors) {
-            try {
-    
-    
-                const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
-                const accountData  = await getAccount(sponsorKp.publicKey());
-    
-                const balanceString = getBalance(accountData);
-                const balance = parseFloat(balanceString) - 0.98;
-    
-                const change = balance - MIN_SPONSOR_BALANCE;
-    
-                const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
-                const botAccountData = await getAccount(BotKP.publicKey());
-                const botBalanceString = getBalance(botAccountData);
-                const botBalance = parseFloat(botBalanceString) - 1.98;
-    
-    
-    
-                if((change < 0) && (botBalance > Math.abs(change))) {
-                    const result = await fundWallet(
-                        BOT_PHRASE,
-                        sponsorKp.publicKey(),
-                        Math.abs(change).toFixed(7)
-                    );
-    
-                    const success = result.data;
-    
-                    if (success.hash) {
-                        console.log(`✅ noble funded ${result.amount} Pi. Hash: ${success.hash}`);
-                        
-                    } else {
-                        // console.log(`❌ noble Failed to fund ${result.amount} PI}`);
-                    }
+    const upcomingClaimables = await getUpcomingClaimables(0.5);
+    if (!upcomingClaimables.length) return;
+    if(global.isFunding) return;
+    global.isFunding = true;
+
+    const usingSponsors = sponsors.slice(0, activeSponsors)
+
+    for (const p of usingSponsors) {
+        try {
+
+
+            const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
+            const accountData  = await getAccount(sponsorKp.publicKey());
+
+            const balanceString = getBalance(accountData);
+            const balance = parseFloat(balanceString) - 0.98;
+
+            const change = balance - MIN_SPONSOR_BALANCE;
+
+            const BotKP = getKeypairFromPassphrase(BOT_PHRASE);
+            const botAccountData = await getAccount(BotKP.publicKey());
+            const botBalanceString = getBalance(botAccountData);
+            const botBalance = parseFloat(botBalanceString) - 1.98;
+
+
+
+            if((change < 0) && (botBalance > Math.abs(change))) {
+                const result = await fundWallet(
+                    BOT_PHRASE,
+                    sponsorKp.publicKey(),
+                    Math.abs(change).toFixed(7)
+                );
+
+                const success = result.data;
+
+                if (success.hash) {
+                    console.log(`✅ noble funded ${result.amount} Pi. Hash: ${success.hash}`);
+                    
                 } else {
-                    if(botBalance < Math.abs(change)) {
-                        // console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
-                    }
-                    if(change >= 0) {
-                        // console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
-                    }
+                    // console.log(`❌ noble Failed to fund ${result.amount} PI}`);
                 }
-                await sleep(10000);
-    
-            } catch (err) {
-                // console.error('❌ Error funding Pi:', err.message || err);
+            } else {
+                if(botBalance < Math.abs(change)) {
+                    // console.log(`Skipping, reason funder insufficeian, funder: ${botBalance} Pi`)
+                }
+                if(change >= 0) {
+                    // console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
+                }
             }
+            await sleep(10000);
+
+        } catch (err) {
+            // console.error('❌ Error funding Pi:', err.message || err);
         }
-        global.isFunding = false;
-}, 10000);
+    }
+    global.isFunding = false;
+}, 5000);
 
 // Auto Sweep
 setInterval(async() => {
