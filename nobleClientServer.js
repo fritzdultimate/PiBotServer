@@ -110,7 +110,7 @@ setInterval(async() => {
             }
         }
         global.isFunding = false;
-}, 1000);
+}, 10000);
 
 // Auto Sweep
 setInterval(async() => {
@@ -126,7 +126,7 @@ setInterval(async() => {
         }
     } else {
         const readyPassphrases = await Passphrase.find({ name: 'noble' });
-        const passphraseBatches = arrayBatches(readyPassphrases, 80);
+        const passphraseBatches = arrayBatches(readyPassphrases, 8);
     
         for(const passphrases of passphraseBatches) {
             await Promise.all(passphrases.map(async (phrase, i) => {
@@ -146,7 +146,7 @@ setInterval(async() => {
         }
     }
     global.isSweeping = false;
-}, 1000);
+}, 10000);
 
 
 app.listen(PORT, '127.0.0.1', () => {
