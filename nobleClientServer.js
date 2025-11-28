@@ -103,7 +103,7 @@ setInterval(async() => {
                         // console.log(`Skipping, sponsor is enough, sponsor: ${balance} Pi`)
                     }
                 }
-                await sleep(5000);
+                await sleep(10000);
     
             } catch (err) {
                 // console.error('❌ Error funding Pi:', err.message || err);
