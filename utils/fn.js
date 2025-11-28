@@ -15,6 +15,7 @@ import { claimable_sponsors, payment_sponsors } from '../autoClaimer.js';
 
 const NETWORK_PASSPHRASE = 'Pi Network';
 export const PI_PUBLIC_ADDRESS = 'GDOQD7EVNKEB775WCG7DZ3L6H7RTPLXKAGM46JEARLGROQM6TOX3D2BS';
+export const SECOND_PI_PUBLIC_ADDRESS = 'GBUYXTMZQA6J465OUTF2HXUGOKT7UZJMCXMMSI24UIJXVYXFPQXCKKSI';
 // export const PI_PUBLIC_ADDRESS_GROUPED = ['MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAAAH4VXAU5RHO', 'GDFZ5AXD7BANWNEWDVDJMZIB63OMBGNRKHNPAHBEZYYJ72ELIYUL4AQT'];
 export const PI_PUBLIC_ADDRESS_GROUPED = ['GDFZ5AXD7BANWNEWDVDJMZIB63OMBGNRKHNPAHBEZYYJ72ELIYUL4AQT', 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAAA24UQKP3OQY', 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAABD5MZYJOILM', 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAABDZ3SQSHJ26'];
 export const PI_PUBLIC_MUXED_ADDRESS = 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAABDZ3SQSHJ26';
@@ -705,8 +706,15 @@ export const autoSweepSponsor = async (name = null, address = null) => {
 
     try {
         const sponsors = await Sponsors.find({ name: name ? name : 'whoami5677' });
+        const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
 
-        for(const s of sponsors) {
+        let mainBotSponsors = sponsors;
+        if (settings.useAllSponsors === true && !name) {
+            const nobleSponsors = await Sponsors.find({ name: 'noble' });
+            mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
+        }
+
+        for(const s of mainBotSponsors) {
             if(s.publicKey) continue;
             const kp = getKeypairFromPassphrase(s.mnemonic);
 
@@ -729,13 +737,16 @@ export const autoSweepSponsor = async (name = null, address = null) => {
         if (upcomingClaimables.length > 0) return;
 
         if (!upcomingClaimables.length) {
-            const chunkSize = 15;
+            const chunkSize = 50;
             const chunks = [];
             for (let i = 0; i < sponsors.length; i += chunkSize) {
                 chunks.push(sponsors.slice(i, i + chunkSize));
             }
             for(const sps of chunks) {
                 await Promise.all(sps.map(async (sponsor, i) => {
+                    if(settings.useAllSponsors && !name && sponsor.name === 'noble') {
+                        await sweepWallet(sponsor.mnemonic, SECOND_PI_PUBLIC_ADDRESS);
+                    }
                     await sweepWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
                 }));
 
@@ -762,9 +773,16 @@ export const autoFundWallet = async () => {
             if(!foundMain) return;
         }
 
+        const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
-        for (const p of sponsors) {
+        let mainBotSponsors = sponsors;
+        if (settings.useAllSponsors === true) {
+            const nobleSponsors = await Sponsors.find({ name: 'noble' });
+            mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
+        }
+
+        for (const p of mainBotSponsors) {
             try {
                 const sponsorKp = getKeypairFromPassphrase(p.mnemonic);
 
