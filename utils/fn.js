@@ -744,7 +744,7 @@ export const autoSweepSponsor = async (name = null, address = null) => {
             }
             for(const sps of chunks) {
                 await Promise.all(sps.map(async (sponsor, i) => {
-                    if(settings.useAllSponsors && !name && sponsor.name === 'noble') {
+                    if(settings.useAllSponsors && !!!name && sponsor.name === 'noble') {
                         await sweepWallet(sponsor.mnemonic, SECOND_PI_PUBLIC_ADDRESS);
                     }
                     await sweepWallet(sponsor.mnemonic, address ? address : PI_PUBLIC_ADDRESS);
