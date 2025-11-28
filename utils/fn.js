@@ -774,10 +774,11 @@ export const autoFundWallet = async () => {
         }
 
         const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+        const nobleSettings = await ColemanSettings.findOne({ name: 'noble' });
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
         let mainBotSponsors = sponsors;
-        if (settings.useAllSponsors === true) {
+        if (settings.useAllSponsors === true && !nobleSettings.sweep) {
             const nobleSponsors = await Sponsors.find({ name: 'noble' });
             mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
         }
