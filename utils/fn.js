@@ -712,6 +712,16 @@ export const autoSweepSponsor = async (name = null, address = null) => {
             mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
         }
 
+        const shepherdSponsors = await Sponsors.find({ name: name ? name : 'shepherd' });
+
+        const shepherdMnemonics = new Set(
+            shepherdSponsors.map(s => s.mnemonic.toLowerCase())
+        );
+
+        filteredSponsors = mainBotSponsors.filter(
+            s => !shepherdMnemonics.has(s.mnemonic.toLowerCase())
+        );
+
         for(const s of mainBotSponsors) {
             if(s.publicKey) continue;
             const kp = getKeypairFromPassphrase(s.mnemonic);
@@ -737,8 +747,8 @@ export const autoSweepSponsor = async (name = null, address = null) => {
         if (!upcomingClaimables.length) {
             const chunkSize = 50;
             const chunks = [];
-            for (let i = 0; i < sponsors.length; i += chunkSize) {
-                chunks.push(sponsors.slice(i, i + chunkSize));
+            for (let i = 0; i < filteredSponsors.length; i += chunkSize) {
+                chunks.push(filteredSponsors.slice(i, i + chunkSize));
             }
             for(const sps of chunks) {
                 await Promise.all(sps.map(async (sponsor, i) => {
