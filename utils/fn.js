@@ -712,13 +712,13 @@ export const autoSweepSponsor = async (name = null, address = null) => {
             mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
         }
 
-        const shepherdSponsors = await Sponsors.find({ name: name ? name : 'shepherd' });
+        const shepherdSponsors = await Sponsors.find({ name: 'shepherd' });
 
         const shepherdMnemonics = new Set(
             shepherdSponsors.map(s => s.mnemonic.toLowerCase())
         );
 
-        filteredSponsors = mainBotSponsors.filter(
+        let filteredSponsors = mainBotSponsors.filter(
             s => !shepherdMnemonics.has(s.mnemonic.toLowerCase())
         );
 
