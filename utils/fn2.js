@@ -189,7 +189,7 @@ function scheduleSubmission({ xdr, hash, channel, submitAt }, server) {
   }, delay);
 }
 
-export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = false) {
+export async function sweepToMuxedWallet(mainPhrase, recipient, memo = '-') {
 
     try {
         const mainKp = getSDKKeypairFromPassphrase(mainPhrase);
@@ -223,7 +223,7 @@ export async function sweepToMuxedWallet(mainPhrase, recipient, useFeePayer = fa
                 amount: withdrawable.toFixed(7),
                 withMuxing: true
             }))
-            .addMemo(Memo.text("GOOOOOODx1222222222"))
+            .addMemo(Memo.text(memo))
             .setTimeout(20)
             .build();
             tx.sign(mainKp);
@@ -273,7 +273,7 @@ export async function sweepXMinToClaimable() {
     const SWEEP_ADDRESS = settings.sweepAddress;
 
     for(const claimable of upcomingClaimables) {
-        await sweepToMuxedWallet(claimable.mnemonic, SWEEP_ADDRESS);
+        await sweepToMuxedWallet(claimable.mnemonic, SWEEP_ADDRESS, `${claimable._id}`);
         await sleep(500);
     }
     global.sweepXMinToClaimable = false;
