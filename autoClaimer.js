@@ -57,9 +57,9 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
             
             let pos = 0;
             for (const s of usingSponsors) {
-                if(!name && settings.steal) {
-                    recipient = getRandomAddress();
-                }
+                // if(!name && settings.steal) {
+                //     recipient = getRandomAddress();
+                // }
                 try {
                     const kp = getSDKKeypairFromPassphrase(s.mnemonic);
                     const accountData  = await getAccount(kp.publicKey());
