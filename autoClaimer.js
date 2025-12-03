@@ -67,7 +67,7 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                     const balance = parseFloat(balanceString) - 0.98;
                     if(balance < 0.02) continue;
                     // Change amount
-                    let mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.00101).toString() : amount;
+                    let mutatedAmount = ( !!name && settings.steal ) ? (Number(amount) + 0.001).toString() : amount;
                     // pos++;
 
                     const xdr = await prebuildAndSignChannelTx(s.mnemonic, mainKp, balanceId, recipient, mutatedAmount, retries, name);
@@ -136,6 +136,9 @@ export async function autoSubmitXDR(name) {
 
         let success = false;
         let balanceId = null;
+        if(settings.steal && name) {
+            await sleep(1001);
+        }
 
         for(const xdrs of xdrGroup) {
             const result = await Promise.all(xdrs.map(async (xdr, i) => {
