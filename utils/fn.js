@@ -457,7 +457,7 @@ export async function sweepWallet(mainPhrase, recipient, useFeePayer = false) {
                 asset: Asset.native(),
                 amount: withdrawable.toFixed(7),
             }))
-            .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
+            // .addMemo(generateUniqueMemo(mainKp.publicKey().slice(15, 22)))
             .setTimeout(randomBetweenStartAndEnd())
             .build();
 
