@@ -476,12 +476,12 @@ app.post('/sweep', async (req, res) => {
 
 
 const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-const sweepActivated = settings.sweep;
+// const sweepActivated = settings.sweep;
 
 setInterval(autoFundWallet, 10000);
-if(sweepActivated) {
-    setInterval(autoSweepWallet, 1000);
-}
+// if(sweepActivated) {
+//     setInterval(autoSweepWallet, 1000);
+// }
 setInterval(sweepXMinToClaimable, 500);
 setInterval(autoSweepSponsor, 1000);
 
