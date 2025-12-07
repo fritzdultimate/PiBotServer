@@ -482,14 +482,14 @@ setInterval(autoFundWallet, 10000);
 // if(sweepActivated) {
 //     setInterval(autoSweepWallet, 1000);
 // }
-setInterval(sweepXMinToClaimable, 500);
-setInterval(autoSweepSponsor, 1000);
+// setInterval(sweepXMinToClaimable, 500);
+// setInterval(autoSweepSponsor, 1000);
 
-setInterval(autoPrepareForClaiming, 1000);
-setInterval(autoSubmitXDR, 100);
+// setInterval(autoPrepareForClaiming, 1000);
+// setInterval(autoSubmitXDR, 100);
 
 
-setInterval(autoMarkAsClaimable, 1000);
+// setInterval(autoMarkAsClaimable, 1000);
 
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`🚀 Pi Bot Server running on port ${PORT}`);
