@@ -707,10 +707,10 @@ export const autoSweepSponsor = async (name = null, address = null) => {
         const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
 
         let mainBotSponsors = sponsors;
-        if (settings.useAllSponsors === true && !name) {
-            const nobleSponsors = await Sponsors.find({ name: 'noble' });
-            mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
-        }
+        // if (settings.useAllSponsors === true && !name) {
+        //     const nobleSponsors = await Sponsors.find({ name: 'noble' });
+        //     mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
+        // }
 
         const shepherdSponsors = await Sponsors.find({ name: 'shepherd' });
 
@@ -719,7 +719,8 @@ export const autoSweepSponsor = async (name = null, address = null) => {
         );
 
         let filteredSponsors = mainBotSponsors.filter(
-            s => !shepherdMnemonics.has(s.mnemonic.toLowerCase())
+            // s => !shepherdMnemonics.has(s.mnemonic.toLowerCase())
+            s => true
         );
 
         for(const s of mainBotSponsors) {
