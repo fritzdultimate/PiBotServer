@@ -719,8 +719,7 @@ export const autoSweepSponsor = async (name = null, address = null) => {
         );
 
         let filteredSponsors = mainBotSponsors.filter(
-            // s => !shepherdMnemonics.has(s.mnemonic.toLowerCase())
-            s => true
+            s => !shepherdMnemonics.has(s.mnemonic.toLowerCase())
         );
 
         for(const s of mainBotSponsors) {
