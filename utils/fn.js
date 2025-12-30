@@ -29,10 +29,13 @@ export const BUMP_FEE = 0.2;
 
 
 export const HORIZONS = [
-    'http://72.61.200.204:8000',
+    'http://72.61.139.198:8000', //nwosuebube005
 
-    'http://92.113.25.75:8000',
-    'http://72.61.139.198:8000' //nwosuebube005
+    'http://72.62.150.131:8000', //piserver303@gmail.com 
+    'http://72.62.3.206:8000', //piserver303@gmail.com 
+    'http://72.62.134.9:8000', //piserver303@gmail.com 
+    'http://72.62.150.161:8000', //piserver303@gmail.com 
+    // 'http://72.62.176.170:8000', //piserver303@gmail.com 
 ];
 const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
