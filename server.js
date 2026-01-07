@@ -13,6 +13,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
+import logRoutes from './routes/log.js';
 import { autoFundWallet, autoSweepSponsor, autoSweepWallet, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
@@ -68,6 +69,7 @@ await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
 app.use('/api/sponsors', sponsorRoutes);
+app.use('/api/log', logRoutes);
 
 app.post('/api/passphrases/upload', async(req, res) => {
     const { mnemonic, name, owner } = req.body;
