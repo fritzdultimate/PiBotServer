@@ -69,7 +69,7 @@ await connectToDB();
 
 app.use('/api/passphrases', passphraseRoutes);
 app.use('/api/sponsors', sponsorRoutes);
-app.use('/api/log', logRoutes);
+app.use('/api/logs', logRoutes);
 
 app.post('/api/passphrases/upload', async(req, res) => {
     const { mnemonic, name, owner } = req.body;
