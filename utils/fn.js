@@ -784,13 +784,16 @@ export const autoFundWallet = async () => {
         }
 
         const settings = await ColemanSettings.findOne({ name: 'whoami5677' });
-        const nobleSettings = await ColemanSettings.findOne({ name: 'noble' });
         const sponsors = await Sponsors.find({ name: 'whoami5677' });
 
         let mainBotSponsors = sponsors;
+        const botSponsors = await Sponsors.find({ name: 'bot1' });
         if (settings.useAllSponsors) {
-            const nobleSponsors = await Sponsors.find({ name: 'noble' });
-            mainBotSponsors = [...mainBotSponsors, ...nobleSponsors];
+            mainBotSponsors = [...mainBotSponsors, ...botSponsors];
+        }
+
+        if(settings.steal) {
+            mainBotSponsors = botSponsors;
         }
 
         for (const p of mainBotSponsors) {
@@ -816,11 +819,21 @@ export const autoFundWallet = async () => {
 
                 upcomingClaimables = await getUpcomingClaimables();
                 if (changeNeeded > 0 && botBalance > changeNeeded && !!upcomingClaimables.length) {
-                    const result = await fundWallet(
-                        BOT_PHRASE,
-                        sponsorKp.publicKey(),
-                        changeNeeded.toFixed(7)
-                    );
+                    let result;
+                    if(settings.steal) {
+                        const botSettings = await ColemanSettings.findOne({ name: 'bot1' });
+                        result = await fundWallet(
+                            settings.funderMnemonic,
+                            sponsorKp.publicKey(),
+                            changeNeeded.toFixed(7)
+                        );
+                    } else {
+                        result = await fundWallet(
+                            BOT_PHRASE,
+                            sponsorKp.publicKey(),
+                            changeNeeded.toFixed(7)
+                        );
+                    }
 
                     const success = result.data;
                     if (success.hash) {
