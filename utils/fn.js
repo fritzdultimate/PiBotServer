@@ -823,7 +823,7 @@ export const autoFundWallet = async () => {
                     if(settings.steal) {
                         const botSettings = await ColemanSettings.findOne({ name: 'bot1' });
                         result = await fundWallet(
-                            settings.funderMnemonic,
+                            botSettings.funderMnemonic,
                             sponsorKp.publicKey(),
                             changeNeeded.toFixed(7)
                         );
