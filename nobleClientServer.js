@@ -114,7 +114,6 @@ setInterval(async() => {
 
 // Auto Sweep
 setInterval(async() => {
-    return;
     const mainSettings = await ColemanSettings.findOne({ name: 'whoami5677' });
     if(mainSettings.useAllSponsors) return;
     if(!sweepActivated) return;
