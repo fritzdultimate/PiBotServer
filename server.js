@@ -35,7 +35,7 @@ const allowedOrigins = [
     'https://cole-piclaimer-ufw.netlify.app', 
     'https://shepherd-piclaimer-ufw.netlify.app', 
     'https://pimaster-admin-ufw.netlify.app', 
-    'https://hey-blob-common-ferr.netlify.app', 
+    'https://pi-noble.netlify.app', 
     'https://pimasterclaimer.netlify.app', 
     'https://knox-bot.netlify.app', 
     'https://roshan-shubham.netlify.app', 
