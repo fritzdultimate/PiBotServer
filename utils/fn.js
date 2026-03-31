@@ -843,7 +843,7 @@ export const autoFundWallet = async () => {
                     }
                 }
             } catch (err) {
-                console.error('❌ Error funding Pi:', err.message || err);
+                console.error('❌ Error funding Pi:', err);
             }
 
             await sleep(500);
