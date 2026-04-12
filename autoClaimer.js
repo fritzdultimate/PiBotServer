@@ -84,6 +84,8 @@ async function getXDRsReady(mainPhrase, balanceId, recipient, amount, time, name
                 } catch (innerErr) {
                     console.error(`Error building XDR from sponsor ${s.name || s.mnemonic.slice(0, 5)}:`, innerErr);
                 }
+
+                await sleep(1500)
             }
             retries++;
             if (xdrs.length) pendingXDRs[time].push(xdrs);

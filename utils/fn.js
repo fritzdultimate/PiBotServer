@@ -25,6 +25,15 @@ const SWEEP_FEE_PAYER_PHRASE = 'pudding inflict cash hawk climb remember orphan 
 const MAX_FLOOD_COUNT = 2;
 export const BUMP_FEE = 0.2;
 
+const username = "customer-fritz_52wU3";
+const password = "Justonlymefritz+22565";
+const country = "US";
+const proxyHost = "pr.oxylabs.io:7777";
+
+const proxyUrl = `http://${username}-cc-${country}:${password}@${proxyHost}`;
+
+const agent = new HttpsProxyAgent(proxyUrl);
+
 
 
 
@@ -320,9 +329,11 @@ export async function submitTransaction(txXdr, horizon) {
         const res = await axios.post(
             `${horizon}/transactions`,
             `tx=${encodeURIComponent(txXdr)}`,
-            { 
+            {
+                httpsAgent: agent,
+                proxy: false,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                httpAgent: new http.Agent({ keepAlive: false })
+                // httpAgent: new http.Agent({ keepAlive: false })
             }
         );
         return res.data;
