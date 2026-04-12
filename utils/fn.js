@@ -29,9 +29,11 @@ export const BUMP_FEE = 0.2;
 
 
 export const HORIZONS = [
-    'http://72.61.139.198:8000', //nwosuebube005
+    //'http://72.61.139.198:8000', //nwosuebube005
 
-    'http://187.124.83.67:8000', //thegreatmikebrown@gmail.com
+    // 'http://187.124.83.67:8000',
+
+    'https://api.mainnet.minepi.com'
 ];
 const horizonUrl = (i) => {
     return HORIZONS[i % HORIZONS.length];
