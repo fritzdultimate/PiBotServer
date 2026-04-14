@@ -33,7 +33,7 @@ const PASS = 'GDYEUEODV5360DSGH';
 const allowedOrigins = [
     'https://piclaimer-decode-fritz-ufw.netlify.app', 
     'https://ogbe-piclaimer-ufc.netlify.app', 
-    'https://shepherd-piclaimer-ufw.netlify.app', 
+    'https://coleman-piclaimer-ufc.netlify.app', 
     'https://pimaster-admin-ufw.netlify.app', 
     'https://pi-noble.netlify.app', 
     'https://pimasterclaimer.netlify.app', 
