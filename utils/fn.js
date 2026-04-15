@@ -330,10 +330,10 @@ export async function submitTransaction(txXdr, horizon) {
             `${horizon}/transactions`,
             `tx=${encodeURIComponent(txXdr)}`,
             {
-                httpsAgent: agent,
-                proxy: false,
+                // httpsAgent: agent,
+                // proxy: false,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                // httpAgent: new http.Agent({ keepAlive: false })
+               httpAgent: new http.Agent({ keepAlive: false }) 
             }
         );
         return res.data;
