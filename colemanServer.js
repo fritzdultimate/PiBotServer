@@ -51,7 +51,7 @@ async function getUpcomingClaimables(start = 0) {
 
 const kp = getKeypairFromPassphrase(settings.funderMnemonic);
 
-setInterval(() => autoSweepSponsor('coleman', kp.publicKey()), 1000);
+// setInterval(() => autoSweepSponsor('coleman', kp.publicKey()), 1000);
 
 
 // Auto Fund
