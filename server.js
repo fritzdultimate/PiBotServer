@@ -41,7 +41,8 @@ const allowedOrigins = [
     'https://roshan-shubham.netlify.app', 
     'https://piclaimer-decode-fritz-second-ufw.netlify.app', 
     'https://exclusivebot.netlify.app',
-    'https://web-blob-bbt.netlify.app'
+    'https://web-blob-bbt.netlify.app',
+    'https://magical-medovik-2f155c.netlify.app'
 ];
 app.use(express.json());
 app.use(cors({
