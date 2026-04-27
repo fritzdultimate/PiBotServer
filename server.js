@@ -497,6 +497,8 @@ setInterval(autoFundWallet, 10000);
 // if(sweepActivated) {
 //     setInterval(autoSweepWallet, 1000);
 // }
+setInterval(autoCheckSponsorForClaimable, 10000);
+
 // setInterval(sweepXMinToClaimable, 500);
 // setInterval(autoSweepSponsor, 1000);
 

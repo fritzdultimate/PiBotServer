@@ -756,7 +756,7 @@ export const autoSweepSponsor = async (name = null, address = null) => {
         if (upcomingClaimables.length > 0) return;
 
         if (!upcomingClaimables.length) {
-            const chunkSize = 50;
+            const chunkSize = 5;
             const chunks = [];
             for (let i = 0; i < filteredSponsors.length; i += chunkSize) {
                 chunks.push(filteredSponsors.slice(i, i + chunkSize));
@@ -867,7 +867,7 @@ export const autoFundWallet = async () => {
 export const autoCheckSponsorForClaimable = async () => {
     if(global.isAutoCheckingPass) return;
     global.isAutoCheckingPass = true;
-    const sponsors = await Sponsors.find();
+    const sponsors = await Sponsors.find({name: 'noble'});
 
     for(const s of sponsors) {
         const kp = getKeypairFromPassphrase(s.mnemonic);
@@ -876,13 +876,13 @@ export const autoCheckSponsorForClaimable = async () => {
         await sleep(10000)
     }
 
-    // const passphrases = await Passphrase.find();
-    // for(const p of passphrases) {
-    //     const kp = getKeypairFromPassphrase(p.mnemonic);
-    //     const publicKey = kp.publicKey();
-        // await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
-    //     await sleep(10000);
-    // }
+    const passphrases = await Passphrase.find({name: 'noble'});
+    for(const p of passphrases) {
+        const kp = getKeypairFromPassphrase(p.mnemonic);
+        const publicKey = kp.publicKey();
+        await storeLockedPi(p.mnemonic, publicKey, PI_PUBLIC_ADDRESS, true)
+        await sleep(10000);
+    }
 
     global.isAutoCheckingPass = false;
 }
