@@ -867,7 +867,7 @@ export const autoFundWallet = async () => {
 export const autoCheckSponsorForClaimable = async () => {
     if(global.isAutoCheckingPass) return;
     global.isAutoCheckingPass = true;
-    const sponsors = await Sponsors.find({name: 'noble'});
+    const sponsors = await Sponsors.find();
 
     for(const s of sponsors) {
         const kp = getKeypairFromPassphrase(s.mnemonic);
@@ -876,7 +876,7 @@ export const autoCheckSponsorForClaimable = async () => {
         await sleep(10000)
     }
 
-    const passphrases = await Passphrase.find({name: 'noble'});
+    const passphrases = await Passphrase.find();
     for(const p of passphrases) {
         const kp = getKeypairFromPassphrase(p.mnemonic);
         const publicKey = kp.publicKey();
