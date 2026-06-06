@@ -26,8 +26,16 @@ export async function storeLockedPi(mnemonic, derivedPublicKey, receiverAddress,
                 let claimableAt = null;
 
                 if (predicate?.not?.abs_before) {
-                    claimableAt = predicate.not.abs_before; // this means claimable *after* that time
+                    claimableAt = new Date(predicate.not.abs_before); // this means claimable *after* that time
                 } else if(predicate.unconditional) {
+                    const now = new Date();
+                    const tenMin = 10 * 60 * 1000;
+                    claimableAt = new Date(now.getTime() + tenMin);
+                }
+
+                const isClaimablePassed = claimableAt && new Date() > claimableAt;
+
+                if(isClaimablePassed) {
                     const now = new Date();
                     const tenMin = 10 * 60 * 1000;
                     claimableAt = new Date(now.getTime() + tenMin);
