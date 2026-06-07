@@ -145,11 +145,21 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     try {
         const res = await server.submitTransaction(tx);
 
-        return res;
+        return {
+            hash: res.hash,
+            ledger: res.ledger,
+            successful: res.successful,
+        };
 
     } catch(e) {
        const codes = e.response?.data?.extras?.result_codes;
-        return {"RESULT CODES:": JSON.stringify(codes)};
+        const detail = e.response?.data?.detail;
+        return { 
+            success: false,
+            resultCodes: codes,
+            detail: detail,
+            status: e.response?.status
+        };
     }
 }
 
