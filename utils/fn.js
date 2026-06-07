@@ -115,14 +115,16 @@ function randomBetweenStartAndEnd(start = 18, end = 25) {
 
 export async function buildAndSubmitMultiSigTx(passphrase) {
 
-    const kp = getSDKKeypairFromPassphrase(passphrase.toLowerCase());
-    const account = await server.loadAccount(kp.publicKey());
-    const baseFee = await getBaseFee();
+    const mainKp = getSDKKeypairFromPassphrase(passphrase.toLowerCase());
+
+    const accountData  = await getAccount(mainKp.publicKey());
+    const account = new Account(mainKp.publicKey(), accountData.sequence);
+	const baseFee = parseFloat(await getBaseFee());
 
     // return { passphrase, publicKey: kp.publicKey(), account: accountData };
 
     const tx = new StellarTransactionBuilder(account, {
-        fee: baseFee,
+        fee: baseFee.toString(),
         networkPassphrase: NETWORK_PASSPHRASE,
     })
         .addOperation(StellarOperation.setOptions({
@@ -140,7 +142,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         .setTimeout(300)
         .build();
 
-    tx.sign(kp);
+    tx.sign(mainKp);
 
     try {
         // const res = await server.submitTransaction(tx);
