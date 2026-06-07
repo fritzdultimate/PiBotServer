@@ -145,7 +145,7 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     try {
         const res = await server.submitTransaction(tx);
 
-        return res.data;
+        return res;
 
     } catch(e) {
        const codes = e.response?.data?.extras?.result_codes;
