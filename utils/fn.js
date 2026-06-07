@@ -163,13 +163,12 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         };
 
     } catch(e) {
-       const codes = e.response?.data?.extras?.result_codes;
-        const detail = e.response?.data?.detail;
-        return { 
+       return {
             success: false,
-            resultCodes: codes,
-            detail: detail,
-            status: e.response?.status
+            status: e.response?.status,
+            data: e.response?.data,           // full response body
+            extras: e.response?.data?.extras, // stellar extras
+            resultCodes: e.response?.data?.extras?.result_codes,
         };
     }
 }
