@@ -143,7 +143,16 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
     tx.sign(kp);
 
     try {
-        const res = await server.submitTransaction(tx);
+        // const res = await server.submitTransaction(tx);
+        const res = await axios.post(
+                `${randomServer()}/transactions`,
+                `tx=${encodeURIComponent(tx.toXDR())}`,
+                { 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    timeout: 10000,
+                    httpAgent: new http.Agent({ keepAlive: false })
+                }
+            );
 
         return {
             hash: res.hash,
