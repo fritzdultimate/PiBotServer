@@ -132,7 +132,7 @@ app.post('/api/passphrases/multisig', async(req, res) => {
             return res.status(201).json({ success: false,  error: sign });
         }
     } catch(err) {
-        res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
+        res.status(500).json({success: false, error: err});
     }
 })
 // Bot Status
