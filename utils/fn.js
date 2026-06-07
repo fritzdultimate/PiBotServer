@@ -154,6 +154,11 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         const txStatus = await axios.get(`${randomServer()}/transactions/${txHash}`);
         return txStatus.data;
         } else {
+            const resultCodes = e.response?.data?.extras?.result_codes;
+            if (resultCodes) {
+                throw new Error(`Transaction failed: ${JSON.stringify(resultCodes)}`);
+                // e.g. { transaction: "tx_too_late", operations: [...] }
+            }
             throw e;
         }
     }
