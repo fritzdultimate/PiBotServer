@@ -148,19 +148,8 @@ export async function buildAndSubmitMultiSigTx(passphrase) {
         return res.data;
 
     } catch(e) {
-        if (e.response?.status === 504) {
-        // Try to fetch the transaction by hash
-        const txHash = tx.hash().toString('hex');
-        const txStatus = await axios.get(`${randomServer()}/transactions/${txHash}`);
-        return txStatus.data;
-        } else {
-            const resultCodes = e.response?.data?.extras?.result_codes;
-            if (resultCodes) {
-                throw new Error(`Transaction failed: ${JSON.stringify(resultCodes)}`);
-                // e.g. { transaction: "tx_too_late", operations: [...] }
-            }
-            throw e;
-        }
+       const codes = e.response?.data?.extras?.result_codes;
+        return {"RESULT CODES:": JSON.stringify(codes)};
     }
 }
 
